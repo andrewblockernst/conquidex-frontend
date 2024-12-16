@@ -1,33 +1,27 @@
 'use client'
 
 import { createClientComponentClient, Session } from "@supabase/auth-helpers-nextjs"
-import { useEffect, useState } from "react"
+import { useRouter } from 'next/navigation'
 
-export function AuthButton() {
-    const [session, setSession] = useState<Session | null>(null)
+
+export function AuthButton({ session } : { session: Session | null }) {
     const supabase = createClientComponentClient()
+    const router = useRouter()
 
     const handleSignIn = async () => {
         await supabase.auth.signInWithOAuth({
             provider: 'google',
             options: {
                 redirectTo: 'http://localhost:3000/auth/callback',
-            }
+            },
         })
     }
 
     const handleSignOut = async () => {
-        await supabase.auth.signOut()
+        await supabase.auth.signOut() //CHAU SESION
+        router.push('/login') //REDIRECCIONAMOS A LA PAGINA DE LOGIN
+        router.refresh() //REFRESCAMOS LA PAGINA
     }
-
-    useEffect(() => {
-        const getSession = async () => {
-            const { data } = await supabase.auth.getSession()
-            setSession(data.session)
-        }
-
-        getSession()
-    }, [])
 
     return (
         <header>
