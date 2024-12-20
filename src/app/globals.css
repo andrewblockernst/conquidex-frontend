@@ -7,15 +7,42 @@
   --foreground: #171717;
 }
 
+/* DARK MODE STYLES
 @media (prefers-color-scheme: dark) {
   :root {
     --background: #0a0a0a;
     --foreground: #ededed;
   }
-}
+} */
 
 body {
   color: var(--foreground);
   background: var(--background);
   font-family: Arial, Helvetica, sans-serif;
+  font-size: 16px; /* Base móvil */
+  line-height: 1.5;
+  margin: 0;
+  padding: 0;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-weight: bold;
+  line-height: 1.2;
+}
+
+button {
+  @apply text-sm font-medium rounded-lg px-4 py-2 bg-blue-500 text-white;
+}
+
+.container {
+  @apply mx-auto px-4; /* CONTENEDORES PARA EL MOBILE-FIRST APPLICATION */ 
+
+  /* ⬆️ REALMENTE NO ES TAN BUENO, PERO TE SACA DE UN APURO PARA ACOMDDAR Y CENTRAR ALGO RAPIDO PARA FACILIDAD*/
+}
+
+.main-background {
+  background-image: url("/public/footBackground.jpg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
 }
