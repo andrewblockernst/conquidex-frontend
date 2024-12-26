@@ -8,9 +8,15 @@ interface Club {
   province: string;
 }
 
-export default function ClubTableClient({ clubs }: { clubs: Club[] }) {
-  const [searchTerm, setSearchTerm] = useState("");
-  const [filteredClubs, setFilteredClubs] = useState<Club[]>([]);
+
+interface Props {
+  clubs: Club[],
+  parentCallback: (club: Club) => void 
+}
+
+export default function ClubTableClient({ clubs, parentCallback }: Props) {
+  const [searchTerm, setSearchTerm] = useState("")
+  const [filteredClubs, setFilteredClubs] = useState<Club[]>([])
 
   useEffect(() => {
     setFilteredClubs(
@@ -34,6 +40,13 @@ export default function ClubTableClient({ clubs }: { clubs: Club[] }) {
     setFilteredClubs(filtered);
     setSelectedClub(null);
   };
+
+  const handleSelection = () =>{
+    if (selectedClub) {
+      parentCallback(selectedClub)
+    }
+    alert(`Club seleccionado: ${selectedClub?.name}`)
+  }
 
   return (
     <div className="flex flex-col items-center space-y-4 p-4">
@@ -72,17 +85,16 @@ export default function ClubTableClient({ clubs }: { clubs: Club[] }) {
 
       {/* Botón de acción */}
       {selectedClub && (
-        <div className="flex justify-center">
-          <button
-            type="button"
-            onClick={() =>
-              alert(`Seleccionaste el club: ${selectedClub?.name}`)
-            }
-            className="text-gray-900 bg-gradient-to-r from-yellow-200 via-yellow-500 to-yellow-400 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-yellow-100 font-medium rounded-3xl text-sm px-4 py-2.5 text-center"
-          >
-            Seleccionar club
-          </button>
-        </div>
+
+      <div className="flex justify-center">
+      <button
+        type="button"
+        onClick={handleSelection}
+        className="text-gray-900 bg-gradient-to-r from-yellow-200 via-yellow-500 to-yellow-400 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-yellow-100 dark:focus:ring-lime-800 font-medium rounded-lg text-sm px-4 py-2.5 text-center me-2 mb-2"
+      >
+        Seleccionar club
+      </button>
+      </div>
       )}
     </div>
   );
