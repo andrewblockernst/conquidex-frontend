@@ -1,12 +1,13 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from "react"
+import { useState, useEffect } from "react";
 
 interface Club {
-  id: number
-  name: string
-  province: string
+  id: number;
+  name: string;
+  province: string;
 }
+
 
 interface Props {
   clubs: Club[],
@@ -20,21 +21,24 @@ export default function ClubTableClient({ clubs, parentCallback }: Props) {
   useEffect(() => {
     setFilteredClubs(
       clubs
-        .filter((club) => club.name !== "SIN CLUB") //NO APARECE SIN CLUB POR TEMA DE QUE NO ES UN CLUB xd
-        .sort((a, b) => a.id - b.id) //ORDENADOS POR ID DE MENOR A MAYOR
-    )
-  }, [clubs])
+        .filter((club) => club.name !== "SIN CLUB") // No muestra "SIN CLUB"
+        .sort((a, b) => a.id - b.id) // Ordenados por ID de menor a mayor
+    );
+  }, [clubs]);
 
   const [selectedClub, setSelectedClub] = useState<Club | null>(null);
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const term = e.target.value.toLowerCase()
-    setSearchTerm(term)
+    const term = e.target.value.toLowerCase();
+    setSearchTerm(term);
     const filtered = clubs
-      .filter((club) => club.name.toLowerCase().includes(term) && club.name !== "SIN CLUB" )
-      .sort((a, b) => a.id - b.id)
-    setFilteredClubs(filtered)
-    setSelectedClub(null)
+      .filter(
+        (club) =>
+          club.name.toLowerCase().includes(term) && club.name !== "SIN CLUB"
+      )
+      .sort((a, b) => a.id - b.id);
+    setFilteredClubs(filtered);
+    setSelectedClub(null);
   };
 
   const handleSelection = () =>{
@@ -45,37 +49,43 @@ export default function ClubTableClient({ clubs, parentCallback }: Props) {
   }
 
   return (
-    <div className="flex flex-col items-center space-y-4">
+    <div className="flex flex-col items-center space-y-4 p-4">
+      {/* Campo de búsqueda */}
       <input
-      type="text"
-      placeholder="Escriba el club"
-      value={searchTerm}
-      onChange={handleSearch}
-      className="w-2/4 p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
+        type="text"
+        placeholder="Escriba el club"
+        value={searchTerm}
+        onChange={handleSearch}
+        className="w-full sm:w-2/3 lg:w-1/2 p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500"
       />
 
-      <div className="space-y-2 w-full flex flex-col items-center">
-      {filteredClubs.map((club) => (
-        <div
-        key={club.id}
-        onClick={() => setSelectedClub(club)}
-        className={`p-4 border rounded-lg shadow-md transition cursor-pointer w-2/4 ${
-          selectedClub?.id === club.id ? "bg-blue-100" : "hover:bg-gray-100"
-        } flex justify-between`}
-        >
-        <p className="font-medium text-gray-700">
-          {club.name} <span className="text-gray-500">({club.id})</span>
-        </p>
-        <p className="text-gray-500 italic">{club.province}</p>
-        </div>
-      ))}
+      {/* Lista de clubes */}
+      <div className="space-y-2 w-full sm:w-2/3 lg:w-1/2 flex flex-col items-center">
+        {filteredClubs.map((club) => (
+          <div
+            key={club.id}
+            onClick={() => setSelectedClub(club)}
+            className={`p-4 border rounded-lg shadow-md transition cursor-pointer w-full ${
+              selectedClub?.id === club.id
+                ? "bg-blue-100"
+                : "hover:bg-gray-100"
+            } flex justify-between items-center`}
+          >
+            <p className="font-medium text-gray-700">
+              {club.name} <span className="text-gray-500">({club.id})</span>
+            </p>
+            <p className="text-sm text-gray-500 italic">{club.province}</p>
+          </div>
+        ))}
 
-      {filteredClubs.length === 0 && (
-        <p className="text-gray-500 text-center">No existe ese club</p>
-      )}
+        {filteredClubs.length === 0 && (
+          <p className="text-gray-500 text-center">No existe ese club</p>
+        )}
       </div>
 
+      {/* Botón de acción */}
       {selectedClub && (
+
       <div className="flex justify-center">
       <button
         type="button"

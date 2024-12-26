@@ -1,16 +1,19 @@
-import { AuthButtonServer } from "@/app/components/auth-button-server"
+import { AuthButtonServer } from "@/app/components/auth-button-server";
 
 export default function Register() {
-    return (
-        <section className="grid place-content-center min-h-screen">
-            <h1 className="text-4xl font-bold text-yellow-500 mb-8">conquidex 🏕️</h1>
-            <div className="grid place-content-center">
-                <h1 className="grid place-content-center text-xl font-bold mb-2">Bienvenido</h1>
-                <input type="email" placeholder="Email" className="mb-4 p-2 border border-gray-300 rounded" />
-                <input type="password" placeholder="Contraseña" className="mb-4 p-2 border border-gray-300 rounded" />
-                <button className="bg-yellow-500 text-white p-2 rounded-full mb-4">Registrarse</button>
-                <AuthButtonServer />
-            </div>
-        </section>
-    )
+  return (
+    <div className="min-h-screen flex flex-col justify-center items-center">
+      <div className="flex justify-center">
+        <img src="./logo.png" alt="conquidex-logo" className="w-1/2" />
+      </div>
+      <h1 className="text-xl font-bold mb-4">Registrarse</h1>
+      <AuthButtonServer />
+      <p className="text-sm mt-4">
+        ¿Ya tenes una cuenta?{" "}
+        <a href="/login" className="text-yellow-400 text-sm underline">
+          Inicia sesión
+        </a>
+      </p>
+    </div>
+  );
 }
