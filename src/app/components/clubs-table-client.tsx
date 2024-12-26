@@ -8,7 +8,12 @@ interface Club {
   province: string
 }
 
-export default function ClubTableClient({ clubs }: { clubs: Club[] }) {
+interface Props {
+  clubs: Club[],
+  parentCallback: (club: Club) => void 
+}
+
+export default function ClubTableClient({ clubs, parentCallback }: Props) {
   const [searchTerm, setSearchTerm] = useState("")
   const [filteredClubs, setFilteredClubs] = useState<Club[]>([])
 
@@ -31,6 +36,13 @@ export default function ClubTableClient({ clubs }: { clubs: Club[] }) {
     setFilteredClubs(filtered)
     setSelectedClub(null)
   };
+
+  const handleSelection = () =>{
+    if (selectedClub) {
+      parentCallback(selectedClub)
+    }
+    alert(`Club seleccionado: ${selectedClub?.name}`)
+  }
 
   return (
     <div className="flex flex-col items-center space-y-4">
@@ -67,7 +79,7 @@ export default function ClubTableClient({ clubs }: { clubs: Club[] }) {
       <div className="flex justify-center">
       <button
         type="button"
-        onClick={() => alert(`Seleccionaste el club: ${selectedClub?.name}`)}
+        onClick={handleSelection}
         className="text-gray-900 bg-gradient-to-r from-yellow-200 via-yellow-500 to-yellow-400 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-yellow-100 dark:focus:ring-lime-800 font-medium rounded-lg text-sm px-4 py-2.5 text-center me-2 mb-2"
       >
         Seleccionar club
