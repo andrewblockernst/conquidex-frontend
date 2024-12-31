@@ -8,7 +8,6 @@ interface Club {
   province: string;
 }
 
-
 interface Props {
   clubs: Club[],
   parentCallback: (club: Club) => void 
@@ -85,7 +84,6 @@ export default function ClubTableClient({ clubs, parentCallback }: Props) {
 
       {/* Botón de acción */}
       {selectedClub && (
-
       <div className="flex justify-center">
       <button
         type="button"

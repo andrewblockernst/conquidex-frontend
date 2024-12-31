@@ -6,7 +6,6 @@ import ClubTableServer from "@/app/components/clubs-table-server"; // Importa el
 
 export default async function Home() {
   //SUPABASE CON COOKIES
-  
   const cookieStore = cookies();
   const supabase = createServerComponentClient({ cookies: () => cookieStore });
   const { data: {session}, error } = await supabase.auth.getSession();
@@ -14,7 +13,6 @@ export default async function Home() {
   if (error) {
     console.error('Error getting session:', error.message);
   }
-
 
   if (session === null) {
     redirect("/login"); //EN CASO DE NO HABER SESION, REDIRIGE A LOGIN
@@ -30,7 +28,7 @@ export default async function Home() {
         <section className="w-full">
           <ClubTableServer />
         </section>
-
+        
         {/*AUTH BUTTON*/}
         <div className="mt-4">
           <AuthButtonServer />
