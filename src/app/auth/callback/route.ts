@@ -33,14 +33,11 @@ export async function GET(request: NextRequest) {
       }
 
       if (person) {
-        
         return NextResponse.redirect(requestUrl.origin);
       } else {
         return NextResponse.redirect('/club/select');
       }
     }
   
-
- 
   return NextResponse.redirect(requestUrl.origin);
 }
