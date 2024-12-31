@@ -2,7 +2,6 @@ import { createServerComponentClient } from "@supabase/auth-helpers-nextjs"; // 
 import { cookies } from "next/headers"; // Acceso a cookies
 import { AuthButtonServer } from "@/app/components/auth-button-server";
 import { redirect } from "next/navigation";
-import ClubTableServer from "@/app/components/clubs-table-server"; // Importa el componente de tabla
 
 export default async function Home() {
   //SUPABASE CON COOKIES
@@ -24,11 +23,7 @@ export default async function Home() {
         <img src="./logo.png" alt="conquidex-logo" className="w-32 h-32" />
       </div>
       <main className="flex flex-col items-center w-full max-w-3xl">
-        {/*CLUBS TABLE*/}
-        <section className="w-full">
-          <ClubTableServer />
-        </section>
-        
+        <h1 className="text-3xl font-bold mb-4">Bienvenido 2K25 PAPAAAAAA</h1>
         {/*AUTH BUTTON*/}
         <div className="mt-4">
           <AuthButtonServer />
