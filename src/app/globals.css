@@ -40,9 +40,18 @@ button {
   /* ⬆️ REALMENTE NO ES TAN BUENO, PERO TE SACA DE UN APURO PARA ACOMDDAR Y CENTRAR ALGO RAPIDO PARA FACILIDAD*/
 }
 
-.main-background {
-  background-image: url("/public/footBackground.jpg");
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(5px);
+  z-index: 50;
+}
+
+.modal-content {
+  background: white;
+  border-radius: 0.5rem;
+  padding: 1.5rem;
+  max-width: 24rem;
+  margin: auto;
 }

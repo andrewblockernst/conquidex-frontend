@@ -1,20 +1,25 @@
-import { createServerComponentClient } from "@supabase/auth-helpers-nextjs"; // Conexión a Supabase
-import { cookies } from "next/headers"; // Acceso a cookies
-import { AuthButtonServer } from "@/app/components/auth-button-server";
+// app/page.tsx
+import SyncProfileModalServer from "@/components/syncprofile-modal-server";
+import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
+import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
+import { AuthButtonServer } from "@/components/auth-button-server";
 
 export default async function Home() {
-  //SUPABASE CON COOKIES
   const cookieStore = cookies();
   const supabase = createServerComponentClient({ cookies: () => cookieStore });
-  const { data: {session}, error } = await supabase.auth.getSession();
+
+  const {
+    data: { session },
+    error,
+  } = await supabase.auth.getSession();
 
   if (error) {
-    console.error('Error getting session:', error.message);
+    console.error("Error getting session:", error.message);
   }
 
   if (session === null) {
-    redirect("/login"); //EN CASO DE NO HABER SESION, REDIRIGE A LOGIN
+    redirect("/login");
   }
 
   return (
@@ -23,8 +28,14 @@ export default async function Home() {
         <img src="./logo.png" alt="conquidex-logo" className="w-32 h-32" />
       </div>
       <main className="flex flex-col items-center w-full max-w-3xl">
-        <h1 className="text-3xl font-bold mb-4 text-center">Bienvenido 2K25 PAPAAAAAA</h1>
-        {/*AUTH BUTTON*/}
+        <h1 className="text-3xl font-bold mb-4 text-center">
+          Bienvenido 2K25 PAPAAAAAA
+        </h1>
+
+        {/* Modal desde el servidor */}
+        <SyncProfileModalServer />
+
+        {/* Botón de autenticación */}
         <div className="mt-4">
           <AuthButtonServer />
         </div>

@@ -46,7 +46,7 @@ export async function GET(request: NextRequest) {
   if (person.role_id > 0) { // no es guest
     if (!person.auth_user_uuid) { // no tiene usuario
       console.log('No tiene usuario');
-      return NextResponse.redirect(`${requestUrl.origin}/link-profile`);
+      return NextResponse.redirect(requestUrl.origin);
     } else if (person.auth_user_uuid === user.id) { //tiene usuario y es el mismo
       console.log('Tiene usuario y es el mismo');
       return NextResponse.redirect(requestUrl.origin);
