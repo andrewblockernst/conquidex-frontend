@@ -43,21 +43,39 @@ export async function GET(request: NextRequest) {
     return NextResponse.redirect(`${requestUrl.origin}/login`);
   }
 
+  // Crear la respuesta con la redirección apropiada
+  let redirectUrl = requestUrl.origin;
+  
   if (person.role_id > 0) { // no es guest
-    if (!person.auth_user_uuid) { // no tiene usuario
+    console.log('rol no es guest');
+    if (!person.auth_user_uuid) {
       console.log('No tiene usuario');
-      return NextResponse.redirect(requestUrl.origin);
-    } else if (person.auth_user_uuid === user.id) { //tiene usuario y es el mismo
+      redirectUrl = `${requestUrl.origin}/profile/sync`;
+    }
+    else if(person.auth_user_uuid === user.id){
       console.log('Tiene usuario y es el mismo');
-      return NextResponse.redirect(requestUrl.origin);
     }
   } else { // es guest
+    console.log('rol es guest');
     if (person.club_id === 0) { // no tiene club
-      console.log('No tiene club');
-      return NextResponse.redirect(`${requestUrl.origin}/club/select`);
-    } else { // tiene club
-      console.log('Tiene club');
-      return NextResponse.redirect(requestUrl.origin);
+      console.log('no tiene club');
+      redirectUrl = `${requestUrl.origin}/club/select`;
     }
   }
+
+  // Crear la respuesta y establecer la cookie
+  const response = NextResponse.redirect(redirectUrl);
+  
+  // Serializar los datos de la persona
+  const serializedPerson = JSON.stringify(person);
+  
+  // Establecer la cookie en la respuesta
+  response.cookies.set({
+    name: 'person',
+    value: serializedPerson,
+    path: '/',
+    httpOnly: true
+  });
+
+  return response;
 }
