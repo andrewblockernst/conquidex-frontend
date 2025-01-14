@@ -1,7 +1,6 @@
-import { createRouteHandlerClient } from "@supabase/auth-helpers-nextjs";
-import { cookies } from "next/headers";
+import { createClient } from '@/utils/supabase/server'
 import { NextResponse, type NextRequest } from "next/server";
-import { supabaseAdmin } from "@/lib/supabaseAdmin";
+import { supabaseAdmin } from "../../../utils/supabase/supabaseAdmin";
 
 //METODO DE NEXTJS PARA EVITAR CACHEE DE FORMA ESTATICA LA RUTA Y QUE SIEMPRE SE EJECUTE EN EL SERVIDOR
 
@@ -11,8 +10,7 @@ export async function GET(request: NextRequest) {
   const requestUrl = new URL(request.url);
   const code = requestUrl.searchParams.get("code");
 
-  const cookieStore = cookies();
-  const supabase = createRouteHandlerClient({ cookies: () => cookieStore });
+  const supabase = await createClient();
 
   if (code === null) {
     console.info('No code found in query string, redirecting to login');
@@ -50,7 +48,7 @@ export async function GET(request: NextRequest) {
     console.log('rol no es guest');
     if (!person.auth_user_uuid) {
       console.log('No tiene usuario');
-      redirectUrl = `${requestUrl.origin}/profile/sync`;
+      redirectUrl = `${requestUrl.origin}`;
     }
     else if(person.auth_user_uuid === user.id){
       console.log('Tiene usuario y es el mismo');

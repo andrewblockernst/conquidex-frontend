@@ -1,11 +1,9 @@
-import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
-import { cookies } from "next/headers";
+import { createClient } from "@/utils/supabase/server";
 import SyncProfileModalClient from "./syncprofile-modal-client";
-import { supabaseAdmin } from "@/lib/supabaseAdmin";
+import { supabaseAdmin } from "../utils/supabase/supabaseAdmin";
 
 export default async function SyncProfileModalServer() {
-  const cookieStore = cookies();
-  const supabase = createServerComponentClient({ cookies: () => cookieStore });
+  const supabase = await createClient();
 
   const { data: { session }, error } = await supabase.auth.getSession();
 
