@@ -1,5 +1,4 @@
-import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
-import { cookies } from 'next/headers';
+import { createClient } from '@/utils/supabase/server'
 import ClubTableClient from './clubs-table-client';
 
 interface Club {
@@ -10,7 +9,7 @@ interface Club {
 
 export default async function ClubTableServer() {
   // Conexión a Supabase para obtener los clubes
-  const supabase = createServerComponentClient({ cookies });
+  const supabase = await createClient();
   const { data: clubs, error } = await supabase.from('clubs').select();
 
   const handleSelection = async (club: Club) => {
