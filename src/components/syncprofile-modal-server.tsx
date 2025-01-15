@@ -1,6 +1,7 @@
 import { createClient } from "@/utils/supabase/server";
 import SyncProfileModalClient from "./syncprofile-modal-client";
-import { supabaseAdmin } from "../utils/supabase/supabaseAdmin";
+import { cookies } from 'next/headers';
+import Person from "@/models/person";
 
 export default async function SyncProfileModalServer() {
   const supabase = await createClient();
@@ -13,28 +14,12 @@ export default async function SyncProfileModalServer() {
   }
 
   const { user } = session;
-  const { data: person, error: personError } = await supabaseAdmin
-    .from('persons')
-    .select('id, email, role_id, auth_user_uuid, club_id')
-    .eq('email', user.email)
-    .single();
 
-  if (personError || !person) {
-    console.error('Error fetching person:', personError?.message);
-    return null; // No muestra nada si hay error al obtener la persona
-  }
+  const cookieStore = await cookies();
+  const memberCookie = cookieStore.get('member');
+  const member: Person = memberCookie ? JSON.parse(memberCookie.value) : null;
 
-  let showModal = false;
+  if(!member || member.auth_user_uuid === user.id) return null; // Si el usuario no tiene perfil miembro, no se muestra el modal
 
-  if (person.role_id > 0) { // no es guest
-    if (!person.auth_user_uuid || person.auth_user_uuid !== user.id) { // no tiene usuario o no es el mismo
-      showModal = true;
-    }
-  } else { // es guest
-    if (person.club_id === 0) { // no tiene club
-      showModal = true
-    }
-  }
-
-  return <SyncProfileModalClient showModal={showModal} />;
+  return <SyncProfileModalClient member={member}/>;
 }
