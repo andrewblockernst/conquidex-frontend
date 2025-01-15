@@ -1,0 +1,7 @@
+import type { Database as DB, Tables } from '@/types/database.types'
+
+declare global {
+    type Database = DB
+    type Member = Tables<'members'>
+    type Club = Tables<'clubs'>
+}

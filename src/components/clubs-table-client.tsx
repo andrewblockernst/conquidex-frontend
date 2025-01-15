@@ -2,12 +2,6 @@
 
 import { useState, useEffect } from "react";
 
-interface Club {
-  id: number;
-  name: string;
-  province: string;
-}
-
 interface Props {
   clubs: Club[],
   parentCallback: (club: Club) => void 

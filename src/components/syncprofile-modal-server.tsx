@@ -1,7 +1,7 @@
 import { createClient } from "@/utils/supabase/server";
 import SyncProfileModalClient from "./syncprofile-modal-client";
 import { cookies } from 'next/headers';
-import Person from "@/models/person";
+
 
 export default async function SyncProfileModalServer() {
   const supabase = await createClient();
@@ -17,7 +17,7 @@ export default async function SyncProfileModalServer() {
 
   const cookieStore = await cookies();
   const memberCookie = cookieStore.get('member');
-  const member: Person = memberCookie ? JSON.parse(memberCookie.value) : null;
+  const member: Member = memberCookie ? JSON.parse(memberCookie.value) : null;
 
   if(!member || member.auth_user_uuid === user.id) return null; // Si el usuario no tiene perfil miembro, no se muestra el modal
 

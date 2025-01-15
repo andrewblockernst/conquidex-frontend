@@ -31,6 +31,11 @@ export async function GET(request: NextRequest) {
   }
 
   const { user } = session;
+  if (!user.email) {
+    console.error('User email is undefined, redirecting to login');
+    return NextResponse.redirect(`${origin}/login`);
+  }
+
   const { data: guest} = await supabaseAdmin
     .from('guests')
     .select('id, email, club_id')

@@ -1,16 +1,12 @@
 import { createClient } from '@/utils/supabase/server'
 import ClubTableClient from './clubs-table-client';
 
-interface Club {
-  id: number
-  name: string
-  province: string
-}
 
 export default async function ClubTableServer() {
   // Conexión a Supabase para obtener los clubes
   const supabase = await createClient();
-  const { data: clubs, error } = await supabase.from('clubs').select();
+  const { data, error } = await supabase.from('clubs').select().returns<Club[]>();
+  const clubs = data || [];
 
   const handleSelection = async (club: Club) => {
     'use server';

@@ -1,8 +1,10 @@
 "use client";
 
-import Person from "@/models/person";
+import { Database, Tables, Enums } from "../types/database.types";
+
+
 interface Props{
-  member: Person;
+  member: Member;
 }
 
 export default function SyncProfileModalClient({member}: Props) {
@@ -10,7 +12,9 @@ export default function SyncProfileModalClient({member}: Props) {
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-20 backdrop-blur-sm">
       <div className="bg-white p-6 rounded-xl shadow-lg max-w-sm w-full text-center">
         <h2 className="text-2xl font-bold mb-4">🍌 ATENCION 🐒</h2>
-        <p className="mb-3">Parece que te registraron antes en el club {member.club_id} como {member.name+" "+member.surname}.</p>
+        <p className="mb-3">
+          Parece que te registraron antes en el club <b>{member.club_name}</b> como <b>{member.name + " " + member.surname}</b>.
+        </p>
         <p className="mb-6">
           ¿Sos vos mape?</p>
         <div className="flex justify-center space-x-4">
