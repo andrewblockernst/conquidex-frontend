@@ -1,15 +1,13 @@
 "use client";
 
-import {
-  createClientComponentClient,
-  Session,
-} from "@supabase/auth-helpers-nextjs";
 import { useRouter } from "next/navigation";
 import { GoogleIcon } from "@/components/icons";
 import { useState, useEffect } from "react";
+import { createClient } from "@/utils/supabase/client";
+import { Session } from "@supabase/supabase-js";
 
 export function AuthButton({ session }: { session: Session | null }) {
-  const supabase = createClientComponentClient(); // Cliente de Supabase en componentes cliente
+  const supabase = createClient(); // Cliente de Supabase en componentes cliente
   const router = useRouter();
 
   const handleSignIn = async () => {

@@ -1,5 +1,4 @@
 import { createClient } from '@/utils/supabase/server'
-import { cookies } from 'next/headers' // NOS PERMITE ACCEDER A LAS PETICIONES Y SUS COOKIES (SABIENDO SI ESTAN CONECTADOS, ETC)
 import { AuthButton } from './auth-button-client'
 
 
