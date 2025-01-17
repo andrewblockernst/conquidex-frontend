@@ -396,19 +396,19 @@ export type Database = {
         Row: {
           honor_category_id: string
           id: number
-          level: number
+          level: string
           name: string
         }
         Insert: {
           honor_category_id: string
           id?: number
-          level: number
+          level: string
           name: string
         }
         Update: {
           honor_category_id?: string
           id?: number
-          level?: number
+          level?: string
           name?: string
         }
         Relationships: [
@@ -1142,6 +1142,10 @@ export type Database = {
           person_id_param: number
         }
         Returns: number
+      }
+      sync_person_to_user: {
+        Args: { user_id: string; user_email: string };
+        Returns: void; 
       }
     }
     Enums: {
