@@ -3,6 +3,9 @@
 import { useState, useEffect } from "react";
 import { updateUserClub } from "./actions";
 import { redirect } from "next/navigation";
+import ConfirmationModal from "@/components/modals/confirmation-modal";
+import ErrorModal from "@/components/modals/error-modal";
+import SuccessModal from "@/components/modals/success-modal";
 
 interface Props {
   clubs: Club[]
@@ -11,6 +14,10 @@ interface Props {
 export default function ClubTableClient({ clubs }: Props) {
   const [searchTerm, setSearchTerm] = useState("")
   const [filteredClubs, setFilteredClubs] = useState<Club[]>([])
+  const [selectedClub, setSelectedClub] = useState<Club | null>(null);
+  const [confirmationModal, setconfirmationModal] = useState(false);
+  const [errorModal, setErrorModal] = useState<React.ReactNode>(null);
+  const [successModal, setSuccessModal] = useState<React.ReactNode>(null);
 
   useEffect(() => {
     setFilteredClubs(
@@ -19,8 +26,6 @@ export default function ClubTableClient({ clubs }: Props) {
         .sort((a, b) => a.id - b.id) // Ordenados por ID de menor a mayor
     );
   }, [clubs]);
-
-  const [selectedClub, setSelectedClub] = useState<Club | null>(null);
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     const term = e.target.value.toLowerCase();
@@ -37,16 +42,12 @@ export default function ClubTableClient({ clubs }: Props) {
 
   const handleSelection = async () =>{
     if (selectedClub) {
-      try {
-        await updateUserClub(selectedClub.id);
-        alert(`Club seleccionado: ${selectedClub?.name}`)
-       }
-      catch (error) {
-        if (error instanceof Error) {
-          alert(`Error: ${error.message}`);
-        } else {
-          alert('An unknown error occurred');
-        }
+      const [message, success] = await updateUserClub(selectedClub.id);
+      if (success) {
+        setSuccessModal(`${message}`);
+      }
+      else{
+        setErrorModal(`${message}`);
       }
     }
   }
@@ -91,13 +92,35 @@ export default function ClubTableClient({ clubs }: Props) {
       <div className="flex justify-center">
       <button
         type="button"
-        onClick={handleSelection}
+        onClick={()=>setconfirmationModal(true)}
         className="text-gray-900 bg-gradient-to-r from-yellow-200 via-yellow-500 to-yellow-400 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-yellow-100 dark:focus:ring-lime-800 font-medium rounded-lg text-sm px-4 py-2.5 text-center me-2 mb-2"
       >
         Seleccionar club
       </button>
       </div>
       )}
+        {/* Modal de confirmación */}
+      <ConfirmationModal
+        title="Confirmar selección"
+        confirmText="Sí"
+        cancelText="No"
+        isOpen={confirmationModal}
+        onClose={() => setconfirmationModal(false)}
+        onConfirm={()=>{
+          handleSelection();
+          setconfirmationModal(false);
+        }}>
+        <p>¿Seguro que quieres seleccionar el club <strong>{selectedClub?.name}</strong>?</p>
+        <p>Esta acción no se puede deshacer y tendrás que esperar <strong>3 meses</strong> para volver a cambiar de club.</p>
+      </ConfirmationModal>
+      
+      {/* Modal de error */}
+      <ErrorModal onClose={() => setErrorModal(null)}>
+        {errorModal}
+      </ErrorModal>
+      <SuccessModal onClose={() => {setSuccessModal(null); redirect("/");}}>
+        {successModal}
+      </SuccessModal>
     </div>
   );
 }
