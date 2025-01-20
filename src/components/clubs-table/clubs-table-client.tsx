@@ -1,13 +1,14 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { updateUserClub } from "./actions";
+import { redirect } from "next/navigation";
 
 interface Props {
-  clubs: Club[],
-  parentCallback: (club: Club) => void 
+  clubs: Club[]
 }
 
-export default function ClubTableClient({ clubs, parentCallback }: Props) {
+export default function ClubTableClient({ clubs }: Props) {
   const [searchTerm, setSearchTerm] = useState("")
   const [filteredClubs, setFilteredClubs] = useState<Club[]>([])
 
@@ -34,26 +35,35 @@ export default function ClubTableClient({ clubs, parentCallback }: Props) {
     setSelectedClub(null);
   };
 
-  const handleSelection = () =>{
+  const handleSelection = async () =>{
     if (selectedClub) {
-      parentCallback(selectedClub)
+      try {
+        await updateUserClub(selectedClub.id);
+        alert(`Club seleccionado: ${selectedClub?.name}`)
+       }
+      catch (error) {
+        if (error instanceof Error) {
+          alert(`Error: ${error.message}`);
+        } else {
+          alert('An unknown error occurred');
+        }
+      }
     }
-    alert(`Club seleccionado: ${selectedClub?.name}`)
   }
 
   return (
-    <div className="flex flex-col items-center space-y-4 p-4">
+    <div className=" lg:w-2/3 flex flex-col items-center space-y-4 p-4">
       {/* Campo de búsqueda */}
       <input
         type="text"
         placeholder="Escriba el club"
         value={searchTerm}
         onChange={handleSearch}
-        className="w-full sm:w-2/3 lg:w-1/2 p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500"
+        className="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500"
       />
 
       {/* Lista de clubes */}
-      <div className="space-y-2 w-full sm:w-2/3 lg:w-1/2 flex flex-col items-center">
+      <div className="w-full space-y-2 w-full flex flex-col items-center">
         {filteredClubs.map((club) => (
           <div
             key={club.id}

@@ -4,4 +4,5 @@ declare global {
     type Database = DB
     type Member = Tables<'members'>
     type Club = Tables<'clubs'>
+    type User = Tables<'auth.users'>
 }

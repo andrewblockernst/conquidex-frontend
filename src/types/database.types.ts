@@ -396,19 +396,19 @@ export type Database = {
         Row: {
           honor_category_id: string
           id: number
-          level: number
+          level: string
           name: string
         }
         Insert: {
           honor_category_id: string
           id?: number
-          level: number
+          level: string
           name: string
         }
         Update: {
           honor_category_id?: string
           id?: number
-          level?: number
+          level?: string
           name?: string
         }
         Relationships: [
@@ -1125,6 +1125,10 @@ export type Database = {
       }
     }
     Functions: {
+      get_current_user: {
+        Args: Record<PropertyKey, never>
+        Returns: string
+      }
       get_event_club_by_id: {
         Args: {
           event_id_param: number
