@@ -1,15 +1,23 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { updateUserClub } from "./actions";
+import { redirect } from "next/navigation";
+import ConfirmationModal from "@/components/modals/confirmation-modal";
+import ErrorModal from "@/components/modals/error-modal";
+import SuccessModal from "@/components/modals/success-modal";
 
 interface Props {
-  clubs: Club[],
-  parentCallback: (club: Club) => void 
+  clubs: Club[]
 }
 
-export default function ClubTableClient({ clubs, parentCallback }: Props) {
+export default function ClubTableClient({ clubs }: Props) {
   const [searchTerm, setSearchTerm] = useState("")
   const [filteredClubs, setFilteredClubs] = useState<Club[]>([])
+  const [selectedClub, setSelectedClub] = useState<Club | null>(null);
+  const [confirmationModal, setconfirmationModal] = useState(false);
+  const [errorModal, setErrorModal] = useState<React.ReactNode>(null);
+  const [successModal, setSuccessModal] = useState<React.ReactNode>(null);
 
   useEffect(() => {
     setFilteredClubs(
@@ -18,8 +26,6 @@ export default function ClubTableClient({ clubs, parentCallback }: Props) {
         .sort((a, b) => a.id - b.id) // Ordenados por ID de menor a mayor
     );
   }, [clubs]);
-
-  const [selectedClub, setSelectedClub] = useState<Club | null>(null);
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     const term = e.target.value.toLowerCase();
@@ -34,26 +40,31 @@ export default function ClubTableClient({ clubs, parentCallback }: Props) {
     setSelectedClub(null);
   };
 
-  const handleSelection = () =>{
+  const handleSelection = async () =>{
     if (selectedClub) {
-      parentCallback(selectedClub)
+      const [message, success] = await updateUserClub(selectedClub.id);
+      if (success) {
+        setSuccessModal(`${message}`);
+      }
+      else{
+        setErrorModal(`${message}`);
+      }
     }
-    alert(`Club seleccionado: ${selectedClub?.name}`)
   }
 
   return (
-    <div className="flex flex-col items-center space-y-4 p-4">
+    <div className=" lg:w-2/3 flex flex-col items-center space-y-4 p-4">
       {/* Campo de búsqueda */}
       <input
         type="text"
         placeholder="Escriba el club"
         value={searchTerm}
         onChange={handleSearch}
-        className="w-full sm:w-2/3 lg:w-1/2 p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500"
+        className="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500"
       />
 
       {/* Lista de clubes */}
-      <div className="space-y-2 w-full sm:w-2/3 lg:w-1/2 flex flex-col items-center">
+      <div className="w-full space-y-2 w-full flex flex-col items-center">
         {filteredClubs.map((club) => (
           <div
             key={club.id}
@@ -81,13 +92,35 @@ export default function ClubTableClient({ clubs, parentCallback }: Props) {
       <div className="flex justify-center">
       <button
         type="button"
-        onClick={handleSelection}
+        onClick={()=>setconfirmationModal(true)}
         className="text-gray-900 bg-gradient-to-r from-yellow-200 via-yellow-500 to-yellow-400 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-yellow-100 dark:focus:ring-lime-800 font-medium rounded-lg text-sm px-4 py-2.5 text-center me-2 mb-2"
       >
         Seleccionar club
       </button>
       </div>
       )}
+        {/* Modal de confirmación */}
+      <ConfirmationModal
+        title="Confirmar selección"
+        confirmText="Sí"
+        cancelText="No"
+        isOpen={confirmationModal}
+        onClose={() => setconfirmationModal(false)}
+        onConfirm={()=>{
+          handleSelection();
+          setconfirmationModal(false);
+        }}>
+        <p>¿Seguro que quieres seleccionar el club <strong>{selectedClub?.name}</strong>?</p>
+        <p>Esta acción no se puede deshacer y tendrás que esperar <strong>3 meses</strong> para volver a cambiar de club.</p>
+      </ConfirmationModal>
+      
+      {/* Modal de error */}
+      <ErrorModal onClose={() => setErrorModal(null)}>
+        {errorModal}
+      </ErrorModal>
+      <SuccessModal onClose={() => {setSuccessModal(null); redirect("/");}}>
+        {successModal}
+      </SuccessModal>
     </div>
   );
 }

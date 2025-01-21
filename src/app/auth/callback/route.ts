@@ -1,6 +1,6 @@
 import { createClient } from '@/utils/supabase/server'
 import { NextResponse, type NextRequest } from "next/server";
-import { supabaseAdmin } from "../../../utils/supabase/supabaseAdmin";
+import { supabaseAdmin } from "@/utils/supabase/service-role";
 import { cookies } from 'next/headers';
 
 //METODO DE NEXTJS PARA EVITAR CACHEE DE FORMA ESTATICA LA RUTA Y QUE SIEMPRE SE EJECUTE EN EL SERVIDOR
@@ -18,19 +18,20 @@ export async function GET(request: NextRequest) {
     return NextResponse.redirect(`${origin}/login`);
   }
 
-  const { data: { session }, error: sessionError } = await supabase.auth.exchangeCodeForSession(code);
-
+  const { error: sessionError } = await supabase.auth.exchangeCodeForSession(code);
   if (sessionError) {
     console.error('Error fetching session:', sessionError.message);
     return NextResponse.redirect(`${origin}/login`);
   }
-
-  if (!session) {
-    console.info('No session found, redirecting to login');
+  const { data: { user }, error: userError } = await supabase.auth.getUser();
+  if (userError) {
+    console.error('Error fetching user:', userError.message);
     return NextResponse.redirect(`${origin}/login`);
   }
-
-  const { user } = session;
+  if (!user) {
+    console.error('User is undefined, redirecting to login');
+    return NextResponse.redirect(`${origin}/login`);
+  }
   if (!user.email) {
     console.error('User email is undefined, redirecting to login');
     return NextResponse.redirect(`${origin}/login`);
@@ -63,38 +64,4 @@ export async function GET(request: NextRequest) {
   cookieStore.set('member', serializedMember, { path: '/', httpOnly: true });
 
   return NextResponse.redirect(origin);
-
-  // // Crear la respuesta con la redirección apropiada
-  // let redirectUrl = origin;
-  
-  // if (person.role_id > 0) { // no es guest
-  //   console.log('rol no es guest');
-  //   if (!person.auth_user_uuid) {
-  //     console.log('No tiene usuario');
-  //     redirectUrl = `${origin}`;
-  //   }
-  //   else if(person.auth_user_uuid === user.id){
-  //     console.log('Tiene usuario y es el mismo');
-  //   }
-  // } else { // es guest
-  //   console.log('rol es guest');
-  //   if (person.club_id === 0) { // no tiene club
-  //     console.log('no tiene club');
-  //     redirectUrl = `${origin}/club/select`;
-  //   }
-  // }
-
-  // // Crear la respuesta y establecer la cookie
-  // const response = NextResponse.redirect(redirectUrl);
-  
-  // // Serializar los datos de la persona
-  // const serializedPerson = JSON.stringify(person);
-  
-  // // Establecer la cookie en la respuesta
-  // response.cookies.set({
-  //   name: 'person',
-  //   value: serializedPerson,
-  //   path: '/',
-  //   httpOnly: true
-  // });
 }

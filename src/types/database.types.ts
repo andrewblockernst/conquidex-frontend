@@ -1125,6 +1125,10 @@ export type Database = {
       }
     }
     Functions: {
+      get_current_user: {
+        Args: Record<PropertyKey, never>
+        Returns: string
+      }
       get_event_club_by_id: {
         Args: {
           event_id_param: number
