@@ -1,6 +1,5 @@
 // app/page.tsx
-import SyncProfileModalServer from "@/components/syncprofile-modal-server";
-import { cookies } from "next/headers";
+import SyncProfileModalServer from "@/components/syncprofile-modal/syncprofile-modal-server";
 import { redirect } from "next/navigation";
 import { AuthButtonServer } from "@/components/auth-button-server";
 import { createClient } from '@/utils/supabase/server'

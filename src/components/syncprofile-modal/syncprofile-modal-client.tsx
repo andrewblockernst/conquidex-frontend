@@ -1,41 +1,15 @@
 "use client";
 
-import { supabaseAdmin } from "@/utils/supabase/service-role";
-import { createClient } from "@/utils/supabase/client";
+import { SyncPersonToUser } from "./actions";
 
 interface Props {
   member: Member;
 }
 
 export default function SyncProfileModalClient({member}: Props) {
-  const supabase = createClient();
-
   const handleSync = async () => {
-  try {
-    const { data: user, error: userError } = await supabase.auth.getUser();
-    
-    if (userError || !user) {
-      console.error("No hay sesión activa o no se pudo obtener el usuario:", userError?.message);
-      return;
-    }
-
-    // Llamar al procedimiento almacenado para sincronización
-    const { data, error } = await supabaseAdmin.rpc('sync_person_to_user', {
-      user_id: user.user.id,
-      user_email: user.user.email || ''
-    });
-
-    if (error) {
-      console.error("Error en la sincronización:", error.message);
-      return;
-    }
-    
-    console.log("Perfil sincronizado exitosamente");
-    window.location.href = "/"; 
-  } catch (error) {
-    console.error("Error en el proceso de sincronización:", error);
-  }
-};
+    await SyncPersonToUser();
+  };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-20 backdrop-blur-sm">
