@@ -1,14 +1,14 @@
 "use client";
 
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
-import { Database } from "@/types/database.types";
+import { supabaseAdmin } from "@/utils/supabase/service-role";
+import { createClient } from "@/utils/supabase/client";
 
 interface Props {
   member: Member;
 }
 
 export default function SyncProfileModalClient({member}: Props) {
-  const supabase = createClientComponentClient<Database>();
+  const supabase = createClient();
 
   const handleSync = async () => {
   try {
@@ -20,7 +20,7 @@ export default function SyncProfileModalClient({member}: Props) {
     }
 
     // Llamar al procedimiento almacenado para sincronización
-    const { data, error } = await supabase.rpc('sync_person_to_user', {
+    const { data, error } = await supabaseAdmin.rpc('sync_person_to_user', {
       user_id: user.user.id,
       user_email: user.user.email || ''
     });
