@@ -1,7 +1,6 @@
 import { createClient } from '@/utils/supabase/server'
 import { NextResponse, type NextRequest } from "next/server";
 import { supabaseAdmin } from "@/utils/supabase/service-role";
-import { cookies } from 'next/headers';
 
 //METODO DE NEXTJS PARA EVITAR CACHEE DE FORMA ESTATICA LA RUTA Y QUE SIEMPRE SE EJECUTE EN EL SERVIDOR
 
@@ -58,10 +57,6 @@ export async function GET(request: NextRequest) {
     return NextResponse.redirect(origin);
   }
   if(!member) return NextResponse.redirect(`${origin}/club/select`);
-
-  const serializedMember = JSON.stringify(member);
-  const cookieStore = await cookies();
-  cookieStore.set('member', serializedMember, { path: '/', httpOnly: true });
 
   return NextResponse.redirect(origin);
 }

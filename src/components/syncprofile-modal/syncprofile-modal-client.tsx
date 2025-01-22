@@ -32,6 +32,11 @@ export default function SyncProfileModalClient({member}: Props) {
         }
     };
 
+    const handleCancel= () =>{
+        revalidate("/club/select");
+        redirect("/club/select");
+    }
+
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-20 backdrop-blur-sm">
             <div className="bg-white p-6 rounded-xl shadow-lg max-w-sm w-full text-center">
@@ -44,7 +49,7 @@ export default function SyncProfileModalClient({member}: Props) {
                 <div className="flex justify-center space-x-4">
                     <button
                         className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 disabled:opacity-50"
-                        onClick={() => redirect("/club/select")}
+                        onClick={(handleCancel)}
                         disabled={isLoading}
                     >
                         Cancelar
@@ -67,4 +72,8 @@ export default function SyncProfileModalClient({member}: Props) {
         </div>
         
     );
+}
+
+function revalidate(arg0: string) {
+    throw new Error("Function not implemented.");
 }

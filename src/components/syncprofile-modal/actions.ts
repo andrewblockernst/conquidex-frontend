@@ -2,7 +2,6 @@
 
 import { supabaseAdmin } from "@/utils/supabase/service-role";
 import { createClient } from "@/utils/supabase/server";
-import { redirect } from 'next/navigation';
 
 export async function SyncPersonToUser(): Promise<{ success: boolean, error?: string }> {
     const supabase = await createClient();
@@ -25,7 +24,7 @@ export async function SyncPersonToUser(): Promise<{ success: boolean, error?: st
             return { success: false, error: error.message };
         }
 
-        console.log("Perfil sincronizado exitosamente");
+        console.log("DATA:", data);
         return { success: true };
         
     } catch (error) {
