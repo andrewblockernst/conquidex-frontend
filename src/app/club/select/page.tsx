@@ -1,6 +1,6 @@
 import ClubTableServer from "@/components/clubs-table/clubs-table-server";
 import React from "react";
-import { AuthButtonServer } from "../../../components";
+import { AuthButton} from "../../../components";
 // import { redirect } from "next/navigation";
 // import { createClient } from "@/utils/supabase/server";
 
@@ -37,7 +37,7 @@ export default function ClubSelect() {
         <div className="flex flex-col items-center">
             <h1 className="text-center m-10">Club Select</h1>
             <ClubTableServer />
-            <AuthButtonServer />
+            <AuthButton />
         </div>
     );
 }

@@ -1,14 +1,24 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-import { GoogleIcon } from "@/components/icons";
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { createClient } from "@/utils/supabase/client";
-import { Session } from "@supabase/supabase-js";
+import { User } from "@supabase/supabase-js"; // Asegúrate de importar el tipo User
+import { GoogleIcon } from "./icons";
 
-export function AuthButton({ session }: { session: Session | null }) {
+export function AuthButton() {
   const supabase = createClient(); // Cliente de Supabase en componentes cliente
   const router = useRouter();
+  const [user, setUser] = useState<User | null>(null);
+
+  useEffect(() => {
+    const getSession = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      setUser(session?.user || null);
+    };
+
+    getSession();
+  }, [supabase]);
 
   const handleSignIn = async () => {
     await supabase.auth.signInWithOAuth({
@@ -27,7 +37,7 @@ export function AuthButton({ session }: { session: Session | null }) {
 
   return (
     <header>
-      {session === null ? (
+      {user === null ? (
         <button
           onClick={handleSignIn}
           type="button"

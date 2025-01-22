@@ -1,7 +1,7 @@
 // app/page.tsx
 import SyncProfileModalServer from "@/components/syncprofile-modal/syncprofile-modal-server";
 import { redirect } from "next/navigation";
-import { AuthButtonServer } from "@/components/auth-button-server";
+import { AuthButton } from "@/components/auth-button";
 import { createClient } from '@/utils/supabase/server'
 
 
@@ -36,7 +36,7 @@ export default async function Home() {
 
         {/* Botón de autenticación */}
         <div className="mt-4">
-          <AuthButtonServer />
+          <AuthButton />
         </div>
       </main>
     </div>
