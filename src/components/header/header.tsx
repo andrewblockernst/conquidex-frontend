@@ -1,12 +1,23 @@
 'use client'
 
-import React, { useState } from 'react';
+import React, { use, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { AuthButton } from '@/components/auth-button';
-import SyncProfileModalServer from '../syncprofile-modal/syncprofile-modal-server';
+import SyncProfileModal from '../syncprofile-modal/syncprofile-modal-client';
+import { redirect } from 'next/navigation';
 
-export const Header = () => {
+interface Props {
+    defaultPopSyncModal: boolean;
+    onCloseSyncModal?: string;
+    }
+
+export const Header = ({ defaultPopSyncModal, onCloseSyncModal }: Props ) => {
     const [showSyncModal, setSyncModal] = useState(false);
+    const [popSyncModal, setPopSyncModal] = useState(defaultPopSyncModal);
+
+    useEffect(() => {
+        popSyncModal && setSyncModal(true);
+    }, [defaultPopSyncModal]);
 
     return (
     <>
@@ -24,11 +35,11 @@ export const Header = () => {
             <span className="text-xl font-bold">Conquidex</span>
           </Link>
           
-          <div>
+          <div className='flex space-x-2 py-6 items-center'>
             <button
             onClick={()=>setSyncModal(!showSyncModal)}
             type="button"
-            className="text-white bg-gradient-to-r from-red-400 via-red-500 to-red-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2"
+            className="text-white bg-gradient-to-r from-yellow-400 via-yellow-500 to-yellow-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-red-300 dark:focus:ring-yellow-800 font-medium rounded-lg text-sm px-3 py-2 text-center me-2 mb-2"
             >
             Vincular
             </button>
@@ -37,7 +48,17 @@ export const Header = () => {
         </div>
       </div>
     </header>
-    <SyncProfileModalServer openedByDefault={showSyncModal}/>
+    <SyncProfileModal
+    isOpenedByDefault={popSyncModal}
+    isOpen={showSyncModal}
+    onClose={() => {
+        setSyncModal(false);
+        if (onCloseSyncModal) {
+            setPopSyncModal(false);
+            redirect(onCloseSyncModal);
+        }
+    }}
+    />
     </>
   );
 };

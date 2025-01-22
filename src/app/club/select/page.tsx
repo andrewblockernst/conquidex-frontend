@@ -2,6 +2,7 @@ import ClubTableServer from "@/components/clubs-table/clubs-table-server";
 import React from "react";
 import { AuthButton} from "../../../components";
 import { Header } from "@/components/header/header";
+import { redirect } from "next/dist/server/api-utils";
 // import { redirect } from "next/navigation";
 // import { createClient } from "@/utils/supabase/server";
 
@@ -36,7 +37,7 @@ export default function ClubSelect() {
   
     return (
     <>
-        <Header />
+        <Header defaultPopSyncModal={false}/>
         <div className="flex flex-col items-center">
             <h1 className="text-center m-10">Club Select</h1>
             <ClubTableServer />
