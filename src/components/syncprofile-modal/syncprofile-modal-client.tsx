@@ -1,31 +1,32 @@
 "use client";
 
 import { SyncPersonToUser } from "./actions";
-import { useRouter } from 'next/navigation';
+import { redirect } from 'next/navigation';
 import { useState } from 'react';
+import SuccessModal from "../modals/success-modal";
+import ErrorModal from "../modals/error-modal";
 
 interface Props {
     member: Member;
 }
 
 export default function SyncProfileModalClient({member}: Props) {
-    const router = useRouter();
     const [isLoading, setIsLoading] = useState(false);
-    const [error, setError] = useState<string | null>(null);
+    const [errorModal, setErrorModal] = useState<React.ReactNode>(null);
+    const [successModal, setSuccessModal] = useState<React.ReactNode>(null);
 
     const handleSync = async () => {
         try {
             setIsLoading(true);
-            setError(null);
+            setErrorModal(null);
             const result = await SyncPersonToUser();
             
             if (result.success) {
-                router.push('/');
+                setSuccessModal(`Sincronización exitosa`);
             } else {
-                setError(result.error || 'Error durante la sincronización');
-            }
+                setErrorModal(`${result.error}` || `Sincronización fallida`)}
         } catch (err) {
-            setError('Error inesperado');
+            setErrorModal(`Error desconocido`);
         } finally {
             setIsLoading(false);
         }
@@ -40,14 +41,10 @@ export default function SyncProfileModalClient({member}: Props) {
                 </p>
                 <p className="mb-6">¿Sos vos mape?</p>
                 
-                {error && (
-                    <p className="text-red-500 mb-4">{error}</p>
-                )}
-                
                 <div className="flex justify-center space-x-4">
                     <button
                         className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 disabled:opacity-50"
-                        onClick={() => router.push('/club/select')}
+                        onClick={() => redirect("/club/select")}
                         disabled={isLoading}
                     >
                         Cancelar
@@ -61,6 +58,13 @@ export default function SyncProfileModalClient({member}: Props) {
                     </button>
                 </div>
             </div>
+            <ErrorModal onClose={() => setErrorModal(null)}>
+            {errorModal}
+            </ErrorModal>
+            <SuccessModal onClose={() => {setSuccessModal(null); redirect("/");}}>
+                {successModal}
+            </SuccessModal>
         </div>
+        
     );
 }
