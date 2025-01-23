@@ -1,19 +1,34 @@
 "use client";
 
-import { SyncPersonToUser } from "./actions";
+import { handleModal, SyncPersonToUser } from "./actions";
 import { redirect } from 'next/navigation';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import SuccessModal from "../modals/success-modal";
 import ErrorModal from "../modals/error-modal";
+import { createClient } from "@/utils/supabase/client";
+import { supabaseAdmin } from "@/utils/supabase/service-role";
+import { revalidatePath } from "next/cache";
 
-interface Props {
-    member: Member;
-}
+interface Props{
+    isOpenedByDefault: boolean;
+    isOpen: boolean;
+    onClose: () => void
+  }
 
-export default function SyncProfileModalClient({member}: Props) {
+export default function SyncProfileModal({isOpenedByDefault, isOpen, onClose}: Props) {
     const [isLoading, setIsLoading] = useState(false);
     const [errorModal, setErrorModal] = useState<React.ReactNode>(null);
     const [successModal, setSuccessModal] = useState<React.ReactNode>(null);
+    const [member, setMember] = useState<Member | null>(null);
+
+
+    useEffect(() => {
+        (async () => {
+            const member = await handleModal(isOpenedByDefault)
+            console.log(member);
+            setMember(member);
+        })();
+    }, [isOpenedByDefault]);
 
     const handleSync = async () => {
         try {
@@ -33,6 +48,7 @@ export default function SyncProfileModalClient({member}: Props) {
     };
 
     return (
+        isOpen && member &&
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-20 backdrop-blur-sm">
             <div className="bg-white p-6 rounded-xl shadow-lg max-w-sm w-full text-center">
                 <h2 className="text-2xl font-bold mb-4">🍌 ATENCIÓN 🐒</h2>
@@ -44,7 +60,7 @@ export default function SyncProfileModalClient({member}: Props) {
                 <div className="flex justify-center space-x-4">
                     <button
                         className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 disabled:opacity-50"
-                        onClick={() => redirect("/club/select")}
+                        onClick={onClose}
                         disabled={isLoading}
                     >
                         Cancelar
@@ -67,4 +83,8 @@ export default function SyncProfileModalClient({member}: Props) {
         </div>
         
     );
+}
+
+function revalidate(arg0: string) {
+    throw new Error("Function not implemented.");
 }
