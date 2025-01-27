@@ -31,7 +31,7 @@ export default async function Home() {
         </div>
         <main className="flex flex-col items-center w-full max-w-3xl">
           <h1 className="text-3xl font-bold mb-4 text-center">
-            Bienvenido 2K25 PAPAAAAAA
+            Bienvenido/a a conquidex
           </h1>
 
           {/* Botón de autenticación */}

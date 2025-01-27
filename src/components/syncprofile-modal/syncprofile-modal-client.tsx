@@ -8,19 +8,19 @@ import ErrorModal from "../modals/error-modal";
 import { createClient } from "@/utils/supabase/client";
 import { supabaseAdmin } from "@/utils/supabase/service-role";
 import { revalidatePath } from "next/cache";
+import { CautionIcon } from "../icons";
 
-interface Props{
+interface Props {
     isOpenedByDefault: boolean;
     isOpen: boolean;
     onClose: () => void
-  }
+}
 
-export default function SyncProfileModal({isOpenedByDefault, isOpen, onClose}: Props) {
+export default function SyncProfileModal({ isOpenedByDefault, isOpen, onClose }: Props) {
     const [isLoading, setIsLoading] = useState(false);
     const [errorModal, setErrorModal] = useState<React.ReactNode>(null);
     const [successModal, setSuccessModal] = useState<React.ReactNode>(null);
     const [member, setMember] = useState<Member | null>(null);
-
 
     useEffect(() => {
         (async () => {
@@ -35,11 +35,12 @@ export default function SyncProfileModal({isOpenedByDefault, isOpen, onClose}: P
             setIsLoading(true);
             setErrorModal(null);
             const result = await SyncPersonToUser();
-            
+
             if (result.success) {
                 setSuccessModal(`Sincronización exitosa`);
             } else {
-                setErrorModal(`${result.error}` || `Sincronización fallida`)}
+                setErrorModal(`${result.error}` || `Sincronización fallida`)
+            }
         } catch (err) {
             setErrorModal(`Error desconocido`);
         } finally {
@@ -50,38 +51,44 @@ export default function SyncProfileModal({isOpenedByDefault, isOpen, onClose}: P
     return (
         isOpen && member &&
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-20 backdrop-blur-sm">
-            <div className="bg-white p-6 rounded-xl shadow-lg max-w-sm w-full text-center">
-                <h2 className="text-2xl font-bold mb-4">🍌 ATENCIÓN 🐒</h2>
-                <p className="mb-3">
+            <div className="mx-auto max-w-md rounded-lg border border-stone-200 bg-stone-100 p-4 shadow-lg sm:p-6">
+                <div className="flex items-center gap-4">
+                    <span className="shrink-0 rounded-full bg-yellow-400 p-1.5 text-white">
+                        <CautionIcon className="w-8 h-8" />
+                    </span>
+
+                    <h2 className="text-2xl font-bold text-yellow-400">ATENCIÓN</h2>
+                </div>
+
+                <p className="mt-4 text-gray-600">
                     Parece que te registraron antes en el club <b>{member.club_name}</b> como <b>{member.name + " " + member.surname}</b>.
                 </p>
-                <p className="mb-6">¿Sos vos mape?</p>
-                
-                <div className="flex justify-center space-x-4">
+                <p className="mt-4 text-gray-600">¿Sos vos?</p>
+
+                <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:gap-4">
                     <button
-                        className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 disabled:opacity-50"
-                        onClick={onClose}
-                        disabled={isLoading}
-                    >
-                        Cancelar
-                    </button>
-                    <button
-                        className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 disabled:opacity-50"
+                        className="w-full rounded-lg bg-yellow-400 px-5 py-3 text-center text-sm font-semibold text-white sm:w-auto sm:order-2"
                         onClick={handleSync}
                         disabled={isLoading}
                     >
-                        {isLoading ? 'Procesando...' : 'Confirmar'}
+                        {isLoading ? 'Procesando...' : 'Sí, soy yo'}
+                    </button>
+                    <button
+                        className="w-full rounded-lg bg-stone-300 px-5 py-3 text-center text-sm font-semibold text-gray-800 sm:w-auto sm:order-1"
+                        onClick={onClose}
+                        disabled={isLoading}
+                    >
+                        No soy yo
                     </button>
                 </div>
             </div>
             <ErrorModal onClose={() => setErrorModal(null)}>
-            {errorModal}
+                {errorModal}
             </ErrorModal>
-            <SuccessModal onClose={() => {setSuccessModal(null); redirect("/");}}>
+            <SuccessModal onClose={() => { setSuccessModal(null); redirect("/"); }}>
                 {successModal}
             </SuccessModal>
         </div>
-        
     );
 }
 
