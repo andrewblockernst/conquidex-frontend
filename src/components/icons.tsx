@@ -22,17 +22,40 @@ export const GoogleIcon = ({ className = "w-5 h-5 me-2 -ms-1" }) => {
 };
 
 export const CautionIcon = ({ className = "w-5 h-5 me-2 -ms-1" }) => {
-    return (
-        <svg
-            fill="#fff4b8"
-            width="80px"
-            height="80px"
-            viewBox="-2 -2 12 24 "
-            xmlns="http://www.w3.org/2000/svg"
-            preserveAspectRatio="xMinYMin"
-            className={className}
-        >
-            <path d="M10 20C4.477 20 0 15.523 0 10S4.477 0 10 0s10 4.477 10 10-4.477 10-10 10zm0-2a8 8 0 1 0 0-16 8 8 0 0 0 0 16zm0-13a1 1 0 0 1 1 1v5a1 1 0 0 1-2 0V6a1 1 0 0 1 1-1zm0 10a1 1 0 1 1 0-2 1 1 0 0 1 0 2z" />
-        </svg>
-    );
+  return (
+    <svg
+      fill="#fff4b8"
+      width="80px"
+      height="80px"
+      viewBox="-2 -2 12 24 "
+      xmlns="http://www.w3.org/2000/svg"
+      preserveAspectRatio="xMinYMin"
+      className={className}
+    >
+      <path d="M10 20C4.477 20 0 15.523 0 10S4.477 0 10 0s10 4.477 10 10-4.477 10-10 10zm0-2a8 8 0 1 0 0-16 8 8 0 0 0 0 16zm0-13a1 1 0 0 1 1 1v5a1 1 0 0 1-2 0V6a1 1 0 0 1 1-1zm0 10a1 1 0 1 1 0-2 1 1 0 0 1 0 2z" />
+    </svg>
+  );
 };
+
+export const HamburgerIcon = ({ className = "w-5 h-5 me-2 -ms-1" }) => {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      x="0px"
+      y="0px"
+      width="100"
+      height="100"
+      viewBox="0 0 50 50"
+      className={className}
+    >
+      <path fill="#ffffff" d="M 0 7.5 L 0 12.5 L 50 12.5 L 50 7.5 Z M 0 22.5 L 0 27.5 L 50 27.5 L 50 22.5 Z M 0 37.5 L 0 42.5 L 50 42.5 L 50 37.5 Z"></path>
+    </svg>
+  );
+};
+
+export const CloseIcon = ({ className }: { className: string }) => (
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" className={className}>
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+  </svg>
+);
+

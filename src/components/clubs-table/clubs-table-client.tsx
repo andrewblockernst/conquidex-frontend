@@ -8,12 +8,12 @@ import ErrorModal from "@/components/modals/error-modal";
 import SuccessModal from "@/components/modals/success-modal";
 
 interface Props {
-  clubs: Club[]
+  clubs: Club[];
 }
 
 export default function ClubTableClient({ clubs }: Props) {
-  const [searchTerm, setSearchTerm] = useState("")
-  const [filteredClubs, setFilteredClubs] = useState<Club[]>([])
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filteredClubs, setFilteredClubs] = useState<Club[]>([]);
   const [selectedClub, setSelectedClub] = useState<Club | null>(null);
   const [confirmationModal, setconfirmationModal] = useState(false);
   const [errorModal, setErrorModal] = useState<React.ReactNode>(null);
@@ -40,17 +40,16 @@ export default function ClubTableClient({ clubs }: Props) {
     setSelectedClub(null);
   };
 
-  const handleSelection = async () =>{
+  const handleSelection = async () => {
     if (selectedClub) {
       const [message, success] = await updateUserClub(selectedClub.id);
       if (success) {
         setSuccessModal(`${message}`);
-      }
-      else{
+      } else {
         setErrorModal(`${message}`);
       }
     }
-  }
+  };
 
   return (
     <div className=" lg:w-2/3 flex flex-col items-center space-y-4 p-4">
@@ -70,9 +69,7 @@ export default function ClubTableClient({ clubs }: Props) {
             key={club.id}
             onClick={() => setSelectedClub(club)}
             className={`p-4 border rounded-lg shadow-md transition cursor-pointer w-full ${
-              selectedClub?.id === club.id
-                ? "bg-blue-100"
-                : "hover:bg-gray-100"
+              selectedClub?.id === club.id ? "bg-blue-100" : "hover:bg-gray-100"
             } flex justify-between items-center`}
           >
             <p className="font-medium text-gray-700">
@@ -89,36 +86,46 @@ export default function ClubTableClient({ clubs }: Props) {
 
       {/* Botón de acción */}
       {selectedClub && (
-      <div className="flex justify-center">
-      <button
-        type="button"
-        onClick={()=>setconfirmationModal(true)}
-        className="text-gray-900 bg-gradient-to-r from-yellow-200 via-yellow-500 to-yellow-400 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-yellow-100 dark:focus:ring-lime-800 font-medium rounded-lg text-sm px-4 py-2.5 text-center me-2 mb-2"
-      >
-        Seleccionar club
-      </button>
-      </div>
+        <div className="flex justify-center">
+          <button
+            onClick={()=>setconfirmationModal(true)}
+            type="button"
+            className="text-white bg-yellow-400 hover:bg-yellow-500 focus:outline-none focus:ring-4 focus:ring-yellow-300 font-medium rounded-full text-sm px-5 py-2.5 text-center me-2 mb-2 dark:focus:ring-yellow-900"
+          >
+            Seleccionar Club
+          </button>
+        </div>
       )}
-        {/* Modal de confirmación */}
+      {/* Modal de confirmación */}
       <ConfirmationModal
         title="Confirmar selección"
         confirmText="Sí"
         cancelText="No"
         isOpen={confirmationModal}
         onClose={() => setconfirmationModal(false)}
-        onConfirm={()=>{
+        onConfirm={() => {
           handleSelection();
           setconfirmationModal(false);
-        }}>
-        <p>¿Seguro que quieres seleccionar el club <strong>{selectedClub?.name}</strong>?</p>
-        <p>Esta acción no se puede deshacer y tendrás que esperar <strong>3 meses</strong> para volver a cambiar de club.</p>
+        }}
+      >
+        <p>
+          ¿Seguro que quieres seleccionar el club{" "}
+          <strong>{selectedClub?.name}</strong>?
+        </p>
+        <p>
+          Esta acción no se puede deshacer y tendrás que esperar{" "}
+          <strong>3 meses</strong> para volver a cambiar de club.
+        </p>
       </ConfirmationModal>
-      
+
       {/* Modal de error */}
-      <ErrorModal onClose={() => setErrorModal(null)}>
-        {errorModal}
-      </ErrorModal>
-      <SuccessModal onClose={() => {setSuccessModal(null); redirect("/");}}>
+      <ErrorModal onClose={() => setErrorModal(null)}>{errorModal}</ErrorModal>
+      <SuccessModal
+        onClose={() => {
+          setSuccessModal(null);
+          redirect("/");
+        }}
+      >
         {successModal}
       </SuccessModal>
     </div>

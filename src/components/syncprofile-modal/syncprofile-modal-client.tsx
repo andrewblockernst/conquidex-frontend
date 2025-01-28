@@ -5,10 +5,8 @@ import { redirect } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import SuccessModal from "../modals/success-modal";
 import ErrorModal from "../modals/error-modal";
-import { createClient } from "@/utils/supabase/client";
-import { supabaseAdmin } from "@/utils/supabase/service-role";
-import { revalidatePath } from "next/cache";
 import { CautionIcon } from "../icons";
+import { useSyncModal } from "@/contexts/SyncModalContext";
 
 interface Props {
     isOpenedByDefault: boolean;
@@ -17,6 +15,7 @@ interface Props {
 }
 
 export default function SyncProfileModal({ isOpenedByDefault, isOpen, onClose }: Props) {
+    const { closeSyncModal, setPopSyncModal } = useSyncModal();
     const [isLoading, setIsLoading] = useState(false);
     const [errorModal, setErrorModal] = useState<React.ReactNode>(null);
     const [successModal, setSuccessModal] = useState<React.ReactNode>(null);
@@ -24,8 +23,7 @@ export default function SyncProfileModal({ isOpenedByDefault, isOpen, onClose }:
 
     useEffect(() => {
         (async () => {
-            const member = await handleModal(isOpenedByDefault)
-            console.log(member);
+            const member = await handleModal(isOpenedByDefault);
             setMember(member);
         })();
     }, [isOpenedByDefault]);
@@ -38,14 +36,23 @@ export default function SyncProfileModal({ isOpenedByDefault, isOpen, onClose }:
 
             if (result.success) {
                 setSuccessModal(`Sincronización exitosa`);
+                setPopSyncModal(false);
+                closeSyncModal();
+                redirect("/");
             } else {
-                setErrorModal(`${result.error}` || `Sincronización fallida`)
+                setErrorModal(`${result.error}` || `Sincronización fallida`);
             }
         } catch (err) {
             setErrorModal(`Error desconocido`);
         } finally {
             setIsLoading(false);
         }
+    };
+
+    const handleNoSoyYo = () => {
+        setPopSyncModal(false);
+        closeSyncModal();
+        redirect("/club/select");
     };
 
     return (
@@ -56,15 +63,12 @@ export default function SyncProfileModal({ isOpenedByDefault, isOpen, onClose }:
                     <span className="shrink-0 rounded-full bg-yellow-400 p-1.5 text-white">
                         <CautionIcon className="w-8 h-8" />
                     </span>
-
                     <h2 className="text-2xl font-bold text-yellow-400">ATENCIÓN</h2>
                 </div>
-
                 <p className="mt-4 text-gray-600">
                     Parece que te registraron antes en el club <b>{member.club_name}</b> como <b>{member.name + " " + member.surname}</b>.
                 </p>
                 <p className="mt-4 text-gray-600">¿Sos vos?</p>
-
                 <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:gap-4">
                     <button
                         className="w-full rounded-lg bg-yellow-400 px-5 py-3 text-center text-sm font-semibold text-white sm:w-auto sm:order-2"
@@ -75,7 +79,7 @@ export default function SyncProfileModal({ isOpenedByDefault, isOpen, onClose }:
                     </button>
                     <button
                         className="w-full rounded-lg bg-stone-300 px-5 py-3 text-center text-sm font-semibold text-gray-800 sm:w-auto sm:order-1"
-                        onClick={onClose}
+                        onClick={handleNoSoyYo}
                         disabled={isLoading}
                     >
                         No soy yo
@@ -90,8 +94,4 @@ export default function SyncProfileModal({ isOpenedByDefault, isOpen, onClose }:
             </SuccessModal>
         </div>
     );
-}
-
-function revalidate(arg0: string) {
-    throw new Error("Function not implemented.");
 }

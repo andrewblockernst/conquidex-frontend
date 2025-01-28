@@ -1,38 +1,48 @@
+// components/auth-button.tsx
 "use client";
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/utils/supabase/client";
-import { User } from "@supabase/supabase-js"; // Asegúrate de importar el tipo User
+import { User } from "@supabase/supabase-js";
 import { GoogleIcon } from "./icons";
+import { useSyncModal } from "@/contexts/SyncModalContext"; // Importamos el contexto
 
 export function AuthButton() {
-  const supabase = createClient(); // Cliente de Supabase en componentes cliente
+  const supabase = createClient();
   const router = useRouter();
   const [user, setUser] = useState<User | null>(null);
+  const { setPopSyncModal } = useSyncModal(); // Usamos setPopSyncModal del contexto el cual permite activar o desactivar el modal de sincronización
 
   useEffect(() => {
     const getSession = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
       setUser(session?.user || null);
+
+      // Si hay un usuario, activamos popSyncModal
+      if (session?.user) {
+        setPopSyncModal(true);
+      }
     };
 
     getSession();
-  }, [supabase]);
+  }, [supabase, setPopSyncModal]);
 
   const handleSignIn = async () => {
     await supabase.auth.signInWithOAuth({
       provider: "google",
       options: {
-        redirectTo: `${window.location.origin}/auth/callback`, // URL de redirección dinámica
+        redirectTo: `${window.location.origin}/auth/callback`,
       },
     });
   };
 
   const handleSignOut = async () => {
-    await supabase.auth.signOut(); // Cierra sesión en Supabase
-    router.push("/login"); // Redirige a /login
-    router.refresh(); // Refresca la página actual
+    await supabase.auth.signOut();
+    router.push("/login");
+    router.refresh();
   };
 
   return (
@@ -50,9 +60,9 @@ export function AuthButton() {
         <button
           onClick={handleSignOut}
           type="button"
-          className="text-white bg-gradient-to-r from-red-400 via-red-500 to-red-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 font-medium rounded-lg text-sm px-3 py-2 text-center me-2 mb-2"
+          className="text-white bg-red-500 hover:bg-red-800 focus:outline-none focus:ring-4 focus:ring-red-300 font-medium rounded-full text-sm px-5 py-2.5 text-center  dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
         >
-          Cerrar Sesión
+          Cerrar sesión
         </button>
       )}
     </header>

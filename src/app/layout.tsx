@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { SyncModalProvider } from "@/contexts/SyncModalContext";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -17,18 +18,14 @@ export const metadata: Metadata = {
   description: "An adventist system",
 };
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        {children}
-      </body>
-    </html>
+      <html lang="es">
+          <body>
+              <SyncModalProvider defaultPopSyncModal={false}>
+                  {children}
+              </SyncModalProvider>
+          </body>
+      </html>
   );
 }

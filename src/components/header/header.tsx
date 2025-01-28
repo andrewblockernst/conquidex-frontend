@@ -1,64 +1,84 @@
-'use client'
+"use client";
 
-import React, { use, useEffect, useState } from 'react';
-import Link from 'next/link';
-import { AuthButton } from '@/components/auth-button';
-import SyncProfileModal from '../syncprofile-modal/syncprofile-modal-client';
-import { redirect } from 'next/navigation';
+import React, { useState, useEffect } from "react";
+import Link from "next/link";
+import { AuthButton } from "@/components/auth-button";
+import SyncProfileModal from "../syncprofile-modal/syncprofile-modal-client";
+import { useSyncModal } from "@/contexts/SyncModalContext";
+import SyncButton from "../buttons/sync-button";
+import { redirect } from "next/navigation";
+import { HamburgerIcon, CloseIcon } from "../icons";  // Asegúrate de tener un CloseIcon
 
 interface Props {
-    defaultPopSyncModal: boolean;
-    onCloseSyncModal?: string;
+  defaultPopSyncModal: boolean;
+  onCloseSyncModal?: string;
+}
+
+export const Header = ({ defaultPopSyncModal, onCloseSyncModal }: Props) => {
+  const {
+    showSyncModal,
+    openSyncModal,
+    closeSyncModal,
+    popSyncModal,
+    setPopSyncModal,
+  } = useSyncModal();
+
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  useEffect(() => {
+    if (popSyncModal) {
+      openSyncModal();
     }
+  }, [popSyncModal, openSyncModal]);
 
-export const Header = ({ defaultPopSyncModal, onCloseSyncModal }: Props ) => {
-    const [showSyncModal, setSyncModal] = useState(false);
-    const [popSyncModal, setPopSyncModal] = useState(defaultPopSyncModal);
-
-    useEffect(() => {
-        popSyncModal && setSyncModal(true);
-    }, [defaultPopSyncModal]);
-
-    return (
+  return (
     <>
-    <header className="bg-yellow-700 text-white">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16">
-          <Link href="/" className="flex items-center space-x-2">
-            <svg 
-              viewBox="0 0 24 24" 
-              className="h-8 w-8"
-              fill="currentColor"
+      <header className="bg-yellow-100 text-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center h-16">
+            <Link href="/" className="flex items-center space-x-2">
+              <img src="/logo.png" alt="Conquidex" className="w-32 h-32" />
+            </Link>
+
+            {/* Botón de menú hamburguesa del celu */}
+            <div className="block lg:hidden">
+              <button
+                onClick={() => setMenuOpen(!menuOpen)}
+                className="bg-yellow-200 text-white focus:outline-none p-2 rounded-lg mx-auto flex items-center justify-center"
+              >
+                {/* Cambia el ícono dependiendo del estado del menú */}
+                {menuOpen ? (
+                  <CloseIcon className="w-6 h-6" />  // Mostrar "X" cuando esté abierto
+                ) : (
+                  <HamburgerIcon className="w-6 h-6" />  // Mostrar hamburguesa cuando esté cerrado
+                )}
+              </button>
+            </div>
+
+            {/* Menú en celular */}
+            <div
+              className={`${
+                menuOpen ? "block" : "hidden"
+              } lg:flex space-x-2 py-6 items-center`}
             >
-              <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
-            </svg>
-            <span className="text-xl font-bold">Conquidex</span>
-          </Link>
-          
-          <div className='flex space-x-2 py-6 items-center'>
-            <button
-            onClick={()=>setSyncModal(!showSyncModal)}
-            type="button"
-            className="text-white bg-gradient-to-r from-yellow-400 via-yellow-500 to-yellow-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-red-300 dark:focus:ring-yellow-800 font-medium rounded-lg text-sm px-3 py-2 text-center me-2 mb-2"
-            >
-            Vincular
-            </button>
-            <AuthButton />
+              <SyncButton showSyncModal={showSyncModal} setSyncModal={setPopSyncModal} />
+              <AuthButton />
+            </div>
           </div>
         </div>
-      </div>
-    </header>
-    <SyncProfileModal
-    isOpenedByDefault={popSyncModal}
-    isOpen={showSyncModal}
-    onClose={() => {
-        setSyncModal(false);
-        if (onCloseSyncModal) {
+      </header>
+
+      <SyncProfileModal
+        isOpenedByDefault={popSyncModal}
+        isOpen={showSyncModal}
+        onClose={() => {
+          closeSyncModal();
+          if (onCloseSyncModal) {
             setPopSyncModal(false);
             redirect(onCloseSyncModal);
-        }
-    }}
-    />
+          }
+        }}
+      />
     </>
   );
 };
