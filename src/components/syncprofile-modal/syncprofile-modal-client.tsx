@@ -1,32 +1,23 @@
 "use client";
 
-import { handleModal, SyncPersonToUser } from "./actions";
+import { SyncPersonToUser } from "./actions";
 import { redirect } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import SuccessModal from "../modals/success-modal";
 import ErrorModal from "../modals/error-modal";
 import { CautionIcon } from "../icons";
 import { useSyncModal } from "@/contexts/SyncModalContext";
+import { useUser } from "@/contexts/UserContext";
 
 interface Props {
-    isOpenedByDefault: boolean;
-    isOpen: boolean;
-    onClose: () => void
 }
 
-export default function SyncProfileModal({ isOpenedByDefault, isOpen, onClose }: Props) {
-    const { closeSyncModal, setPopSyncModal } = useSyncModal();
+export default function SyncProfileModal() {
+    const { showSyncModal, closeSyncModal, syncRedirect } = useSyncModal();
     const [isLoading, setIsLoading] = useState(false);
     const [errorModal, setErrorModal] = useState<React.ReactNode>(null);
     const [successModal, setSuccessModal] = useState<React.ReactNode>(null);
-    const [member, setMember] = useState<Member | null>(null);
-
-    useEffect(() => {
-        (async () => {
-            const member = await handleModal(isOpenedByDefault);
-            setMember(member);
-        })();
-    }, [isOpenedByDefault]);
+    const { member, refreshProfile } = useUser();
 
     const handleSync = async () => {
         try {
@@ -36,9 +27,6 @@ export default function SyncProfileModal({ isOpenedByDefault, isOpen, onClose }:
 
             if (result.success) {
                 setSuccessModal(`Sincronización exitosa`);
-                setPopSyncModal(false);
-                closeSyncModal();
-                redirect("/");
             } else {
                 setErrorModal(`${result.error}` || `Sincronización fallida`);
             }
@@ -50,13 +38,13 @@ export default function SyncProfileModal({ isOpenedByDefault, isOpen, onClose }:
     };
 
     const handleNoSoyYo = () => {
-        setPopSyncModal(false);
         closeSyncModal();
-        redirect("/club/select");
+        console.log("redireccionando:", syncRedirect);
+        syncRedirect();
     };
 
     return (
-        isOpen && member &&
+        showSyncModal && member &&
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-20 backdrop-blur-sm">
             <div className="mx-auto max-w-md rounded-lg border border-stone-200 bg-stone-100 p-4 shadow-lg sm:p-6">
                 <div className="flex items-center gap-4">
@@ -89,7 +77,7 @@ export default function SyncProfileModal({ isOpenedByDefault, isOpen, onClose }:
             <ErrorModal onClose={() => setErrorModal(null)}>
                 {errorModal}
             </ErrorModal>
-            <SuccessModal onClose={() => { setSuccessModal(null); redirect("/"); }}>
+            <SuccessModal onClose={() => { closeSyncModal(); setSuccessModal(null); refreshProfile(); redirect("/"); }}>
                 {successModal}
             </SuccessModal>
         </div>

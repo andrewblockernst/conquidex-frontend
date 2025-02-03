@@ -5,4 +5,5 @@ declare global {
     type Member = Tables<'members'>
     type Club = Tables<'clubs'>
     type User = Tables<'auth.users'>
+    type Guest = Tables<'guests'>
 }

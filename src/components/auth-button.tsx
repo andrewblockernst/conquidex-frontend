@@ -12,7 +12,6 @@ export function AuthButton() {
   const supabase = createClient();
   const router = useRouter();
   const [user, setUser] = useState<User | null>(null);
-  const { setPopSyncModal } = useSyncModal(); // Usamos setPopSyncModal del contexto el cual permite activar o desactivar el modal de sincronización
 
   useEffect(() => {
     const getSession = async () => {
@@ -20,15 +19,10 @@ export function AuthButton() {
         data: { session },
       } = await supabase.auth.getSession();
       setUser(session?.user || null);
-
-      // Si hay un usuario, activamos popSyncModal
-      if (session?.user) {
-        setPopSyncModal(true);
-      }
     };
 
     getSession();
-  }, [supabase, setPopSyncModal]);
+  }, [supabase]);
 
   const handleSignIn = async () => {
     await supabase.auth.signInWithOAuth({
