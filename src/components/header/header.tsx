@@ -10,26 +10,11 @@ import { redirect } from "next/navigation";
 import { HamburgerIcon, CloseIcon } from "../icons";  // Asegúrate de tener un CloseIcon
 
 interface Props {
-  defaultPopSyncModal: boolean;
-  onCloseSyncModal?: string;
 }
 
-export const Header = ({ defaultPopSyncModal, onCloseSyncModal }: Props) => {
-  const {
-    showSyncModal,
-    openSyncModal,
-    closeSyncModal,
-    popSyncModal,
-    setPopSyncModal,
-  } = useSyncModal();
+export const Header = () => {
 
   const [menuOpen, setMenuOpen] = useState(false);
-
-  useEffect(() => {
-    if (popSyncModal) {
-      openSyncModal();
-    }
-  }, [popSyncModal, openSyncModal]);
 
   return (
     <>
@@ -61,24 +46,14 @@ export const Header = ({ defaultPopSyncModal, onCloseSyncModal }: Props) => {
                 menuOpen ? "block" : "hidden"
               } lg:flex space-x-2 py-6 items-center`}
             >
-              <SyncButton showSyncModal={showSyncModal} setSyncModal={setPopSyncModal} />
+              <SyncButton />
               <AuthButton />
             </div>
           </div>
         </div>
       </header>
 
-      <SyncProfileModal
-        isOpenedByDefault={popSyncModal}
-        isOpen={showSyncModal}
-        onClose={() => {
-          closeSyncModal();
-          if (onCloseSyncModal) {
-            setPopSyncModal(false);
-            redirect(onCloseSyncModal);
-          }
-        }}
-      />
+      <SyncProfileModal/>
     </>
   );
 };

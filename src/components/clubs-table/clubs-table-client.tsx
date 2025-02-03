@@ -6,6 +6,7 @@ import { redirect } from "next/navigation";
 import ConfirmationModal from "@/components/modals/confirmation-modal";
 import ErrorModal from "@/components/modals/error-modal";
 import SuccessModal from "@/components/modals/success-modal";
+import { useUser } from "@/contexts/UserContext";
 
 interface Props {
   clubs: Club[];
@@ -18,6 +19,7 @@ export default function ClubTableClient({ clubs }: Props) {
   const [confirmationModal, setconfirmationModal] = useState(false);
   const [errorModal, setErrorModal] = useState<React.ReactNode>(null);
   const [successModal, setSuccessModal] = useState<React.ReactNode>(null);
+  const { refreshProfile } = useUser();
 
   useEffect(() => {
     setFilteredClubs(
@@ -44,6 +46,7 @@ export default function ClubTableClient({ clubs }: Props) {
     if (selectedClub) {
       const [message, success] = await updateUserClub(selectedClub.id);
       if (success) {
+        await refreshProfile();
         setSuccessModal(`${message}`);
       } else {
         setErrorModal(`${message}`);

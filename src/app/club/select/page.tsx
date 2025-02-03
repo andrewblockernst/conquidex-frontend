@@ -6,7 +6,7 @@ import { Header } from "@/components/header/header";
 export default function ClubSelect() {
     return (
     <>
-        <Header defaultPopSyncModal={false}/>
+        <Header/>
         <div className="flex flex-col items-center">
             <h1 className="text-center m-10">CLUBES</h1>
             <ClubTableServer />

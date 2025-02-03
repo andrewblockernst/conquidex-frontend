@@ -22,7 +22,7 @@ export default async function Home() {
 
     return (
         <>
-            <Header defaultPopSyncModal={true} onCloseSyncModal={"/club/select"} />
+            <Header/>
             <div className="flex flex-col items-center min-h-screen p-4 bg-cover bg-center">
 
 
