@@ -39,7 +39,6 @@ export default function SyncProfileModal() {
 
     const handleNoSoyYo = () => {
         closeSyncModal();
-        console.log("redireccionando:", syncRedirect);
         syncRedirect();
     };
 

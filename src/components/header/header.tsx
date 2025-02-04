@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { AuthButton } from "@/components/auth-button";
+import { AuthButton } from "@/components/buttons/auth-button";
 import SyncProfileModal from "../syncprofile-modal/syncprofile-modal-client";
 import { useSyncModal } from "@/contexts/SyncModalContext";
 import SyncButton from "../buttons/sync-button";
