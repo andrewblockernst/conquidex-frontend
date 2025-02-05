@@ -43,7 +43,7 @@ export async function GET(request: NextRequest) {
     .single();
 
   if(!guest || guest.club_id !== 0){
-    return NextResponse.redirect(origin);
+    return NextResponse.redirect(`${origin}/home`);
   }
 
   const { data: member, error: memberError } = await supabaseAdmin
@@ -54,9 +54,9 @@ export async function GET(request: NextRequest) {
   
   if (memberError) {
     console.error('Error fetching member:', memberError?.message);
-    return NextResponse.redirect(origin);
+    return NextResponse.redirect(`${origin}/home`);
   }
   if(!member) return NextResponse.redirect(`${origin}/club/select`);
 
-  return NextResponse.redirect(origin);
+  return NextResponse.redirect(`${origin}/home`);
 }

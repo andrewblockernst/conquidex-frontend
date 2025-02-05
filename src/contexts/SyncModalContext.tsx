@@ -25,8 +25,6 @@ export const SyncModalProvider = ({ children}: { children: React.ReactNode;}) =>
     }, [activeProfile, member]);
 
     const syncRedirect = useCallback(() => {
-        console.log("activeProfile en syncRedirect:", activeProfile); // <--- Depuración
-        console.log("club id en syncRedirect:", activeProfile?.club_id); // <--- Depuración
         if (activeProfile?.club_id === 0) {
           router.push("/club/select");
         }

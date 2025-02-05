@@ -27,14 +27,15 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    setLoading(true);
     const getUser = async () => {
       const { data: { session }, error } = await supabase.auth.getSession();
       if (error) {
         setError(error.message);
+        console.error('Error al obtener la sesión:', error.message);
       } else {
         setUser(session?.user || null);
       }
-      setLoading(false);
     };
     getUser();
   }, []); // Este efecto se ejecuta solo al montar el componente
@@ -47,7 +48,8 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
         setMember(member);
       }).catch((error) => {
         setError(error.message);
-      });
+        console.error(activeProfile, member);
+      }).finally(() => setLoading(false));      
     } else {
       setActiveProfile(null);
       setMember(null);
