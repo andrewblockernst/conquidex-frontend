@@ -11,12 +11,14 @@ declare global {
     interface UnitGroup{
         unit_id: number;
         unit_name: string;
+        color: string;
         persons: Person[];
       }
 
     interface ClassGroup {
         class_id: number;
         class_name: string;
+        color: string;
         persons: Person[];
       }
 
