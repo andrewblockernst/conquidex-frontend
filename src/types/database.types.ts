@@ -153,14 +153,17 @@ export type Database = {
       }
       classes: {
         Row: {
+          color: string
           id: number
           name: string
         }
         Insert: {
+          color?: string
           id?: number
           name: string
         }
         Update: {
+          color?: string
           id?: number
           name?: string
         }
@@ -691,16 +694,19 @@ export type Database = {
       units: {
         Row: {
           club_id: number
+          color: string
           id: number
           name: string
         }
         Insert: {
           club_id: number
+          color?: string
           id: number
           name: string
         }
         Update: {
           club_id?: number
+          color?: string
           id?: number
           name?: string
         }
@@ -853,6 +859,12 @@ export type Database = {
       }
     }
     Functions: {
+      check_unit_access: {
+        Args: {
+          unit_id: number
+        }
+        Returns: boolean
+      }
       get_current_user: {
         Args: Record<PropertyKey, never>
         Returns: string
@@ -877,11 +889,12 @@ export type Database = {
       }
       get_persons_by_class: {
         Args: {
-          club_id: number
+          input_club_id: number
         }
         Returns: {
           class_id: number
           class_name: string
+          color: string
           persons: Json
         }[]
       }
@@ -892,6 +905,7 @@ export type Database = {
         Returns: {
           unit_id: number
           unit_name: string
+          color: string
           persons: Json
         }[]
       }

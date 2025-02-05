@@ -2,11 +2,12 @@
 import { AuthButton } from "@/components/buttons/auth-button";
 import { Header } from "@/components/header/header";
 import { redirect } from "next/navigation";
-import { createClient } from '@/utils/supabase/client'
+import { createClient } from '@/utils/supabase/server';
 
 export default async function Home() {
     const supabase = await createClient();
     const { data: {session}, error } = await supabase.auth.getSession();
+
     if (session) {
         redirect("/home");
     } 
