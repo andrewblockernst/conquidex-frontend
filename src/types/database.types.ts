@@ -47,6 +47,13 @@ export type Database = {
             foreignKeyName: "attendance_person_id_fkey"
             columns: ["person_id"]
             isOneToOne: false
+            referencedRelation: "member_club_role_unit"
+            referencedColumns: ["person_id"]
+          },
+          {
+            foreignKeyName: "attendance_person_id_fkey"
+            columns: ["person_id"]
+            isOneToOne: false
             referencedRelation: "members"
             referencedColumns: ["id"]
           },
@@ -68,21 +75,7 @@ export type Database = {
             foreignKeyName: "attendance_person_id_fkey"
             columns: ["person_id"]
             isOneToOne: false
-            referencedRelation: "persons_emails"
-            referencedColumns: ["person_id"]
-          },
-          {
-            foreignKeyName: "attendance_person_id_fkey"
-            columns: ["person_id"]
-            isOneToOne: false
             referencedRelation: "user_club_and_role"
-            referencedColumns: ["person_id"]
-          },
-          {
-            foreignKeyName: "attendance_person_id_fkey"
-            columns: ["person_id"]
-            isOneToOne: false
-            referencedRelation: "user_club_role_unit"
             referencedColumns: ["person_id"]
           },
           {
@@ -96,6 +89,13 @@ export type Database = {
             foreignKeyName: "attendance_taken_by_fkey"
             columns: ["taken_by"]
             isOneToOne: false
+            referencedRelation: "member_club_role_unit"
+            referencedColumns: ["person_id"]
+          },
+          {
+            foreignKeyName: "attendance_taken_by_fkey"
+            columns: ["taken_by"]
+            isOneToOne: false
             referencedRelation: "members"
             referencedColumns: ["id"]
           },
@@ -117,21 +117,7 @@ export type Database = {
             foreignKeyName: "attendance_taken_by_fkey"
             columns: ["taken_by"]
             isOneToOne: false
-            referencedRelation: "persons_emails"
-            referencedColumns: ["person_id"]
-          },
-          {
-            foreignKeyName: "attendance_taken_by_fkey"
-            columns: ["taken_by"]
-            isOneToOne: false
             referencedRelation: "user_club_and_role"
-            referencedColumns: ["person_id"]
-          },
-          {
-            foreignKeyName: "attendance_taken_by_fkey"
-            columns: ["taken_by"]
-            isOneToOne: false
-            referencedRelation: "user_club_role_unit"
             referencedColumns: ["person_id"]
           },
         ]
@@ -252,81 +238,6 @@ export type Database = {
         }
         Relationships: []
       }
-      counselor_units: {
-        Row: {
-          club_id: number
-          person_id: number
-          unit_id: number
-        }
-        Insert: {
-          club_id: number
-          person_id: number
-          unit_id: number
-        }
-        Update: {
-          club_id?: number
-          person_id?: number
-          unit_id?: number
-        }
-        Relationships: [
-          {
-            foreignKeyName: "counselor_units_person_id_fkey"
-            columns: ["person_id"]
-            isOneToOne: false
-            referencedRelation: "guests"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "counselor_units_person_id_fkey"
-            columns: ["person_id"]
-            isOneToOne: false
-            referencedRelation: "members"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "counselor_units_person_id_fkey"
-            columns: ["person_id"]
-            isOneToOne: false
-            referencedRelation: "person_with_role"
-            referencedColumns: ["person_id"]
-          },
-          {
-            foreignKeyName: "counselor_units_person_id_fkey"
-            columns: ["person_id"]
-            isOneToOne: false
-            referencedRelation: "persons"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "counselor_units_person_id_fkey"
-            columns: ["person_id"]
-            isOneToOne: false
-            referencedRelation: "persons_emails"
-            referencedColumns: ["person_id"]
-          },
-          {
-            foreignKeyName: "counselor_units_person_id_fkey"
-            columns: ["person_id"]
-            isOneToOne: false
-            referencedRelation: "user_club_and_role"
-            referencedColumns: ["person_id"]
-          },
-          {
-            foreignKeyName: "counselor_units_person_id_fkey"
-            columns: ["person_id"]
-            isOneToOne: false
-            referencedRelation: "user_club_role_unit"
-            referencedColumns: ["person_id"]
-          },
-          {
-            foreignKeyName: "counselor_units_unit_id_club_id_fkey"
-            columns: ["unit_id", "club_id"]
-            isOneToOne: false
-            referencedRelation: "units"
-            referencedColumns: ["id", "club_id"]
-          },
-        ]
-      }
       events: {
         Row: {
           city: string | null
@@ -421,130 +332,6 @@ export type Database = {
           },
         ]
       }
-      pathfinder_units: {
-        Row: {
-          club_id: number
-          person_id: number
-          unit_id: number
-        }
-        Insert: {
-          club_id: number
-          person_id: number
-          unit_id: number
-        }
-        Update: {
-          club_id?: number
-          person_id?: number
-          unit_id?: number
-        }
-        Relationships: [
-          {
-            foreignKeyName: "fk_person_unit"
-            columns: ["person_id"]
-            isOneToOne: true
-            referencedRelation: "guests"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_person_unit"
-            columns: ["person_id"]
-            isOneToOne: true
-            referencedRelation: "members"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_person_unit"
-            columns: ["person_id"]
-            isOneToOne: true
-            referencedRelation: "person_with_role"
-            referencedColumns: ["person_id"]
-          },
-          {
-            foreignKeyName: "fk_person_unit"
-            columns: ["person_id"]
-            isOneToOne: true
-            referencedRelation: "persons"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_person_unit"
-            columns: ["person_id"]
-            isOneToOne: true
-            referencedRelation: "persons_emails"
-            referencedColumns: ["person_id"]
-          },
-          {
-            foreignKeyName: "fk_person_unit"
-            columns: ["person_id"]
-            isOneToOne: true
-            referencedRelation: "user_club_and_role"
-            referencedColumns: ["person_id"]
-          },
-          {
-            foreignKeyName: "fk_person_unit"
-            columns: ["person_id"]
-            isOneToOne: true
-            referencedRelation: "user_club_role_unit"
-            referencedColumns: ["person_id"]
-          },
-          {
-            foreignKeyName: "pathfinder_units_person_id_fkey"
-            columns: ["person_id"]
-            isOneToOne: true
-            referencedRelation: "guests"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "pathfinder_units_person_id_fkey"
-            columns: ["person_id"]
-            isOneToOne: true
-            referencedRelation: "members"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "pathfinder_units_person_id_fkey"
-            columns: ["person_id"]
-            isOneToOne: true
-            referencedRelation: "person_with_role"
-            referencedColumns: ["person_id"]
-          },
-          {
-            foreignKeyName: "pathfinder_units_person_id_fkey"
-            columns: ["person_id"]
-            isOneToOne: true
-            referencedRelation: "persons"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "pathfinder_units_person_id_fkey"
-            columns: ["person_id"]
-            isOneToOne: true
-            referencedRelation: "persons_emails"
-            referencedColumns: ["person_id"]
-          },
-          {
-            foreignKeyName: "pathfinder_units_person_id_fkey"
-            columns: ["person_id"]
-            isOneToOne: true
-            referencedRelation: "user_club_and_role"
-            referencedColumns: ["person_id"]
-          },
-          {
-            foreignKeyName: "pathfinder_units_person_id_fkey"
-            columns: ["person_id"]
-            isOneToOne: true
-            referencedRelation: "user_club_role_unit"
-            referencedColumns: ["person_id"]
-          },
-          {
-            foreignKeyName: "pathfinder_units_unit_id_club_id_fkey"
-            columns: ["unit_id", "club_id"]
-            isOneToOne: false
-            referencedRelation: "units"
-            referencedColumns: ["id", "club_id"]
-          },
-        ]
-      }
       person_class_items: {
         Row: {
           class_id: number
@@ -580,6 +367,13 @@ export type Database = {
             foreignKeyName: "person_class_items_person_id_fkey"
             columns: ["person_id"]
             isOneToOne: false
+            referencedRelation: "member_club_role_unit"
+            referencedColumns: ["person_id"]
+          },
+          {
+            foreignKeyName: "person_class_items_person_id_fkey"
+            columns: ["person_id"]
+            isOneToOne: false
             referencedRelation: "members"
             referencedColumns: ["id"]
           },
@@ -601,21 +395,7 @@ export type Database = {
             foreignKeyName: "person_class_items_person_id_fkey"
             columns: ["person_id"]
             isOneToOne: false
-            referencedRelation: "persons_emails"
-            referencedColumns: ["person_id"]
-          },
-          {
-            foreignKeyName: "person_class_items_person_id_fkey"
-            columns: ["person_id"]
-            isOneToOne: false
             referencedRelation: "user_club_and_role"
-            referencedColumns: ["person_id"]
-          },
-          {
-            foreignKeyName: "person_class_items_person_id_fkey"
-            columns: ["person_id"]
-            isOneToOne: false
-            referencedRelation: "user_club_role_unit"
             referencedColumns: ["person_id"]
           },
         ]
@@ -652,6 +432,13 @@ export type Database = {
             foreignKeyName: "person_classes_person_id_fkey"
             columns: ["person_id"]
             isOneToOne: false
+            referencedRelation: "member_club_role_unit"
+            referencedColumns: ["person_id"]
+          },
+          {
+            foreignKeyName: "person_classes_person_id_fkey"
+            columns: ["person_id"]
+            isOneToOne: false
             referencedRelation: "members"
             referencedColumns: ["id"]
           },
@@ -673,21 +460,7 @@ export type Database = {
             foreignKeyName: "person_classes_person_id_fkey"
             columns: ["person_id"]
             isOneToOne: false
-            referencedRelation: "persons_emails"
-            referencedColumns: ["person_id"]
-          },
-          {
-            foreignKeyName: "person_classes_person_id_fkey"
-            columns: ["person_id"]
-            isOneToOne: false
             referencedRelation: "user_club_and_role"
-            referencedColumns: ["person_id"]
-          },
-          {
-            foreignKeyName: "person_classes_person_id_fkey"
-            columns: ["person_id"]
-            isOneToOne: false
-            referencedRelation: "user_club_role_unit"
             referencedColumns: ["person_id"]
           },
         ]
@@ -727,6 +500,13 @@ export type Database = {
             foreignKeyName: "person_honor_person_id_fkey"
             columns: ["person_id"]
             isOneToOne: false
+            referencedRelation: "member_club_role_unit"
+            referencedColumns: ["person_id"]
+          },
+          {
+            foreignKeyName: "person_honor_person_id_fkey"
+            columns: ["person_id"]
+            isOneToOne: false
             referencedRelation: "members"
             referencedColumns: ["id"]
           },
@@ -748,21 +528,7 @@ export type Database = {
             foreignKeyName: "person_honor_person_id_fkey"
             columns: ["person_id"]
             isOneToOne: false
-            referencedRelation: "persons_emails"
-            referencedColumns: ["person_id"]
-          },
-          {
-            foreignKeyName: "person_honor_person_id_fkey"
-            columns: ["person_id"]
-            isOneToOne: false
             referencedRelation: "user_club_and_role"
-            referencedColumns: ["person_id"]
-          },
-          {
-            foreignKeyName: "person_honor_person_id_fkey"
-            columns: ["person_id"]
-            isOneToOne: false
-            referencedRelation: "user_club_role_unit"
             referencedColumns: ["person_id"]
           },
         ]
@@ -818,6 +584,74 @@ export type Database = {
           },
         ]
       }
+      persons_units: {
+        Row: {
+          club_id: number
+          person_id: number
+          unit_id: number
+        }
+        Insert: {
+          club_id: number
+          person_id: number
+          unit_id: number
+        }
+        Update: {
+          club_id?: number
+          person_id?: number
+          unit_id?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fk_persons_units_person"
+            columns: ["person_id"]
+            isOneToOne: false
+            referencedRelation: "guests"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_persons_units_person"
+            columns: ["person_id"]
+            isOneToOne: false
+            referencedRelation: "member_club_role_unit"
+            referencedColumns: ["person_id"]
+          },
+          {
+            foreignKeyName: "fk_persons_units_person"
+            columns: ["person_id"]
+            isOneToOne: false
+            referencedRelation: "members"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_persons_units_person"
+            columns: ["person_id"]
+            isOneToOne: false
+            referencedRelation: "person_with_role"
+            referencedColumns: ["person_id"]
+          },
+          {
+            foreignKeyName: "fk_persons_units_person"
+            columns: ["person_id"]
+            isOneToOne: false
+            referencedRelation: "persons"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_persons_units_person"
+            columns: ["person_id"]
+            isOneToOne: false
+            referencedRelation: "user_club_and_role"
+            referencedColumns: ["person_id"]
+          },
+          {
+            foreignKeyName: "fk_persons_units_unit"
+            columns: ["unit_id", "club_id"]
+            isOneToOne: false
+            referencedRelation: "units"
+            referencedColumns: ["id", "club_id"]
+          },
+        ]
+      }
       roles: {
         Row: {
           hierarchy: number
@@ -854,81 +688,6 @@ export type Database = {
         }
         Relationships: []
       }
-      staff_units: {
-        Row: {
-          club_id: number
-          person_id: number
-          unit_id: number
-        }
-        Insert: {
-          club_id: number
-          person_id: number
-          unit_id: number
-        }
-        Update: {
-          club_id?: number
-          person_id?: number
-          unit_id?: number
-        }
-        Relationships: [
-          {
-            foreignKeyName: "staff_units_person_id_fkey"
-            columns: ["person_id"]
-            isOneToOne: false
-            referencedRelation: "guests"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "staff_units_person_id_fkey"
-            columns: ["person_id"]
-            isOneToOne: false
-            referencedRelation: "members"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "staff_units_person_id_fkey"
-            columns: ["person_id"]
-            isOneToOne: false
-            referencedRelation: "person_with_role"
-            referencedColumns: ["person_id"]
-          },
-          {
-            foreignKeyName: "staff_units_person_id_fkey"
-            columns: ["person_id"]
-            isOneToOne: false
-            referencedRelation: "persons"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "staff_units_person_id_fkey"
-            columns: ["person_id"]
-            isOneToOne: false
-            referencedRelation: "persons_emails"
-            referencedColumns: ["person_id"]
-          },
-          {
-            foreignKeyName: "staff_units_person_id_fkey"
-            columns: ["person_id"]
-            isOneToOne: false
-            referencedRelation: "user_club_and_role"
-            referencedColumns: ["person_id"]
-          },
-          {
-            foreignKeyName: "staff_units_person_id_fkey"
-            columns: ["person_id"]
-            isOneToOne: false
-            referencedRelation: "user_club_role_unit"
-            referencedColumns: ["person_id"]
-          },
-          {
-            foreignKeyName: "staff_units_unit_id_club_id_fkey"
-            columns: ["unit_id", "club_id"]
-            isOneToOne: false
-            referencedRelation: "units"
-            referencedColumns: ["id", "club_id"]
-          },
-        ]
-      }
       units: {
         Row: {
           club_id: number
@@ -937,7 +696,7 @@ export type Database = {
         }
         Insert: {
           club_id: number
-          id?: number
+          id: number
           name: string
         }
         Update: {
@@ -947,7 +706,7 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "units_club_id_fkey"
+            foreignKeyName: "fk_units_club"
             columns: ["club_id"]
             isOneToOne: false
             referencedRelation: "clubs"
@@ -1008,6 +767,25 @@ export type Database = {
           },
         ]
       }
+      member_club_role_unit: {
+        Row: {
+          club_id: number | null
+          hierarchy: number | null
+          person_id: number | null
+          role_name: string | null
+          unit_id: number | null
+          user_id: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "persons_club_id_fkey"
+            columns: ["club_id"]
+            isOneToOne: false
+            referencedRelation: "clubs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       members: {
         Row: {
           auth_user_uuid: string | null
@@ -1048,35 +826,6 @@ export type Database = {
         }
         Relationships: []
       }
-      persons_emails: {
-        Row: {
-          auth_user_uuid: string | null
-          email: string | null
-          person_id: number | null
-          role_id: number | null
-        }
-        Insert: {
-          auth_user_uuid?: string | null
-          email?: string | null
-          person_id?: number | null
-          role_id?: number | null
-        }
-        Update: {
-          auth_user_uuid?: string | null
-          email?: string | null
-          person_id?: number | null
-          role_id?: number | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "persons_role_id_fkey"
-            columns: ["role_id"]
-            isOneToOne: false
-            referencedRelation: "roles"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       user_available_units: {
         Row: {
           auth_user_uuid: string | null
@@ -1090,27 +839,6 @@ export type Database = {
           hierarchy: number | null
           person_id: number | null
           role_name: string | null
-          user_id: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "persons_club_id_fkey"
-            columns: ["club_id"]
-            isOneToOne: false
-            referencedRelation: "clubs"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      user_club_role_unit: {
-        Row: {
-          club_id: number | null
-          counselor_unit_id: number | null
-          hierarchy: number | null
-          pathfinder_unit_id: number | null
-          person_id: number | null
-          role_name: string | null
-          staff_unit_id: number | null
           user_id: string | null
         }
         Relationships: [
@@ -1147,9 +875,46 @@ export type Database = {
         }
         Returns: number
       }
+      get_persons_by_class: {
+        Args: {
+          club_id: number
+        }
+        Returns: {
+          class_id: number
+          class_name: string
+          persons: Json
+        }[]
+      }
+      get_persons_by_unit: {
+        Args: {
+          input_club_id: number
+        }
+        Returns: {
+          unit_id: number
+          unit_name: string
+          persons: Json
+        }[]
+      }
+      is_of_same_club:
+        | {
+            Args: {
+              target_club_id: number
+            }
+            Returns: boolean
+          }
+        | {
+            Args: {
+              target_club_id: number
+              uid: string
+            }
+            Returns: boolean
+          }
       sync_person_to_user: {
-        Args: { user_id: string; user_email: string };
-        Returns: void; 
+        Args: {
+          user_id: string
+          user_email: string
+        }
+        Returns: string
       }
     }
     Enums: {
