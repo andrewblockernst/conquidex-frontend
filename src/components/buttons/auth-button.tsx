@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { useUser } from '@/contexts/UserContext';
-import { GoogleIcon } from '@/components/icons';
+import { useUser } from "@/contexts/UserContext";
+import { GoogleIcon } from "@/components/icons";
 
 export function AuthButton() {
   const { user, loading, error, signIn, signOut } = useUser();
@@ -9,24 +9,31 @@ export function AuthButton() {
   if (loading) return <p>Cargando...</p>;
   if (error) return <p>Error: {error}</p>;
 
+  // Verificación adicional para evitar estado intermedio
+  if (typeof window === "undefined") return null;
+
   return (
     <header>
       {user === null ? (
         <button
           onClick={signIn}
           type="button"
-          className="w-60 text-black bg-[#ececec] hover:bg-[#e6e6e6] focus:ring-4 focus:outline-none focus:ring-[#4285F4]/50 font-bold rounded-full text-md py-2 inline-flex items-center justify-start"
+          className="flex justify-center items-center gap-2 p-2 w-64 h-10 rounded-lg border-2 border-yellow-800 bg-white shadow-[4px_4px_0_0_#323232] text-gray-800 font-semibold text-base cursor-pointer transition-all duration-250 relative overflow-hidden z-10 group hover:text-gray-100"
         >
-          <GoogleIcon className="w-8 h-8 ml-1 mr-3" />
-          Continuar con Google
+          {/*BARRIDO DEL FONDO*/}
+          <span className="absolute inset-0 w-0 bg-yellow-600 transition-all duration-500 group-hover:w-full z-0"></span>
+          <GoogleIcon className="relative z-10" />
+          <span className="relative z-10">Continuar con Google</span>
         </button>
       ) : (
         <button
           onClick={signOut}
           type="button"
-          className="text-white bg-gradient-to-r from-red-400 via-red-500 to-red-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2"
+          className="flex justify-center items-center gap-2 p-2 w-35 h-10 rounded-lg border-2 border-red-800 bg-red-500 shadow-[4px_4px_0_0_#323232] text-white font-semibold text-base cursor-pointer transition-all duration-250 relative overflow-hidden z-10 group hover:text-gray-100"
         >
-          Cerrar Sesión
+          {/*BARRIDO DEL FONDO*/}
+          <span className="absolute inset-0 w-0 bg-red-600 transition-all duration-500 group-hover:w-full z-0"></span>
+          <span className="relative z-10">Cerrar Sesión</span>
         </button>
       )}
     </header>

@@ -9,32 +9,35 @@ interface SyncModalContextType {
     openSyncModal: () => void;
     closeSyncModal: () => void;
     syncRedirect: () => void;
+    loading: boolean;
 }
 
 const SyncModalContext = createContext<SyncModalContextType | undefined>(undefined);
 
-export const SyncModalProvider = ({ children}: { children: React.ReactNode;}) => {
+export const SyncModalProvider = ({ children }: { children: React.ReactNode; }) => {
     const router = useRouter();
     const { activeProfile, member } = useUser();
     const [showSyncModal, setShowSyncModal] = useState(false);
+    const [loading, setLoading] = useState(true);
     
     useEffect(() => {
-      const defaultPopSyncModal = !!(activeProfile && activeProfile.club_id === 0 && member);
-      setShowSyncModal(defaultPopSyncModal);
-    
+        if (activeProfile !== undefined && member !== undefined) {
+            setShowSyncModal(!!(activeProfile && activeProfile.club_id === 0 && member));
+            setLoading(false);
+        }
     }, [activeProfile, member]);
 
     const syncRedirect = useCallback(() => {
         if (activeProfile?.club_id === 0) {
-          router.push("/club/select");
+            router.push("/club/select");
         }
-      }, [activeProfile, router]); // <--- Dependencias
+    }, [activeProfile, router]);
 
     const openSyncModal = () => setShowSyncModal(true);
     const closeSyncModal = () => setShowSyncModal(false);
 
     return (
-        <SyncModalContext.Provider value={{ showSyncModal, openSyncModal, closeSyncModal, syncRedirect}}>
+        <SyncModalContext.Provider value={{ showSyncModal, openSyncModal, closeSyncModal, syncRedirect, loading }}>
             {children}
         </SyncModalContext.Provider>
     );

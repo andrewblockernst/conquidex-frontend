@@ -23,7 +23,7 @@ export const Header = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
-          <Link href="/" className="flex items-center space-x-2">
+          <Link href="/home" className="flex items-center space-x-2">
             <img
               src="/logo.png"
               alt="Conquidex"
@@ -35,8 +35,8 @@ export const Header = () => {
           <div className="hidden lg:flex space-x-2">
             <SyncButton />
             <AttendanceButton />
-            <ProgressButton />
             <ProfileButton />
+            <AuthButton />
           </div>
 
           {/* Mobile Menu Toggle */}
@@ -60,8 +60,8 @@ export const Header = () => {
             <nav className="flex flex-col space-y-4 p-4">
               <SyncButton />
               <AttendanceButton />
-              <ProgressButton />
               <ProfileButton />
+              <AuthButton />
             </nav>
           </div>
         )}

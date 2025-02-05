@@ -27,34 +27,45 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    setLoading(true);
     const getUser = async () => {
-      const { data: { session }, error } = await supabase.auth.getSession();
-      if (error) {
-        setError(error.message);
-        console.error('Error al obtener la sesión:', error.message);
-      } else {
+      setLoading(true);
+      try {
+        const { data: { session }, error } = await supabase.auth.getSession();
+        
+        if (error) throw error;
+        
         setUser(session?.user || null);
+      } catch (error) {
+        setError(error as any);
+      } finally {
+        setLoading(false); // <-- Siempre marca loading como false al finalizar
       }
     };
     getUser();
-  }, []); // Este efecto se ejecuta solo al montar el componente
+  }, []);
   
-  // Nuevo efecto que reacciona a cambios en el usuario
   useEffect(() => {
-    if (user) {
-      getProfile(user).then(({ activeProfile, member }) => {
-        setActiveProfile(activeProfile);
-        setMember(member);
-      }).catch((error) => {
-        setError(error.message);
-        console.error(activeProfile, member);
-      }).finally(() => setLoading(false));      
-    } else {
-      setActiveProfile(null);
-      setMember(null);
-    }
-  }, [user]); // Este efecto se ejecuta cada vez que `user` cambia
+    const fetchProfile = async () => {
+      if (user) {
+        setLoading(true); // <-- Activa loading al actualizar el perfil
+        try {
+          const { activeProfile, member } = await getProfile(user);
+          setActiveProfile(activeProfile);
+          setMember(member);
+        } catch (error) {
+          setError(error as any);
+        } finally {
+          setLoading(false);
+        }
+      } else {
+        setActiveProfile(null);
+        setMember(null);
+        setLoading(false); // <-- Asegura marcar loading como false cuando no hay usuario
+      }
+    };
+  
+    fetchProfile();
+  }, [user]);
 
   const signIn = async () => {
     const { error } = await supabase.auth.signInWithOAuth({

@@ -76,7 +76,7 @@ export default function SyncProfileModal() {
             <ErrorModal onClose={() => setErrorModal(null)}>
                 {errorModal}
             </ErrorModal>
-            <SuccessModal onClose={() => { closeSyncModal(); setSuccessModal(null); refreshProfile(); redirect("/"); }}>
+            <SuccessModal onClose={() => { closeSyncModal(); setSuccessModal(null); refreshProfile(); redirect("/home"); }}>
                 {successModal}
             </SuccessModal>
         </div>
