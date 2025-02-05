@@ -19,13 +19,13 @@ export const Header = () => {
 
   return (
     <>
-    <header className="bg-yellow-100 text-white shadow-md">
+      <header className="bg-yellow-500 text-white shadow-md fixed w-full z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <Link href="/home" className="flex items-center space-x-2">
             <img
-              src="/logo.png"
+              src="/logo-blanco.png"
               alt="Conquidex"
               className="h-10 w-auto"
             />
@@ -40,7 +40,8 @@ export const Header = () => {
           </div>
 
           {/* Mobile Menu Toggle */}
-          <div className="block lg:hidden">
+          <div className="flex lg:hidden items-center space-x-2">
+            <ProfileButton />
             <button
               onClick={() => setMenuOpen(!menuOpen)}
               className="flex justify-center items-center p-2 w-10 h-10 rounded-lg border-2 border-yellow-800 bg-yellow-500 shadow-[4px_4px_0_0_#323232] cursor-pointer transition-all duration-250 relative overflow-hidden z-10 group hover:bg-yellow-600"
@@ -56,11 +57,10 @@ export const Header = () => {
 
         {/* Mobile Menu */}
         {menuOpen && (
-          <div className="lg:hidden mt-4 bg-white rounded-lg shadow-md text-gray-800">
+          <div className="lg:hidden bg-yellow-500 text-gray-800">
             <nav className="flex flex-col space-y-4 p-4">
               <SyncButton />
               <AttendanceButton />
-              <ProfileButton />
               <AuthButton />
             </nav>
           </div>

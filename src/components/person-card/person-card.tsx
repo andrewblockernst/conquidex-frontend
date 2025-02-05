@@ -1,8 +1,8 @@
 const AVATARS: { [key: number]: string } = {
-    1: "/images/avatar_conqui.png",
-    2: "/images/avatar_counselor.png",
-    3: "/images/avatar_staff.png",
-    0: "/images/avatar_default.png"
+    1: "/images/pathfinder-avatar.jpg",
+    2: "/images/counselor-avatar.jpg",
+    3: "/images/staff-avatar.jpg",
+    0: "/images/guest-avatar.jpg"
 };
 
 interface Props {
