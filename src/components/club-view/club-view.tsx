@@ -1,12 +1,8 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
-import { useRouter } from "next/navigation";
 import { createClient } from "@/utils/supabase/client";
 import { useUser } from "@/contexts/UserContext";
-import { Header } from "@/components/header/header";
-import PersonTable from "@/components/person-table/person-table";
-import { AuthButton } from "@/components/buttons/auth-button";
 import { useSyncModal } from "@/contexts/SyncModalContext";
 import FilterButton from "@/components/buttons/filter-button";
 
@@ -16,85 +12,104 @@ const optionsMap = {
   units: "Unidades",
   classes: "Tarjetas",
 };
+import { ClassList } from "../person-table/class-list/class-list";
+import { UnitList } from "../person-table/unit-list/unit-list";
 
 export default function ClubView() {
-  const supabase = createClient();
-  const { user, activeProfile, loading: userLoading } = useUser();
-  const { loading: syncLoading } = useSyncModal();
-  const [groupBy, setGroupBy] = useState<"units" | "classes">("units");
-  const [data, setData] = useState<UnitGroup[]>([]);
-  const [dataLoading, setDataLoading] = useState(true);
-  const router = useRouter();
+    const supabase = createClient();
+    const { user, activeProfile, loading: userLoading } = useUser();
+    const { loading: syncLoading } = useSyncModal();
+    const [groupBy, setGroupBy] = useState<'units' | 'classes'>('units');
+    
+    // Separar estados para unidades y clases
+    const [unitsData, setUnitsData] = useState<UnitGroup[]>([]);
+    const [classesData, setClassesData] = useState<ClassGroup[]>([]);
+    const [loading, setLoading] = useState({ units: true, classes: true });
 
-  const fetchData = useCallback(
-    async (clubId: number) => {
-      setDataLoading(true);
-      try {
-        const { data, error } = await supabase
-          .rpc(
-            groupBy === "units"
-              ? "get_persons_by_unit"
-              : "get_persons_by_class",
-            {
-              input_club_id: clubId,
-            }
-          )
-          .select("*");
-
-        if (error) throw error;
-        setData(data as UnitGroup[]);
-      } finally {
-        setDataLoading(false);
-      }
-    },
-    [groupBy, supabase]
-  );
-
+  // Efectos separados para cada tipo de datos
   useEffect(() => {
-    if (userLoading || syncLoading) return;
+    let isMounted = true;
+    const controller = new AbortController();
 
-    if (!user) {
-      router.push("/login");
-      return;
-    }
+    const fetchAllData = async () => {
+        if (!activeProfile?.club_id) return;
 
-    if (!activeProfile) {
-      return;
-    }
+        setLoading({ units: true, classes: true });
+        
+        try {
+            // Ejecutar ambas consultas en paralelo
+            const [unitsResponse, classesResponse] = await Promise.all([
+                supabase
+                    .rpc('get_persons_by_unit', { 
+                        input_club_id: activeProfile.club_id 
+                    })
+                    .select('*')
+                    .abortSignal(controller.signal),
+                
+                supabase
+                    .rpc('get_persons_by_class', { 
+                        input_club_id: activeProfile.club_id 
+                    })
+                    .select('*')
+                    .abortSignal(controller.signal)
+            ]);
 
-    if (activeProfile.club_id === 0) {
-      router.push("/club/select");
-    } else {
-      router.push("/home");
-    }
-  }, [user, activeProfile, userLoading, syncLoading, router]);
+            if (isMounted) {
+                // Validar y setear unidades
+                if (!unitsResponse.error && unitsResponse.data) {
+                    const validUnits = unitsResponse.data.filter(
+                        unit => unit.unit_id !== undefined && unit.club_id
+                    );
+                    setUnitsData(validUnits as UnitGroup[]);
+                }
+                
+                // Validar y setear clases
+                if (!classesResponse.error && classesResponse.data) {
+                    const validClasses = classesResponse.data.filter(
+                        cls => cls.class_id !== undefined  && cls.club_id
+                    );
+                    setClassesData(validClasses as ClassGroup[]);
+                }
+              }
+          } catch (error) {
+              console.error("Error fetching data:", error);
+          } finally {
+              if (isMounted) {
+                  setLoading({ units: false, classes: false });
+              }
+          }
+      };
 
-  useEffect(() => {
-    if (activeProfile?.club_id) {
-      fetchData(activeProfile.club_id);
-    }
-  }, [activeProfile?.club_id, fetchData]);
+      fetchAllData();
 
-  if (userLoading || syncLoading || dataLoading) {
+      return () => {
+          isMounted = false;
+          controller.abort();
+      };
+  }, [activeProfile?.club_id]); // Solo depende del club_id
+
+    const isLoading = userLoading || syncLoading || (groupBy === 'units' ? loading.units : loading.classes);
     return (
-      <div className="flex justify-center items-center min-h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900"></div>
-      </div>
-    );
-  }
-
-  return (
-    <div className="flex flex-col items-center min-h-screen p-4 bg-cover bg-center">
-      <main className="flex flex-col items-center w-full max-w-3xl">
-        <div className="w-full mb-2 pr-1 flex justify-between">
-            <h1 className="text-2xl mt-2">{activeProfile?.club_name}: {optionsMap[groupBy]}</h1> {/* HACE BIEN EL LLAMADO Y CORRESPONDE ACORDE AL USUARIO -> HAY QUE ACOMODARLO*/}
-          <FilterButton
-            onClick={(selectedOption) => setGroupBy(selectedOption as "units" | "classes")}
-            currentGroupBy={groupBy}
-          />
+        <div className="flex flex-col items-center min-h-screen p-4 bg-cover bg-center">
+            <main className="flex flex-col items-center w-full max-w-3xl">
+                <div className="w-full mb-6">
+                    <button 
+                        onClick={() => setGroupBy(prev => prev === 'units' ? 'classes' : 'units')}
+                        className="w-full py-2 px-4 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                    >
+                        Filtrar por {groupBy === 'units' ? 'Clases' : 'Unidades'}
+                    </button>
+                </div>
+                {isLoading ? (
+                    <div className="flex justify-center items-center h-64">
+                        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900"></div>
+                    </div>
+                ) : groupBy === 'units' ? (
+                    <UnitList units={unitsData} />
+                ) : (
+                    <ClassList classes={classesData} />
+                )}
+            </main>
         </div>
-        <PersonTable data={data} groupType={groupBy} />
-      </main>
-    </div>
-  );
+    );
 }

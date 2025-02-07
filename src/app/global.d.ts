@@ -10,6 +10,7 @@ declare global {
     type GroupData = UnitGroup | ClassGroup;
     interface UnitGroup{
         unit_id: number;
+        club_id: number
         unit_name: string;
         color: string;
         persons: Person[];
@@ -17,6 +18,7 @@ declare global {
 
     interface ClassGroup {
         class_id: number;
+        club_id: number
         class_name: string;
         color: string;
         persons: Person[];

@@ -20,6 +20,6 @@ export async function updateUserClub(clubId: number): Promise<[string, boolean]>
   } catch (error) {
     return [error as string, false]
   }
-  revalidatePath('/')
+
   return ['Club actualizado correctamente.', true]
 }

@@ -46,7 +46,6 @@ export default function ClubTableClient({ clubs }: Props) {
     if (selectedClub) {
       const [message, success] = await updateUserClub(selectedClub.id);
       if (success) {
-        await refreshProfile();
         setSuccessModal(`${message}`);
       } else {
         setErrorModal(`${message}`);
@@ -128,7 +127,8 @@ export default function ClubTableClient({ clubs }: Props) {
       <SuccessModal
         onClose={() => {
           setSuccessModal(null);
-          redirect("/");
+          refreshProfile();
+          redirect("/home");
         }}
       >
         {successModal}

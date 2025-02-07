@@ -893,6 +893,7 @@ export type Database = {
         }
         Returns: {
           class_id: number
+          club_id: number
           class_name: string
           color: string
           persons: Json
@@ -904,6 +905,7 @@ export type Database = {
         }
         Returns: {
           unit_id: number
+          club_id: number
           unit_name: string
           color: string
           persons: Json
