@@ -10,7 +10,6 @@ const FilterButton: React.FC<FilterButtonProps> = ({
   currentGroupBy,
 }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [searchTerm, setSearchTerm] = useState("");
   const [selectedOption, setSelectedOption] = useState<"units" | "classes">(
     currentGroupBy
   );
@@ -24,21 +23,14 @@ const FilterButton: React.FC<FilterButtonProps> = ({
     setIsDropdownOpen(!isDropdownOpen);
   };
 
-  const handleOptionToggle = (option: "units" | "classes") => {
+  const handleOptionClick = (option: "units" | "classes") => {
     setSelectedOption(option);
-  };
-
-  const handleApply = () => {
-    onClick(selectedOption);
+    onClick(option);
     setIsDropdownOpen(false);
   };
 
   return (
     <div>
-        {/* TEXTO CON EL CONTENIDO DE LAS LISTAS (UNIDADES o TARJETAS) 
-        <span className="font-bold text-2xl">{optionsMap[selectedOption]}</span> */} {/* A CHEQUEAR ESTO, SI ES MEJOR DEJARLO DENTRO DEL COMPONENTE O POR FUERA -> /club-view.tsx */}
-
-      {/*FilterButton Y SU FUNCION TOGGLE*/}
       <div className="relative inline-block">
         <button
           onClick={toggleDropdown}
@@ -62,41 +54,22 @@ const FilterButton: React.FC<FilterButtonProps> = ({
           </div>
         </button>
 
-        {/*FUNCIONALIDAD DEL DROPDOWN*/}
         {isDropdownOpen && (
-          <div className="absolute right-0 z-10 w-64 p-4 mt-2 bg-white border border-gray-300 rounded-lg shadow-lg">
-            <span>Filtrar por:</span>
-            <ul className="mt-2 mb-2">
-              {Object.entries(optionsMap)
-                .filter(([key]) =>
-                  optionsMap[key as "units" | "classes"]
-                    .toLowerCase()
-                    .includes(searchTerm.toLowerCase())
-                )
-                .map(([key, label]) => (
-                  <li key={key}>
-                    <label className="flex items-center space-x-2">
-                      <input
-                        type="radio"
-                        name="filter-option"
-                        checked={selectedOption === key}
-                        onChange={() =>
-                          handleOptionToggle(key as "units" | "classes")
-                        }
-                      />
-                      <span>{label}</span>
-                    </label>
-                  </li>
-                ))}
-            </ul>
-            <div className="flex justify-end mt-4 space-x-2">
-              <button
-                onClick={handleApply}
-                type="button"
-                className="flex justify-center items-center p-2 w-15 h-7 rounded-lg border-2 border-yellow-800 bg-yellow-500 shadow-[4px_4px_0_0_#323232] cursor-pointer transition-all duration-250 relative overflow-hidden z-10 group hover:bg-yellow-600"
-              >
-                Aplicar
-              </button>
+            <div className="absolute right-0 z-10 w-64 p-4 mt-2 bg-yellow-500 border-2 border-yellow-800 rounded-lg shadow-[4px_4px_0_0_#323232]">
+            <span className="text-white font-semibold">Filtrar por:</span>
+            <div className="flex flex-col mt-2 mb-2 space-y-2">
+              {Object.entries(optionsMap).map(([key, label]) => (
+                <button
+                  key={key}
+                  onClick={() => handleOptionClick(key as "units" | "classes")}
+                  type="button"
+                  className={`flex justify-center items-center p-2 w-full h-7 rounded-lg border-2 border-yellow-800 bg-yellow-500 shadow-[4px_4px_0_0_#323232] cursor-pointer transition-all duration-250 relative overflow-hidden z-10 group hover:bg-yellow-600 ${
+                  selectedOption === key ? "bg-yellow-600" : ""
+                  } font-semibold`}
+                >
+                  {label}
+                </button>
+              ))}
             </div>
           </div>
         )}
