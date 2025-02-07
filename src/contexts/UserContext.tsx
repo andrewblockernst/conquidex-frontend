@@ -1,109 +1,89 @@
 'use client';
 
-import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { createContext, useContext, useState, useEffect, ReactNode, useRef, useMemo } from 'react';
 import { createClient } from '@/utils/supabase/client';
-import { User } from '@supabase/supabase-js';
+import { User, Session } from '@supabase/supabase-js';
 import { getProfile } from './actions';
+//import { supabaseClient } from '@/utils/supabase/config';
 
 interface UserContextType {
+  session: Session | null | undefined,
   user: User | null;
   activeProfile: Member | Guest | null;
   member: Member | null;
   loading: boolean;
-  error: string | null;
-  signIn: () => Promise<void>;
-  signOut: () => Promise<void>;
   refreshProfile: () => Promise<void>;
 }
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
-
+const supabaseClient = createClient();
 export const UserProvider = ({ children }: { children: ReactNode }) => {
-  const supabase = createClient();
   const [user, setUser] = useState<User | null>(null);
   const [activeProfile, setActiveProfile] = useState<Member | Guest | null>(null);
   const [member, setMember] = useState<Member | null>(null);
+  const [session, setSession] = useState<Session | null>();
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const getUser = async () => {
-      setLoading(true);
-      try {
-        const { data: { session }, error } = await supabase.auth.getSession();
-        
-        if (error) throw error;
-        
-        setUser(session?.user || null);
-      } catch (error) {
-        setError(error as any);
-      } finally {
-        setLoading(false); // <-- Siempre marca loading como false al finalizar
-      }
-    };
-    getUser();
+    setLoading(true);
+      const setData = async () => {
+          const { data: { session }, error } = await supabaseClient.auth.getSession();
+          if (error) throw error;
+          setSession(session)
+          setUser(session?.user ?? null)
+          setLoading(false);
+      };
+
+      const { data: listener } = supabaseClient.auth.onAuthStateChange((_event, session) => {
+          setSession(session);
+          setUser(session?.user ?? null)
+      });
+
+      setData();
+
+      return () => {
+          listener?.subscription.unsubscribe();
+      };
   }, []);
-  
+
   useEffect(() => {
     const fetchProfile = async () => {
-      if (user) {
-        setLoading(true); // <-- Activa loading al actualizar el perfil
-        try {
-          const { activeProfile, member } = await getProfile(user);
-          setActiveProfile(activeProfile);
-          setMember(member);
-        } catch (error) {
-          setError(error as any);
-        } finally {
-          setLoading(false);
-        }
-      } else {
-        setActiveProfile(null);
-        setMember(null);
-        setLoading(false); // <-- Asegura marcar loading como false cuando no hay usuario
-      }
+      const {activeProfile: profile, member} = await getProfile(session?.user!);
+      setActiveProfile(profile);
+      setMember(member);
     };
-  
     fetchProfile();
   }, [user]);
 
-  const signIn = async () => {
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider: 'google',
-      options: {
-        redirectTo: `${window.location.origin}/auth/callback`,
-      },
-    });
-    if (error) {
-      setError(error.message);
-    }
-  };
-
-  const signOut = async () => {
-    const { error } = await supabase.auth.signOut();
-    if (error) {
-      setError(error.message);
-    } else {
-      setUser(null);
-    }
-  };
-
   const refreshProfile = async () => {
+    setLoading(true);
     if (!user) return;
     try {
       const { activeProfile: newProfile, member: newMember } = await getProfile(user);
       setActiveProfile(newProfile);
       setMember(newMember);
+      setLoading(false);
     } catch (error) {
-      setError(error as string);
+      throw error;
     }
   };
 
+  const value = {
+      session,
+      user,
+      activeProfile,
+      member,
+      loading,
+      signOut: () => supabaseClient.auth.signOut(),
+      refreshProfile
+  };
+
+
   return (
-    <UserContext.Provider value={{ user, activeProfile, member, loading, error, signIn, signOut, refreshProfile }}>
-      {children}
+    <UserContext.Provider value={value}>
+        {!loading && children}
     </UserContext.Provider>
-  );
+);
 };
 
 export const useUser = () => {

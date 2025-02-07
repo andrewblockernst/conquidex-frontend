@@ -2,9 +2,13 @@ import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 
 export async function updateSession(request: NextRequest) {
-  let supabaseResponse = NextResponse.next({
-    request,
-  })
+  // Si la request no es GET o es una petición interna de Next.js (por ejemplo, para datos)
+  // se retorna rápidamente sin hacer la verificación completa.
+  if (request.method !== 'GET' || request.headers.get('x-nextjs-data')) {
+    return NextResponse.next();
+  }
+
+  let supabaseResponse = NextResponse.next({ request });
 
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -12,40 +16,50 @@ export async function updateSession(request: NextRequest) {
     {
       cookies: {
         getAll() {
-          return request.cookies.getAll()
+          return request.cookies.getAll();
         },
         setAll(cookiesToSet) {
-          cookiesToSet.forEach(({ name, value, options }) => request.cookies.set(name, value))
-          supabaseResponse = NextResponse.next({
-            request,
-          })
+          cookiesToSet.forEach(({ name, value, options }) => {
+            request.cookies.set(name, value);
+          });
+          // Actualizamos la respuesta para propagar las cookies
+          supabaseResponse = NextResponse.next({ request });
           cookiesToSet.forEach(({ name, value, options }) =>
             supabaseResponse.cookies.set(name, value, options)
-          )
+          );
         },
       },
     }
-  )
+  );
 
-  // Do not run code between createServerClient and
-  // supabase.auth.getUser(). A simple mistake could make it very hard to debug
-  // issues with users being randomly logged out.
+  // Llamada crítica: no modificar entre createServerClient y getUser()
+  const { data: { user } } = await supabase.auth.getUser();
 
-  // IMPORTANT: DO NOT REMOVE auth.getUser()
+  console.log('User refreshed by middleware:');
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
+  // Opcional: agregamos un header de cache para que algunas requests internas se puedan reusar.
+  supabaseResponse.headers.set('Cache-Control', 's-maxage=60, stale-while-revalidate');
 
+  // Si no hay usuario y se está accediendo a rutas protegidas, redirige a /login.
   if (
     !user &&
     !request.nextUrl.pathname.startsWith('/login') &&
     !request.nextUrl.pathname.startsWith('/auth')
   ) {
-    // no user, potentially respond by redirecting the user to the login page
-    const url = request.nextUrl.clone()
-    url.pathname = '/login'
-    return NextResponse.redirect(url)
+    const url = request.nextUrl.clone();
+    url.pathname = '/login';
+    return NextResponse.redirect(url);
+  }
+
+  // Si hay usuario y se intenta acceder a /login, redirige a /home.
+  if (user && request.nextUrl.pathname.startsWith('/login')) {
+    return NextResponse.redirect(new URL('/home', request.url));
+  }
+
+  // Proteger rutas privadas.
+  const protectedRoutes = ['/home', '/profile', '/settings'];
+  if (!user && protectedRoutes.some(path => request.nextUrl.pathname.startsWith(path))) {
+    return NextResponse.redirect(new URL('/login', request.url));
   }
 
   // IMPORTANT: You *must* return the supabaseResponse object as it is.
@@ -61,5 +75,5 @@ export async function updateSession(request: NextRequest) {
   // If this is not done, you may be causing the browser and server to go out
   // of sync and terminate the user's session prematurely!
 
-  return supabaseResponse
+  return supabaseResponse;
 }
