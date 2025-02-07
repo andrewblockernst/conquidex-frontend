@@ -22,6 +22,7 @@ const ProfileButton = () => {
           state="hover-looking-around"
           colors="primary:#ffffff,secondary:#ffffff"
           style={{ width: "30px", height: "30px" }}
+          strokeWidth="1.5"
         ></lord-icon>
       </div>
     </button>
