@@ -18,22 +18,20 @@ export default async function Home() {
     <>
       <Header />
       <div className="flex flex-col items-center min-h-screen p-4 bg-cover bg-center">
-        {/* DEJAR ESTO */}
-
-        {/* <div className="flex justify-center mb-4">
-                    <img src="./logo.png" alt="conquidex-logo" className="w-32 h-32" />
-                </div> */}
         <main className="flex flex-col items-center w-full max-w-3xl">
           <h1 className="text-3xl font-bold mb-4 text-center">
-            Bienvenido/a a conquidex
+            Bienvenido/a a Conquidex
           </h1>
-          <h3>Esto es una landing page</h3>
-          <p>
-            Lorem ipsum dolor, sit amet consectetur adipisicing elit. Non,
-            maiores. Tenetur maiores nisi voluptas ex voluptates atque eaque quo
-            facilis amet rem veritatis quia soluta, accusantium deleniti ipsa
-            ipsam similique.
+          <h3 className="text-xl mb-4 text-center">
+            La plataforma de gestión para clubes y organizaciones
+          </h3>
+          <p className="text-center mb-4">
+            Conquidex es una herramienta integral diseñada para facilitar la administración y gestión de clubes y organizaciones. Con nuestra plataforma, podrás gestionar miembros, eventos, asistencia y mucho más de manera eficiente y centralizada.
           </p>
+          <p className="text-center mb-4">
+            Nuestra misión es simplificar la gestión de tu club, permitiéndote enfocarte en lo que realmente importa: el crecimiento y bienestar de tus miembros. Únete a Conquidex y descubre cómo podemos ayudarte a llevar tu organización al siguiente nivel.
+          </p>
+          <AuthButton />
         </main>
       </div>
     </>
