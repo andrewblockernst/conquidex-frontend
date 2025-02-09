@@ -12,8 +12,8 @@ const optionsMap = {
   units: "Unidades",
   classes: "Tarjetas",
 };
-import { ClassList } from "../person-table/class-list/class-list";
-import { UnitList } from "../person-table/unit-list/unit-list";
+
+import { PersonList } from "../person-table/person-list";
 
 export default function ClubView() {
   const supabase = createClient();
@@ -104,9 +104,9 @@ export default function ClubView() {
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900"></div>
           </div>
         ) : groupBy === 'units' ? (
-          <UnitList units={unitsData} />
+          <PersonList group={unitsData} groupBy={'units'} />
         ) : (
-          <ClassList classes={classesData} />
+          <PersonList group={classesData} groupBy={'classes'} />
         )}
       </main>
     </div>
