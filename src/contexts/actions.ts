@@ -44,3 +44,25 @@ export const getProfile = async (user: User) => {
         throw new Error('Error al obtener el perfil');
       }
     };
+
+  export const getClub = async (club_id: number): Promise<Club | null>  => {
+      if (!club_id) return null;
+
+      const supabase = await createClient();
+
+      try {
+          const { data: club, error: clubError } = await supabase
+          .from('clubs')
+          .select('*')
+          .eq('id', club_id)
+          .single();
+      
+          if (!clubError && club) {
+              return club;
+          }
+      
+        } catch (error) {
+          throw new Error('Error al obtener el club');
+        }
+      return null;
+      };
