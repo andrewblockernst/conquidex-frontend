@@ -42,7 +42,11 @@ export async function GET(request: NextRequest) {
     .eq('email', user.email)
     .single();
 
-   const { data: member, error: memberError } = await supabaseAdmin
+  if(!guest || guest.club_id !== 0){
+    return NextResponse.redirect(`${origin}/home`);
+  }
+
+  const { data: member, error: memberError } = await supabaseAdmin
   .from('members')
   .select("*")
   .eq('email', user.email)
