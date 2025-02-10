@@ -35,8 +35,6 @@ export async function updateSession(request: NextRequest) {
   // Llamada crítica: no modificar entre createServerClient y getUser()
   const { data: { user } } = await supabase.auth.getUser();
 
-  console.log('User refreshed by middleware:');
-
   // Opcional: agregamos un header de cache para que algunas requests internas se puedan reusar.
   supabaseResponse.headers.set('Cache-Control', 's-maxage=60, stale-while-revalidate');
 
@@ -44,24 +42,16 @@ export async function updateSession(request: NextRequest) {
   if (
     !user &&
     !request.nextUrl.pathname.startsWith('/login') &&
-    !request.nextUrl.pathname.startsWith('/auth')
+    !request.nextUrl.pathname.startsWith('/auth') &&
+    request.nextUrl.pathname !== '/'
   ) {
-    const url = request.nextUrl.clone();
-    url.pathname = '/login';
-    return NextResponse.redirect(url);
+    return NextResponse.redirect(new URL('/login', request.url));
   }
 
   // Si hay usuario y se intenta acceder a /login, redirige a /home.
   if (user && request.nextUrl.pathname.startsWith('/login')) {
     return NextResponse.redirect(new URL('/home', request.url));
   }
-
-  // Proteger rutas privadas.
-  const protectedRoutes = ['/home', '/profile', '/settings'];
-  if (!user && protectedRoutes.some(path => request.nextUrl.pathname.startsWith(path))) {
-    return NextResponse.redirect(new URL('/login', request.url));
-  }
-
   // IMPORTANT: You *must* return the supabaseResponse object as it is.
   // If you're creating a new response object with NextResponse.next() make sure to:
   // 1. Pass the request in it, like so:
