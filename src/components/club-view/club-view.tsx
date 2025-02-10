@@ -14,6 +14,8 @@ const optionsMap = {
 };
 
 import { PersonList } from "../person-table/person-list";
+import Button from "../buttons/button";
+import Link from "next/link";
 
 export default function ClubView() {
   const supabase = createClient();
@@ -87,6 +89,21 @@ export default function ClubView() {
       controller.abort();
     };
   }, [activeProfile?.club_id]); // Solo depende del club_id
+
+  if (!activeProfile?.club_id) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen p-4 bg-cover bg-center">
+        <main className="flex flex-col items-center w-full max-w-3xl mb-16">
+          <h1 className="text-2xl m-4">
+            ¡Ups! Parece que todavía no formás parte de ningún club :(
+          </h1>
+          <Link href="/club/select">
+            <Button className="px-8">Buscar club</Button>
+          </Link>
+        </main>
+      </div>
+    );
+  }
 
   const isLoading = userLoading || syncLoading || (groupBy === 'units' ? loading.units : loading.classes);
   return (

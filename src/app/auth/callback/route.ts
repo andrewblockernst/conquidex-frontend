@@ -52,11 +52,9 @@ export async function GET(request: NextRequest) {
   .eq('email', user.email)
   .single();
   
-  if (memberError) {
-    console.error('Error fetching member:', memberError?.message);
-    return NextResponse.redirect(`${origin}/home`);
+  if (memberError || !member) {
+    return NextResponse.redirect(`${origin}/club/select`);
   }
-  if(!member) return NextResponse.redirect(`${origin}/club/select`);
 
   return NextResponse.redirect(`${origin}/home`);
 }
