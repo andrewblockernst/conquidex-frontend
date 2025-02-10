@@ -14,7 +14,7 @@ const PersonCard = ({ person }: Props) => {
     const avatar = AVATARS[person.role_id] || AVATARS[0];
 
     return (
-        <div className="flex items-center my-2 p-4 bg-gray-200 rounded-lg shadow-lg">
+        <div className="flex items-center my-2 p-4 bg-gray-200 rounded-lg shadow-[4px_4px_0_0_#323232] border-2 border-slate-800">
             <img
                 src={avatar}
                 alt={person.name!}

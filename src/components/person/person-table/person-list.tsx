@@ -1,6 +1,6 @@
 'use client'
 
-import PersonCard from "@/components/person-card/person-card"
+import PersonCard from "@/components/person/person-card/person-card"
 import { useState } from "react";
 
 interface PersonListProps {
@@ -35,11 +35,11 @@ export const PersonList = ({ group, groupBy }: PersonListProps) => {
         return (
           <div 
             key={uniqueKey}
-            className="my-2 rounded-lg shadow-md p-4" 
+            className="my-2 rounded-lg shadow-[4px_4px_0_0_#323232] p-4 border-2 border-slate-800" 
             style={{ backgroundColor: `#${g.color}` }}
           >
             <div className="flex justify-between items-center">
-              <h2 className="text-xl font-bold mb-3">{name}</h2>
+              <h2 className="text-xl font-bold">{name}</h2>
               <button 
                 onClick={() => HandleExpand(uniqueKey)} 
                 className={`bg-transparent text-black text-xl font-bold transform transition-transform ${isExpanded ? 'rotate-0' : 'rotate-90'}`}

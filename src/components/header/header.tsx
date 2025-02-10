@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { AuthButton } from "@/components/buttons/auth-button";
 import SyncButton from "../buttons/sync-button";
-import SyncProfileModal from "../syncprofile-modal/syncprofile-modal-client";
+import SyncProfileModal from "../modals/syncprofile-modal/syncprofile-modal-client";
 import { useSyncModal } from "@/contexts/SyncModalContext";
 import AttendanceButton from "../buttons/attendance-button";
 import ProfileButton from "../buttons/profile-button";
