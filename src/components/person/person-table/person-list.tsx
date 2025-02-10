@@ -35,7 +35,7 @@ export const PersonList = ({ group, groupBy }: PersonListProps) => {
         return (
           <div 
             key={uniqueKey}
-            className="my-2 rounded-lg shadow-[4px_4px_0_0_#323232] p-4 border-2 border-slate-800" 
+            className="my-2 rounded-lg shadow-[4px_4px_0_0_#323232] p-2 border-2 border-slate-800" 
             style={{ backgroundColor: `#${g.color}` }}
           >
             <div className="flex justify-between items-center">

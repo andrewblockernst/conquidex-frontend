@@ -5,6 +5,7 @@ import { createClient } from "@/utils/supabase/client";
 import { useUser } from "@/contexts/UserContext";
 import { useSyncModal } from "@/contexts/SyncModalContext";
 import FilterButton from "@/components/buttons/filter-button";
+import CircularMenuButton from "@/components/buttons/floating-menu";
 
 //LLAMADO DEL TIPO DE LISTA (UNIDADES o TARJETAS) desde FilterButton
 const optionsMap = {
@@ -104,21 +105,6 @@ export default function ClubView() {
     );
   }
 
-  if (!activeProfile?.club_id) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-screen p-4 bg-cover bg-center">
-        <main className="flex flex-col items-center w-full max-w-3xl mb-16">
-          <h1 className="text-2xl m-4">
-            ¡Ups! Parece que todavía no formás parte de ningún club :(
-          </h1>
-          <Link href="/club/select">
-            <Button className="px-8">Buscar club</Button>
-          </Link>
-        </main>
-      </div>
-    );
-  }
-
   const isLoading =
     userLoading ||
     syncLoading ||
@@ -147,6 +133,10 @@ export default function ClubView() {
           <PersonList group={classesData} groupBy={"classes"} />
         )}
       </main>
+      {/* CircularMenuButton flotante */}
+      <div className="fixed bottom-20 right-10 z-50">
+        <CircularMenuButton />
+      </div>
     </div>
   );
 }

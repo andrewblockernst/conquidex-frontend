@@ -1,4 +1,6 @@
-import React, { useState } from "react";
+'use client'
+
+import { use, useState } from "react";
 
 interface FilterButtonProps {
   onClick: (option: "units" | "classes") => void;
