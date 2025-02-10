@@ -6,9 +6,10 @@ interface SyncButtonProps {}
 
 const SyncButton: React.FC<SyncButtonProps> = () => {
   const { openSyncModal } = useSyncModal();
-  const { activeProfile } = useUser();
+  const { activeProfile, member } = useUser();
 
-  if (activeProfile && activeProfile.role_id !== 0) return null; //no mostrar el boton si el perfil activo es miembro
+  //Si no hay un miembro al que vincular o si el perfil activo ya es miembro
+  if (!member || activeProfile?.role_id !== 0) return null;
   return (
     <button
       onClick={openSyncModal}

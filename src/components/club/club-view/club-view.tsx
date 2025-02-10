@@ -18,7 +18,7 @@ import Link from "next/link";
 
 export default function ClubView() {
   const supabase = createClient();
-  const { user, activeProfile, loading: userLoading } = useUser();
+  const { club, loading: userLoading } = useUser();
   const { loading: syncLoading } = useSyncModal();
   const [groupBy, setGroupBy] = useState<"units" | "classes">("units");
 
@@ -27,29 +27,26 @@ export default function ClubView() {
   const [classesData, setClassesData] = useState<ClassGroup[]>([]);
   const [loading, setLoading] = useState({ units: true, classes: true });
 
-  // Efectos separados para cada tipo de datos
   useEffect(() => {
     let isMounted = true;
     const controller = new AbortController();
 
     const fetchAllData = async () => {
-      if (!activeProfile?.club_id) return;
-
-      setLoading({ units: true, classes: true });
-
       try {
+        if (!club?.id) return;
+        setLoading({ units: true, classes: true });
         // Ejecutar ambas consultas en paralelo
         const [unitsResponse, classesResponse] = await Promise.all([
           supabase
-            .rpc("get_persons_by_unit", {
-              input_club_id: activeProfile.club_id,
+            .rpc('get_persons_by_unit', { 
+              input_club_id: club.id
             })
             .select("*")
             .abortSignal(controller.signal),
 
           supabase
-            .rpc("get_persons_by_class", {
-              input_club_id: activeProfile.club_id,
+            .rpc('get_persons_by_class', { 
+              input_club_id: club.id
             })
             .select("*")
             .abortSignal(controller.signal),
@@ -87,9 +84,11 @@ export default function ClubView() {
       isMounted = false;
       controller.abort();
     };
-  }, [activeProfile?.club_id]); // Solo depende del club_id
+  }, [club?.id]); // Solo depende del club_id
 
-  if (!activeProfile?.club_id) {
+  const isLoading = userLoading || syncLoading || (groupBy === 'units' ? loading.units : loading.classes);
+
+  if (!club?.id && !isLoading) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen p-4 bg-cover bg-center">
         <main className="flex flex-col items-center w-full max-w-3xl mb-16">
@@ -103,32 +102,12 @@ export default function ClubView() {
       </div>
     );
   }
-
-  if (!activeProfile?.club_id) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-screen p-4 bg-cover bg-center">
-        <main className="flex flex-col items-center w-full max-w-3xl mb-16">
-          <h1 className="text-2xl m-4">
-            ¡Ups! Parece que todavía no formás parte de ningún club :(
-          </h1>
-          <Link href="/club/select">
-            <Button className="px-8">Buscar club</Button>
-          </Link>
-        </main>
-      </div>
-    );
-  }
-
-  const isLoading =
-    userLoading ||
-    syncLoading ||
-    (groupBy === "units" ? loading.units : loading.classes);
   return (
     <div className="flex flex-col items-center min-h-screen p-4 bg-cover bg-center">
       <main className="flex flex-col items-center w-full max-w-3xl">
         <div className="w-full mt-3 mb-2 pr-1 flex justify-between">
           <h1 className="text-2xl">
-            {activeProfile?.club_name}: {optionsMap[groupBy]}
+            {club?.name}: {optionsMap[groupBy]}
           </h1>
           <FilterButton
             onClick={(selectedOption) =>
