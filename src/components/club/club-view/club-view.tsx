@@ -125,7 +125,7 @@ export default function ClubView() {
         <div className="w-full mt-3 mb-2 pr-1 flex justify-between">
           <h1 className="text-2xl">
             <SearchButton onSearch={handleSearch} />
-            {club?.name}: {optionsMap[groupBy]}
+            {/* {club?.name}: {optionsMap[groupBy]}  */}
           </h1>
           <FilterButton
             onClick={(selectedOption) =>

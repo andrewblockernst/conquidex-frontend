@@ -37,7 +37,7 @@ const FilterButton: React.FC<FilterButtonProps> = ({
         <button
           onClick={toggleDropdown}
           type="button"
-          className="flex justify-center items-center w-10 h-10 rounded-lg border-2 border-yellow-800 bg-yellow-500 shadow-[4px_4px_0_0_#323232] cursor-pointer transition-all duration-250 relative overflow-hidden z-10 group hover:bg-yellow-600"
+          className="flex justify-center items-center w-10 h-9 rounded-lg border-2 border-yellow-800 bg-yellow-500 shadow-[4px_4px_0_0_#323232] cursor-pointer transition-all duration-250 relative overflow-hidden z-10 group hover:bg-yellow-600"
         >
           <div className="flex items-center justify-center"></div>
           <div className="flex items-center justify-center">
