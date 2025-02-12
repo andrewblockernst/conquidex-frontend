@@ -1,29 +1,28 @@
-"use client";
+'use client';
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState } from "react";
 import { createClient } from "@/utils/supabase/client";
 import { useUser } from "@/contexts/UserContext";
 import { useSyncModal } from "@/contexts/SyncModalContext";
 import FilterButton from "@/components/buttons/filter-button";
 import CircularMenuButton from "@/components/buttons/floating-menu";
+import { PersonList } from "../../person/person-table/person-list";
+import Button from "@/components/buttons/button";
+import Link from "next/link";
+import SearchButton from "@/components/buttons/search-button";
 
-//LLAMADO DEL TIPO DE LISTA (UNIDADES o TARJETAS) desde FilterButton
 const optionsMap = {
   units: "Unidades",
   classes: "Tarjetas",
 };
-
-import { PersonList } from "../../person/person-table/person-list";
-import Button from "@/components/buttons/button";
-import Link from "next/link";
 
 export default function ClubView() {
   const supabase = createClient();
   const { club, loading: userLoading } = useUser();
   const { loading: syncLoading } = useSyncModal();
   const [groupBy, setGroupBy] = useState<"units" | "classes">("units");
+  const [searchTerm, setSearchTerm] = useState<string>("");
 
-  // Separar estados para unidades y clases
   const [unitsData, setUnitsData] = useState<UnitGroup[]>([]);
   const [classesData, setClassesData] = useState<ClassGroup[]>([]);
   const [loading, setLoading] = useState({ units: true, classes: true });
@@ -36,7 +35,6 @@ export default function ClubView() {
       try {
         if (!club?.id) return;
         setLoading({ units: true, classes: true });
-        // Ejecutar ambas consultas en paralelo
         const [unitsResponse, classesResponse] = await Promise.all([
           supabase
             .rpc('get_persons_by_unit', { 
@@ -54,7 +52,6 @@ export default function ClubView() {
         ]);
 
         if (isMounted) {
-          // Validar y setear unidades
           if (!unitsResponse.error && unitsResponse.data) {
             const validUnits = unitsResponse.data.filter(
               (unit) => unit.unit_id !== undefined && unit.club_id
@@ -62,7 +59,6 @@ export default function ClubView() {
             setUnitsData(validUnits as UnitGroup[]);
           }
 
-          // Validar y setear clases
           if (!classesResponse.error && classesResponse.data) {
             const validClasses = classesResponse.data.filter(
               (cls) => cls.class_id !== undefined && cls.club_id
@@ -85,9 +81,29 @@ export default function ClubView() {
       isMounted = false;
       controller.abort();
     };
-  }, [club?.id]); // Solo depende del club_id
+  }, [club?.id]);
 
   const isLoading = userLoading || syncLoading || (groupBy === 'units' ? loading.units : loading.classes);
+
+  const handleSearch = (term: string) => {
+    setSearchTerm(term);
+  };
+
+  const filteredUnits = unitsData.filter(unit =>
+    unit.persons.some(person => 
+      (person.name && person.name.toLowerCase().includes(searchTerm.toLowerCase())) ||
+      (person.surname && person.surname.toLowerCase().includes(searchTerm.toLowerCase())) ||
+      (person.nickname && person.nickname.toLowerCase().includes(searchTerm.toLowerCase()))
+    )
+  );
+
+  const filteredClasses = classesData.filter(cls =>
+    cls.persons.some(person => 
+      (person.name && person.name.toLowerCase().includes(searchTerm.toLowerCase())) ||
+      (person.surname && person.surname.toLowerCase().includes(searchTerm.toLowerCase())) ||
+      (person.nickname && person.nickname.toLowerCase().includes(searchTerm.toLowerCase()))
+    )
+  );
 
   if (!club?.id && !isLoading) {
     return (
@@ -108,6 +124,7 @@ export default function ClubView() {
       <main className="flex flex-col items-center w-full max-w-3xl">
         <div className="w-full mt-3 mb-2 pr-1 flex justify-between">
           <h1 className="text-2xl">
+            <SearchButton onSearch={handleSearch} />
             {club?.name}: {optionsMap[groupBy]}
           </h1>
           <FilterButton
@@ -122,15 +139,11 @@ export default function ClubView() {
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900"></div>
           </div>
         ) : groupBy === "units" ? (
-          <PersonList group={unitsData} groupBy={"units"} />
+          <PersonList group={filteredUnits} groupBy={"units"} />
         ) : (
-          <PersonList group={classesData} groupBy={"classes"} />
+          <PersonList group={filteredClasses} groupBy={"classes"} />
         )}
       </main>
-      {/* CircularMenuButton flotante */}
-      <div className="fixed bottom-20 right-10 z-50">
-        <CircularMenuButton />
-      </div>
     </div>
   );
 }

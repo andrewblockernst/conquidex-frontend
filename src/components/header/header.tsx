@@ -39,19 +39,16 @@ export const Header = () => {
             {/* Desktop Menu */}
             <div className="hidden lg:flex space-x-2">
               {user && (
-                <>
-                  <SyncButton />
-                  <AttendanceButton />
-                  <ProfileButton />
-                </>
+              <>
+                <SyncButton />
+                <ProfileButton />
+              </>
               )}
-              <AuthButton />
             </div>
 
             {/* Mobile Menu Toggle */}
             {user && (
               <div className="flex lg:hidden items-center space-x-2">
-                <ProfileButton />
                 <button
                   onClick={() => setMenuOpen(!menuOpen)}
                   className="flex justify-center items-center p-2 w-10 h-10 rounded-lg border-2 border-yellow-800 bg-yellow-500 shadow-[4px_4px_0_0_#323232] cursor-pointer transition-all duration-250 relative overflow-hidden z-10 group hover:bg-yellow-600"
@@ -71,7 +68,7 @@ export const Header = () => {
             <div className="lg:hidden bg-yellow-500 text-gray-800">
               <nav className="flex flex-col space-y-4 p-4">
                 <SyncButton />
-                <AttendanceButton />
+                <ProfileButton />
                 <AuthButton />
               </nav>
             </div>

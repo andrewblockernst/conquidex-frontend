@@ -26,6 +26,9 @@ const ProfileButton = () => {
           style={{ width: "30px", height: "30px" }}
           strokeWidth="1.5"
         ></lord-icon>
+        <span className="ml-2 text-white text-lg font-semibold mr-2">
+          Perfil
+        </span>
       </div>
     </button>
   );
