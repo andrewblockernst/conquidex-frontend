@@ -1,6 +1,7 @@
 'use client'
 
 import PersonCard from "@/components/person/person-card/person-card"
+import Link from "next/link";
 import { useState } from "react";
 
 interface PersonListProps {
@@ -50,10 +51,11 @@ export const PersonList = ({ group, groupBy }: PersonListProps) => {
             {isExpanded &&
               <div className="space-y-2">
                 {g.persons.map((person) => (
-                  <PersonCard 
-                    key={`${uniqueKey}-person-${person.id}`} 
-                    person={person} 
-                  />
+                  <Link href={`/profile/${person.id}`} key={`${uniqueKey}-person-${person.id}`}>
+                    <PersonCard
+                      person={person}
+                    />
+                  </Link>
                 ))}
               </div>
             }

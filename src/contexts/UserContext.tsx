@@ -4,7 +4,6 @@ import { createContext, useContext, useState, useEffect, ReactNode, useRef, useM
 import { createClient } from '@/utils/supabase/client';
 import { User, Session } from '@supabase/supabase-js';
 import { getClub, getProfile } from './actions';
-//import { supabaseClient } from '@/utils/supabase/config';
 
 interface UserContextType {
   session: Session | null | undefined,
@@ -18,73 +17,118 @@ interface UserContextType {
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
 const supabaseClient = createClient();
+
 export const UserProvider = ({ children }: { children: ReactNode }) => {
   const [session, setSession] = useState<Session | null>();
   const [user, setUser] = useState<User | null>(null);
-
   const [activeProfile, setActiveProfile] = useState<Member | Guest | null>(null);
   const [member, setMember] = useState<Member | null>(null);
   const [club, setClub] = useState<Club | null>(null);
-
   const [loading, setLoading] = useState(true);
-
+  
+  // Control de la sesión
   useEffect(() => {
-    setLoading(true);
-      const setData = async () => {
-          const { data: { session }, error } = await supabaseClient.auth.getSession();
-          if (error) throw error;
-          setSession(session)
-          setUser(session?.user ?? null)
-          setLoading(false);
-      };
+    let mounted = true;
 
-      const { data: listener } = supabaseClient.auth.onAuthStateChange((_event, session) => {
+    const setData = async () => {
+      try {
+        const { data: { session }, error } = await supabaseClient.auth.getSession();
+        if (error) throw error;
+        if (mounted) {
           setSession(session);
-          setUser(session?.user ?? null)
-      });
+          setUser(session?.user ?? null);
+        }
+      } catch (error) {
+        console.error('Error getting session:', error);
+      }
+    };
 
-      setData();
+    const { data: listener } = supabaseClient.auth.onAuthStateChange((_event, session) => {
+      if (mounted) {
+        setSession(session);
+        setUser(session?.user ?? null);
+      }
+    });
 
-      return () => {
-          listener?.subscription.unsubscribe();
-      };
+    setData();
+
+    return () => {
+      mounted = false;
+      listener?.subscription.unsubscribe();
+    };
   }, []);
 
-  const fetchProfile = async () => {
-    setLoading(true);
-    if (!user) return;
-    try {
-      const {activeProfile: profile, member} = await getProfile(user);
-      setActiveProfile(profile);
-      setMember(member);
-      if (profile){
-        const profile_club = await getClub(profile.club_id!);
-        setClub(profile_club)
-      }
-      setLoading(false);
-    }catch (error) {
-      throw error;
-    }
-  };
-
+  // Fetch del perfil y club
   useEffect(() => {
-    fetchProfile();
+    let mounted = true;
+
+    const fetchProfileAndClub = async () => {
+      if (!user) {
+        if (mounted) {
+          setActiveProfile(null);
+          setMember(null);
+          setClub(null);
+        }
+        return;
+      }
+
+      try {
+        const { activeProfile: profile, member } = await getProfile(user);
+        
+        if (!mounted) return;
+        
+        setActiveProfile(profile);
+        setMember(member);
+
+        if (profile?.club_id) {
+          const profile_club = await getClub(profile.club_id);
+            setClub(profile_club);
+          }
+        setLoading(false);
+        
+      } catch (error) {
+        console.error('Error fetching profile:', error);
+      }
+    };
+
+    fetchProfileAndClub();
+
+    return () => {
+      mounted = false;
+    };
   }, [user]);
 
   const refreshProfile = async () => {
-    fetchProfile();
+    if (!user) return;
+    
+    setLoading(true);
+    try {
+      const { activeProfile: profile, member } = await getProfile(user);
+      setActiveProfile(profile);
+      setMember(member);
+
+      if (profile?.club_id) {
+        const profile_club = await getClub(profile.club_id);
+        setClub(profile_club);
+      } else {
+        setClub(null);
+      }
+    } catch (error) {
+      console.error('Error refreshing profile:', error);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const value = {
-      session,
-      user,
-      activeProfile,
-      member,
-      club,
-      loading,
-      refreshProfile
-  };
-
+  const value = useMemo(() => ({
+    session,
+    user,
+    activeProfile,
+    member,
+    club,
+    loading,
+    refreshProfile
+  }), [session, user, activeProfile, member, club, loading]);
 
   return (
     <UserContext.Provider value={value}>
