@@ -24,34 +24,52 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
   const [activeProfile, setActiveProfile] = useState<Member | Guest | null>(null);
   const [member, setMember] = useState<Member | null>(null);
   const [club, setClub] = useState<Club | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [authLoading, setAuthLoading] = useState(true);
+  const [profileLoading, setProfileLoading] = useState(true);
   
-  // Control de la sesión
   useEffect(() => {
     let mounted = true;
-
+  
     const setData = async () => {
       try {
         const { data: { session }, error } = await supabaseClient.auth.getSession();
         if (error) throw error;
         if (mounted) {
-          setSession(session);
-          setUser(session?.user ?? null);
+          // Solo actualizamos si realmente hay un cambio
+          setSession(prevSession => {
+            if (prevSession?.user?.id === session?.user?.id) return prevSession;
+            return session;
+          });
+          setUser(prevUser => {
+            if (prevUser?.id === session?.user?.id) return prevUser;
+            return session?.user ?? null;
+          });
         }
       } catch (error) {
         console.error('Error getting session:', error);
+      } finally {
+        if (mounted) {
+          setAuthLoading(false);
+        }
       }
     };
-
+  
     const { data: listener } = supabaseClient.auth.onAuthStateChange((_event, session) => {
       if (mounted) {
-        setSession(session);
-        setUser(session?.user ?? null);
+        // Solo actualizamos si realmente hay un cambio
+        setSession(prevSession => {
+          if (prevSession?.user?.id === session?.user?.id) return prevSession;
+          return session;
+        });
+        setUser(prevUser => {
+          if (prevUser?.id === session?.user?.id) return prevUser;
+          return session?.user ?? null;
+        });
       }
     });
-
+  
     setData();
-
+  
     return () => {
       mounted = false;
       listener?.subscription.unsubscribe();
@@ -63,17 +81,19 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     let mounted = true;
 
     const fetchProfileAndClub = async () => {
+      setProfileLoading(true);
       if (!user) {
         if (mounted) {
           setActiveProfile(null);
           setMember(null);
           setClub(null);
+          setProfileLoading(false);
         }
         return;
       }
 
       try {
-        const { activeProfile: profile, member } = await getProfile(user);
+        const { activeProfile: profile, member } = await getProfile(user!);
         
         if (!mounted) return;
         
@@ -82,12 +102,18 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
 
         if (profile?.club_id) {
           const profile_club = await getClub(profile.club_id);
+          if (mounted) {
             setClub(profile_club);
           }
-        setLoading(false);
-        
+        } else {
+          setClub(null);
+        }
       } catch (error) {
         console.error('Error fetching profile:', error);
+      } finally {
+        if (mounted) {
+          setProfileLoading(false);
+        }
       }
     };
 
@@ -98,10 +124,20 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     };
   }, [user]);
 
+  // Calculamos el loading general
+  const loading = useMemo(() => {
+    // Si la autenticación aún está cargando, todo está cargando
+    if (authLoading) return true;
+    // Si no hay usuario, no necesitamos esperar al perfil
+    if (!user) return false;
+    // Si hay usuario, esperamos a que el perfil termine de cargar
+    return profileLoading;
+  }, [authLoading, user, profileLoading]);
+
   const refreshProfile = async () => {
     if (!user) return;
     
-    setLoading(true);
+    setProfileLoading(true);
     try {
       const { activeProfile: profile, member } = await getProfile(user);
       setActiveProfile(profile);
@@ -116,7 +152,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     } catch (error) {
       console.error('Error refreshing profile:', error);
     } finally {
-      setLoading(false);
+      setProfileLoading(false);
     }
   };
 
@@ -132,9 +168,14 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
 
   return (
     <UserContext.Provider value={value}>
-        {!loading && children}
+      {loading && (
+        <div className="flex justify-center items-center h-screen">
+          <img src="logo.png" alt="Conquidex Logo" className="w-32" />
+        </div>
+      )}
+      {!loading && children}
     </UserContext.Provider>
-);
+  );
 };
 
 export const useUser = () => {
