@@ -22,7 +22,7 @@ export function AuthButton() {
     };
 
     getSession();
-  }, [supabase]);
+  }, []);
 
   const handleSignIn = async () => {
     await supabase.auth.signInWithOAuth({
