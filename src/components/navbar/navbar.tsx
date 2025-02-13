@@ -1,6 +1,6 @@
 const MobileNavbar = () => {
   return (
-    <div className="fixed bottom-0 left-0 right-0 bg-white shadow-lg h-[60px] flex items-center justify-around sm:hidden rounded-t-2xl shadow-top border-t border-slate-100">
+    <div className="fixed bottom-0 left-0 right-0 bg-white shadow-lg h-[60px] flex items-center justify-around sm:hidden shadow-top border-t border-slate-600">
       <button className="outline-none border-0 w-16 h-16 rounded-t-full bg-transparent flex items-center justify-center text-black transition-all duration-300 ease-in-out cursor-pointer hover:-translate-y-[3px]">
         <svg
           className="w-8 h-8 text-black"
