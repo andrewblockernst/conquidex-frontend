@@ -5,11 +5,10 @@ import { createClient } from "@/utils/supabase/client";
 import { useUser } from "@/contexts/UserContext";
 import { useSyncModal } from "@/contexts/SyncModalContext";
 import FilterButton from "@/components/buttons/filter-button";
-import CircularMenuButton from "@/components/buttons/floating-menu";
 import { PersonList } from "../../person/person-table/person-list";
 import Button from "@/components/buttons/button";
 import Link from "next/link";
-import SearchButton from "@/components/buttons/search-button";
+import SearchButton from "@/components/search-input";
 
 const optionsMap = {
   units: "Unidades",
@@ -18,7 +17,7 @@ const optionsMap = {
 
 export default function ClubView() {
   const supabase = createClient();
-  const { club, loading: userLoading } = useUser();
+  const { club, loading: userLoading, user } = useUser();
   const { loading: syncLoading } = useSyncModal();
   const [groupBy, setGroupBy] = useState<"units" | "classes">("units");
   const [searchTerm, setSearchTerm] = useState<string>("");
@@ -116,6 +115,10 @@ export default function ClubView() {
     )
   );
 
+  if (!userLoading && !user) {
+    return null; // No renderizar nada si no hay usuario autenticado y no está cargando
+  }
+
   if (!club?.id && !isLoading) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen p-4 bg-cover bg-center">
@@ -130,13 +133,13 @@ export default function ClubView() {
       </div>
     );
   }
+
   return (
     <div className="flex flex-col items-center min-h-screen p-4 bg-cover bg-center">
       <main className="flex flex-col items-center w-full max-w-3xl">
         <div className="w-full mt-3 mb-2 pr-1 flex justify-between">
           <h1 className="text-2xl">
             <SearchButton onSearch={handleSearch} />
-            {/* {club?.name}: {optionsMap[groupBy]}  */}
           </h1>
           <FilterButton
             onClick={(selectedOption) =>

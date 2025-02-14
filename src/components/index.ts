@@ -1,10 +1,8 @@
 export * from "./buttons/auth-button";
 export * from "./buttons/button";
 export * from "./buttons/filter-button";
-export * from "./buttons/floating-menu";
 export * from "./buttons/profile-button";
 export * from "./buttons/progress-button";
-export * from "./buttons/search-button";
 export * from "./buttons/sync-button";
 export * from "./cards/club-card";
 export * from "./club/club-view/club-view";
@@ -24,3 +22,5 @@ export * from "./person/person-card/person-card";
 export * from "./person/person-table/person-list";
 export * from "./profile/myprofile-card";
 export * from "./profile/profile-card";
+export * from "./search-input";
+export * from "./toolsbar/toolsbar";

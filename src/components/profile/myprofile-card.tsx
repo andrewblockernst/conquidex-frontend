@@ -16,8 +16,9 @@ const roleNameMap: { [key: string]: string } = {
 };
 
 const MyProfileCard: React.FC<Props> = ({ member }) => {
+  const isGuest = member.role_name === 'guest';
   const avatar = AVATARS[member.role_id ?? 0] || AVATARS[0];
-  const friendlyRoleName = roleNameMap[member.role_name ?? ''] || member.role_name;
+  const friendlyRoleName = isGuest ? 'Usuario' : (roleNameMap[member.role_name ?? ''] || member.role_name);
 
   return (
     <div className="max-w-sm mx-auto bg-white rounded-lg shadow-lg p-6 flex justify-center items-center">
@@ -35,10 +36,12 @@ const MyProfileCard: React.FC<Props> = ({ member }) => {
           {friendlyRoleName} en el club: {member.club_name}
         </div>
 
-        <div className="flex gap-4 w-full justify-center">
-          <Button>Editar Perfil</Button>
-          <AuthButton/>
-        </div>
+        {!isGuest && (
+          <div className="flex gap-4 w-full justify-center">
+            <Button>Editar Perfil</Button>
+            <AuthButton/>
+          </div>
+        )}
       </div>
     </div>
   );

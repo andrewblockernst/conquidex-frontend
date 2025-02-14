@@ -61,28 +61,32 @@ export default function ClubTableClient({ clubs }: Props) {
         placeholder="Escriba el club"
         value={searchTerm}
         onChange={handleSearch}
-        className="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500"
+        className="bg-[#dbdbdb] px-4 py-1.5 outline-none w-full text-slate-800 rounded-lg border-2 transition-colors duration-100 border-solid focus:border-[#958059] border-[#403c2b] font-bold"
       />
 
       {/* Lista de clubes */}
-      <div className="w-full space-y-2 flex flex-col items-center">
-        {filteredClubs.map((club) => (
-          <div
-            key={club.id}
-            onClick={() => setSelectedClub(club)}
-            className={`p-4 border rounded-lg shadow-md transition cursor-pointer w-full ${
-              selectedClub?.id === club.id ? "bg-blue-100" : "hover:bg-gray-100"
-            } flex justify-between items-center`}
-          >
-            <p className="font-medium text-gray-700">
-              {club.name} <span className="text-gray-500">({club.id})</span>
-            </p>
-            <p className="text-sm text-gray-500 italic">{club.province}</p>
+      <div className="w-full">
+        {filteredClubs.map((club) => {
+          const uniqueKey = `club-${club.id}`;
+          const isSelected = selectedClub?.id === club.id;
+          return (
+        <div
+          key={uniqueKey}
+          onClick={() => setSelectedClub(club)}
+          className={`my-3 rounded-lg shadow-[4px_4px_0_0_#323232] p-4 border-2 border-slate-800 transition cursor-pointer ${
+            isSelected ? "bg-blue-100" : "hover:bg-gray-100"
+          }`}
+        >
+          <div className="flex justify-between items-center">
+            <h2 className="text-xl">{club.name}</h2>
+            <p className="text-sm text-slate-800 italic">{club.province}</p>
           </div>
-        ))}
+        </div>
+          );
+        })}
 
         {filteredClubs.length === 0 && (
-          <p className="text-gray-500 text-center">No existe ese club</p>
+          <p className="text-slate-800 text-center">No existe ese club</p>
         )}
       </div>
 
