@@ -65,7 +65,7 @@ export default function ClubTableClient({ clubs }: Props) {
       />
 
       {/* Lista de clubes */}
-      <div className="w-full space-y-2 w-full flex flex-col items-center">
+      <div className="w-full space-y-2 flex flex-col items-center">
         {filteredClubs.map((club) => (
           <div
             key={club.id}

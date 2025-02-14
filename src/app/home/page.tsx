@@ -25,7 +25,6 @@ export default function Home() {
           {clubName && <h1>{clubName}</h1>}
         </div>
         <ClubView />
-        <MobileNavbar/>
       </div>
     </>
   );

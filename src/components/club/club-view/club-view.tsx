@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import { useEffect, useState } from "react";
 import { createClient } from "@/utils/supabase/client";
@@ -37,15 +37,15 @@ export default function ClubView() {
         setLoading({ units: true, classes: true });
         const [unitsResponse, classesResponse] = await Promise.all([
           supabase
-            .rpc('get_persons_by_unit', { 
-              input_club_id: club.id
+            .rpc("get_persons_by_unit", {
+              input_club_id: club.id,
             })
             .select("*")
             .abortSignal(controller.signal),
 
           supabase
-            .rpc('get_persons_by_class', { 
-              input_club_id: club.id
+            .rpc("get_persons_by_class", {
+              input_club_id: club.id,
             })
             .select("*")
             .abortSignal(controller.signal),
@@ -83,25 +83,36 @@ export default function ClubView() {
     };
   }, [club?.id]);
 
-  const isLoading = userLoading || syncLoading || (groupBy === 'units' ? loading.units : loading.classes);
+  const isLoading =
+    userLoading ||
+    syncLoading ||
+    (groupBy === "units" ? loading.units : loading.classes);
 
   const handleSearch = (term: string) => {
     setSearchTerm(term);
   };
 
-  const filteredUnits = unitsData.filter(unit =>
-    unit.persons.some(person => 
-      (person.name && person.name.toLowerCase().includes(searchTerm.toLowerCase())) ||
-      (person.surname && person.surname.toLowerCase().includes(searchTerm.toLowerCase())) ||
-      (person.nickname && person.nickname.toLowerCase().includes(searchTerm.toLowerCase()))
+  const filteredUnits = unitsData.filter((unit) =>
+    unit.persons.some(
+      (person) =>
+        (person.name &&
+          person.name.toLowerCase().includes(searchTerm.toLowerCase())) ||
+        (person.surname &&
+          person.surname.toLowerCase().includes(searchTerm.toLowerCase())) ||
+        (person.nickname &&
+          person.nickname.toLowerCase().includes(searchTerm.toLowerCase()))
     )
   );
 
-  const filteredClasses = classesData.filter(cls =>
-    cls.persons.some(person => 
-      (person.name && person.name.toLowerCase().includes(searchTerm.toLowerCase())) ||
-      (person.surname && person.surname.toLowerCase().includes(searchTerm.toLowerCase())) ||
-      (person.nickname && person.nickname.toLowerCase().includes(searchTerm.toLowerCase()))
+  const filteredClasses = classesData.filter((cls) =>
+    cls.persons.some(
+      (person) =>
+        (person.name &&
+          person.name.toLowerCase().includes(searchTerm.toLowerCase())) ||
+        (person.surname &&
+          person.surname.toLowerCase().includes(searchTerm.toLowerCase())) ||
+        (person.nickname &&
+          person.nickname.toLowerCase().includes(searchTerm.toLowerCase()))
     )
   );
 

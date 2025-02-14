@@ -170,7 +170,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     <UserContext.Provider value={value}>
       {loading && (
         <div className="flex justify-center items-center h-screen">
-          <img src="logo.png" alt="Conquidex Logo" className="w-32" />
+          <img src="logo.png" alt="conquidex" className="w-32" />
         </div>
       )}
       {!loading && children}

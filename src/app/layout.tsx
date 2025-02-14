@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import { SyncModalProvider } from "@/contexts/SyncModalContext";
 import "./globals.css";
 import { UserProvider } from "@/contexts/UserContext";
+import MobileNavbar from "@/components/navbar/navbar"; // Importar el MobileNavbar
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -21,14 +22,15 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-      <html lang="es">
-          <body className="mb-12">
-            <UserProvider>
-                <SyncModalProvider>
-                    {children}
-                </SyncModalProvider>
-              </UserProvider>
-          </body>
-      </html>
+    <html lang="es">
+      <body className="mb-12">
+        <UserProvider>
+          <SyncModalProvider>
+            {children}
+            <MobileNavbar /> {/* INCLUSION DE NAVBAR AL LAYOUT, ESPERO QUE ESTE BIEN xd*/}
+          </SyncModalProvider>
+        </UserProvider>
+      </body>
+    </html>
   );
 }
