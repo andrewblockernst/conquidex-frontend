@@ -7,14 +7,6 @@
   --foreground: #171717;
 }
 
-/* DARK MODE STYLES
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-} */
-
 body {
   color: var(--foreground);
   background: var(--background);
@@ -54,5 +46,20 @@ button {
   padding: 1.5rem;
   max-width: 24rem;
   margin: auto;
+}
+
+@keyframes slide-in-left {
+  0% {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.animate-slide-in-left {
+  animation: slide-in-left 0.5s ease-out forwards;
 }
 
