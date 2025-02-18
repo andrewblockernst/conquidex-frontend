@@ -11,7 +11,7 @@ const SearchButton: React.FC<SearchButtonProps> = ({ onSearch }) => {
 
   return (
     <input
-      className="bg-[#dbdbdb] px-4 py-1.5 outline-none w-[280px] text-slate-800 rounded-lg border-2 transition-colors duration-100 border-solid focus:border-[#958059] border-[#403c2b]"
+      className="bg-[#dbdbdb] px-4 py-1.5 outline-none w-full text-slate-800 rounded-lg border-2 transition-colors duration-100 border-solid focus:border-[#958059] border-[#403c2b]"
       name="text"
       placeholder="Buscar"
       type="text"

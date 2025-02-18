@@ -58,7 +58,7 @@ export const PersonList = ({ group, groupBy }: PersonListProps) => {
             </div>
             {isExpanded && (
               <div className="space-y-2">
-                {g.persons.map((person) => (
+                {g.persons && g.persons.map((person) => (
                   <Link
                     href={`/profile/${person.id}`}
                     key={`${uniqueKey}-person-${person.id}`}

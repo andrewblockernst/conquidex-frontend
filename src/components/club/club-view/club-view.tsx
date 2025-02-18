@@ -91,7 +91,8 @@ export default function ClubView() {
     setSearchTerm(term);
   };
 
-  const filteredUnits = unitsData.filter((unit) =>
+  const filteredUnits = searchTerm === "" ? unitsData :
+  unitsData.filter((unit) =>
     unit.persons.some(
       (person) =>
         (person.name &&
@@ -121,13 +122,13 @@ export default function ClubView() {
 
   if (!club?.id && !isLoading) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-screen p-4 bg-cover bg-center">
+      <div className="flex w-full flex-col items-center justify-center min-h-screen p-4 bg-cover bg-center">
         <main className="flex flex-col items-center w-full max-w-3xl mb-16">
           <h1 className="text-2xl m-4">
             ¡Ups! Parece que todavía no formás parte de ningún club :(
           </h1>
           <Link href="/club/select">
-            <Button className="px-8">Buscar club</Button>
+            <Button buttonStyle="px-8">Buscar club</Button>
           </Link>
         </main>
       </div>
@@ -137,10 +138,10 @@ export default function ClubView() {
   return (
     <div className="flex flex-col items-center min-h-screen p-4 bg-cover bg-center">
       <main className="flex flex-col items-center w-full max-w-3xl">
-        <div className="w-full mt-3 mb-2 pr-1 flex justify-between">
-          <h1 className="text-2xl">
+        <div className="w-full mt-3 mb-2 flex justify-between items-center">
+          <div className="flex-grow mr-2">
             <SearchButton onSearch={handleSearch} />
-          </h1>
+          </div>
           <FilterButton
             onClick={(selectedOption) =>
               setGroupBy(selectedOption as "units" | "classes")

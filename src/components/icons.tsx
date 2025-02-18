@@ -154,6 +154,7 @@ export const AttendanceIcon = ({ className }: { className: string }) => (
 
 export const AddIcon = ({ className }: { className: string }) => (
   <svg
+    className={className}
     xmlns="http://www.w3.org/20000/svg"
     width="32"
     height="32"
@@ -191,7 +192,8 @@ export const CalendarIcon = ({ className }: { className: string }) => (
 );
 
 export const InfoClubIcon = ({ className }: { className: string }) => (
-  <svg
+  <svg  
+  className={className}
             xmlns="http://www.w3.org/2000/svg"
             x="0px"
             y="0px"
@@ -205,6 +207,7 @@ export const InfoClubIcon = ({ className }: { className: string }) => (
 
 export const ProfileIcon = ({ className }: { className: string }) => (
   <svg
+    className={className}
     xmlns="http://www.w3.org/2000/svg"
     width="24"
     height="24"
@@ -261,7 +264,7 @@ export const SupportIconWhite = ({ className }: { className: string }) => (
   </svg>
 );
 
-export const TentIconWhite = ({ className }: { className: string }) => (
+export const TentIconWhite = ({ className }: { className?: string }) => (
   <svg
     className={`w-8 h-8 text-white ${className}`}
     aria-hidden="true"
@@ -288,7 +291,7 @@ export const TentIconWhite = ({ className }: { className: string }) => (
   </svg>
 );
 
-export const AttendanceIconWhite = ({ className }: { className: string }) => (
+export const AttendanceIconWhite = ({ className }: { className?: string }) => (
   <svg
     className={`w-8 h-8 text-white ${className}`}
     aria-hidden="true"
@@ -308,7 +311,7 @@ export const AttendanceIconWhite = ({ className }: { className: string }) => (
   </svg>
 );
 
-export const AddIconWhite = ({ className }: { className: string }) => (
+export const AddIconWhite = ({ className }: { className?: string }) => (
   <svg
     xmlns="http://www.w3.org/20000/svg"
     width="32"
@@ -326,7 +329,7 @@ export const AddIconWhite = ({ className }: { className: string }) => (
   </svg>
 );
 
-export const CalendarIconWhite = ({ className }: { className: string }) => (
+export const CalendarIconWhite = ({ className }: { className?: string }) => (
   <svg
     className={`w-8 h-8 text-white ${className}`}
     aria-hidden="true"
@@ -346,13 +349,12 @@ export const CalendarIconWhite = ({ className }: { className: string }) => (
   </svg>
 );
 
-export const InfoClubIconWhite = ({ className }: { className: string }) => (
+export const InfoClubIconWhite = ({ className }: { className?: string }) => (
   <svg
+    className={`w-8 h-8 text-white ${className}`}
     xmlns="http://www.w3.org/2000/svg"
     x="0px"
     y="0px"
-    width="100"
-    height="100"
     viewBox="0 0 24 24"
     fill="#ffffff"
   >

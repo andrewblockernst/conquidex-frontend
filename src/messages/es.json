@@ -1,0 +1,8 @@
+{
+    "Roles": {
+        "guest": "Invitado",
+        "pathfinder": "Conquistador",
+        "counselor": "Consejero",
+        "staff": "Directivo"
+    }
+}

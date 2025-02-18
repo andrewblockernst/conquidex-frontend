@@ -1,0 +1,190 @@
+import { useUser } from "@/contexts/UserContext";
+import { useEffect, useState } from "react";
+import { createPerson, fetchRoles, fetchUnits, fetchClasses } from '@/lib/actions/person.actions';
+import Spinner1 from "../spinners/spinner-1";
+
+interface Props {
+    onSubmit: (data: PersonFormData) => void;
+    onCancel: () => void;
+  }
+
+export default function PersonForm({onSubmit, onCancel }: Props) {
+    const { club_id: clubId } = useUser().activeProfile!;
+
+    const [formData, setFormData] = useState<PersonFormData>({
+      name: '',
+      surname: '',
+      nickname: '',
+      email: '',
+      club_id: clubId!,
+      last_enrollment: null,
+      role_id: 1,
+      auth_user_uuid: null,
+      units: [],
+      classes: []
+    });
+  
+    const [roles, setRoles] = useState<Role[]>([]);
+    const [units, setUnits] = useState<Unit[]>([]);
+    const [classes, setClasses] = useState<Class[]>([]);
+    const [loading, setLoading] = useState(true);
+  
+    useEffect(() => {
+      const loadFormData = async () => {
+        try {
+          const [rolesData, unitsData, classesData] = await Promise.all([
+            fetchRoles(),
+            fetchUnits(clubId!),
+            fetchClasses()
+          ]);
+  
+          setRoles(rolesData);
+          setUnits(unitsData);
+          setClasses(classesData);
+        } catch (error) {
+          console.error('Error loading form data:', error);
+        } finally {
+          setLoading(false);
+        }
+      };
+  
+      loadFormData();
+    }, [clubId]);
+  
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+      const { name, value } = e.target;
+      setFormData(prev => ({ ...prev, [name]: value }));
+    };
+  
+    const handleMultiSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
+      const { name, options } = e.target;
+      const values = Array.from(options)
+        .filter(option => option.selected)
+        .map(option => Number(option.value));
+      
+      setFormData(prev => ({ ...prev, [name]: values }));
+    };
+
+    const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+      const { name, value, checked } = e.target;
+      setFormData(prev => {
+        const values = checked
+          ? [...prev[name as keyof PersonFormData] as number[], Number(value)]
+          : (prev[name as keyof PersonFormData] as number[]).filter((id: number) => id !== Number(value));
+        return { ...prev, [name]: values };
+      });
+    };
+  
+    if (loading) return <Spinner1 />
+  
+    return (
+      <form onSubmit={(e) => {
+        e.preventDefault();
+        onSubmit(formData);
+      }} className="space-y-4 max-h-96 overflow-y-auto">
+        <div className="space-y-2">
+          <input
+            type="text"
+            name="name"
+            value={formData.name || ''}
+            onChange={handleInputChange}
+            placeholder="Nombre"
+            className="w-full p-2 border rounded"
+            required
+          />
+          <input
+            type="text"
+            name="surname"
+            value={formData.surname || ''}
+            onChange={handleInputChange}
+            placeholder="Apellido"
+            className="w-full p-2 border rounded"
+            required
+          />
+          <input
+            type="text"
+            name="nickname"
+            value={formData.nickname || ''}
+            onChange={handleInputChange}
+            placeholder="Apodo"
+            className="w-full p-2 border rounded"
+          />
+          <input
+            type="email"
+            name="email"
+            value={formData.email}
+            onChange={handleInputChange}
+            placeholder="Email"
+            className="w-full p-2 border rounded"
+            required
+          />
+          
+          <select
+            name="role_id"
+            value={formData.role_id}
+            onChange={handleInputChange}
+            className="w-full p-2 border rounded"
+            required
+          >
+            <option value="">Seleccionar Rol</option>
+            {roles.map(role => (
+              <option key={role.id} value={role.id}>
+                {role.name}
+              </option>
+            ))}
+          </select>
+          {/* UNIDADES Y CLASES */}
+          <div className="flex flex-row justify-around">
+            <div>
+              <label className="block font-medium">Unidades</label>
+              {units.map(unit => (
+                <div key={unit.id} className="flex items-center" style={{ backgroundColor: `#${unit.color}` }}>
+                  <input
+                    type="checkbox"
+                    name="units"
+                    value={unit.id}
+                    checked={formData.units.includes(unit.id)}
+                    onChange={handleCheckboxChange}
+                    className="mr-2"
+                  />
+                  <label>{unit.name}</label>
+                </div>
+              ))}
+            </div>
+            <div>
+              <label className="block font-medium">Clases</label>
+              {classes.map(class_ => (
+                <div key={class_.id} className="flex items-center" style={{ backgroundColor: `#${class_.color}` }}>
+                  <input
+                    type="checkbox"
+                    name="classes"
+                    value={class_.id}
+                    checked={formData.classes.includes(class_.id)}
+                    onChange={handleCheckboxChange}
+                    className="mr-2"
+                  />
+                  <label>{class_.name}</label>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+  
+        <div className="flex justify-end space-x-2">
+          <button
+            type="button"
+            onClick={onCancel}
+            className="px-4 py-2 text-gray-600 border rounded hover:bg-gray-100"
+          >
+            Cancelar
+          </button>
+          <button
+            type="submit"
+            className="px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-600"
+          >
+            Guardar
+          </button>
+        </div>
+      </form>
+    );
+  }

@@ -8,6 +8,7 @@ const MobileNavbar = () => {
   const { activeProfile } = useUser();
 
   return (
+    <>
     <div className="fixed bottom-0 left-0 right-0 bg-white shadow-lg h-[60px] flex items-center justify-around sm:hidden shadow-top border-t border-slate-600">
       <Link href="/home">
         <button
@@ -61,6 +62,7 @@ const MobileNavbar = () => {
         </button>
       </Link>
     </div>
+    </>
   );
 };
 
