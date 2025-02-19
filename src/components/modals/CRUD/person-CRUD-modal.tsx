@@ -1,9 +1,5 @@
 import PersonForm from '@/components/forms/person-form';
 import { useState } from 'react';
-import ErrorModal from '../error-modal';
-import { createPerson } from '@/lib/actions/person.actions';
-import SuccessModal from '../success-modal';
-import { revalidatePath } from "next/cache";
 import BaseModal from '../base-modal';
 import Spinner1 from '@/components/spinners/spinner-1';
 
@@ -15,28 +11,7 @@ interface Props{
 const PersonCrudModal = ({ isOpen, onClose }: Props) => {
     const [step, setStep] = useState('select'); // 'select', 'createMember', 'createUnit'
     const [loading, setLoading] = useState(false);
-    const [error, setError] = useState<string | null>(null);
-    const [success, setSuccess] = useState<string | null>(null);
 
-    const handleSave = async (formData: PersonFormData) => {
-        try {
-            setLoading(true);
-            const success = await createPerson(formData);
-            if (success) {
-                setSuccess('Miembro creado con éxito.');
-                window.location.reload();
-            }
-          } catch (error) {
-            setError((error as Error).message);
-          } finally {
-            setLoading(false);
-          }
-    };
-
-    const handleSuccess = () => {
-        setSuccess(null);
-        onClose();
-    }
 
     if (!isOpen) return null;
 
@@ -72,19 +47,10 @@ const PersonCrudModal = ({ isOpen, onClose }: Props) => {
         </BaseModal>
         {step === 'createMember' && (
             <BaseModal title="Crear Miembro" onClose={() => setStep('select')}>
-                <PersonForm onSubmit={handleSave} onCancel={() => setStep('select')} ></PersonForm>
+                <PersonForm onClose={() => setStep('select')} ></PersonForm>
             </BaseModal>
         )}
-        {error && (
-            <ErrorModal onClose={() => setError(null)}>
-            {error}
-            </ErrorModal>
-         )}
-        {success && (
-            <SuccessModal onClose={handleSuccess}>
-                {success}
-            </SuccessModal>
-        )}
+        
         </>
     );
 };

@@ -1,10 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Header } from "@/components/header/header";
 import ClubView from "@/components/club/club-view/club-view";
 import { useUser } from "@/contexts/UserContext";
-import ToolBar from "@/components/toolsbar/toolsbar";
 
 export default function Home() {
   const { club, loading: userLoading, user } = useUser();

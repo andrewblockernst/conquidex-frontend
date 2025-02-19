@@ -107,6 +107,7 @@ export default function ClubTableClient({ clubs }: Props) {
       {/* Modal de confirmación */}
       <ConfirmationModal
         title="Confirmar selección"
+        className="modal-overlay"
         confirmText="Sí"
         cancelText="No"
         isOpen={confirmationModal}
@@ -127,8 +128,9 @@ export default function ClubTableClient({ clubs }: Props) {
       </ConfirmationModal>
 
       {/* Modal de error */}
-      <ErrorModal onClose={() => setErrorModal(null)}>{errorModal}</ErrorModal>
+      <ErrorModal className="modal-overlay" onClose={() => setErrorModal(null)}>{errorModal}</ErrorModal>
       <SuccessModal
+        className="modal-overlay"
         onClose={() => {
           setSuccessModal(null);
           refreshProfile();

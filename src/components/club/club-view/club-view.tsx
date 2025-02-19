@@ -9,11 +9,7 @@ import { PersonList } from "../../person/person-table/person-list";
 import Button from "@/components/buttons/button";
 import Link from "next/link";
 import SearchButton from "@/components/search-input";
-
-const optionsMap = {
-  units: "Unidades",
-  classes: "Tarjetas",
-};
+import { useClubView } from "@/contexts/ClubViewContext";
 
 export default function ClubView() {
   const supabase = createClient();
@@ -25,8 +21,10 @@ export default function ClubView() {
   const [unitsData, setUnitsData] = useState<UnitGroup[]>([]);
   const [classesData, setClassesData] = useState<ClassGroup[]>([]);
   const [loading, setLoading] = useState({ units: true, classes: true });
+  const { shouldRefetch } = useClubView();
 
   useEffect(() => {
+    console.log("ClubView: shouldRefetch", shouldRefetch);
     let isMounted = true;
     const controller = new AbortController();
 
@@ -80,7 +78,7 @@ export default function ClubView() {
       isMounted = false;
       controller.abort();
     };
-  }, [club?.id]);
+  }, [club?.id, shouldRefetch]);
 
   const isLoading =
     userLoading ||

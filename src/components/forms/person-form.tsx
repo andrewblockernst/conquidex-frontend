@@ -2,13 +2,15 @@ import { useUser } from "@/contexts/UserContext";
 import { useEffect, useState } from "react";
 import { createPerson, fetchRoles, fetchUnits, fetchClasses } from '@/lib/actions/person.actions';
 import Spinner1 from "../spinners/spinner-1";
+import ErrorModal from "../modals/error-modal";
+import SuccessModal from "../modals/success-modal";
+import { useClubView } from "@/contexts/ClubViewContext";
 
 interface Props {
-    onSubmit: (data: PersonFormData) => void;
-    onCancel: () => void;
+    onClose: () => void;
   }
 
-export default function PersonForm({onSubmit, onCancel }: Props) {
+export default function PersonForm({ onClose }: Props) {
     const { club_id: clubId } = useUser().activeProfile!;
 
     const [formData, setFormData] = useState<PersonFormData>({
@@ -28,6 +30,31 @@ export default function PersonForm({onSubmit, onCancel }: Props) {
     const [units, setUnits] = useState<Unit[]>([]);
     const [classes, setClasses] = useState<Class[]>([]);
     const [loading, setLoading] = useState(true);
+    const { triggerRefetch: refetchPersons } = useClubView();
+
+    //modales
+    const [error, setError] = useState<string | null>(null);
+    const [success, setSuccess] = useState<string | null>(null);
+
+    const handleSave = async (formData: PersonFormData) => {
+        try {
+            setLoading(true);
+            const success = await createPerson(formData);
+            if (success) {
+                setSuccess('Miembro creado con éxito.');
+            }
+          } catch (error) {
+            setError((error as Error).message);
+          } finally {
+            setLoading(false);
+          }
+    };
+
+    const handleSuccess = () => {
+        setSuccess(null);
+        onClose();
+        refetchPersons();
+    }
   
     useEffect(() => {
       const loadFormData = async () => {
@@ -55,15 +82,6 @@ export default function PersonForm({onSubmit, onCancel }: Props) {
       const { name, value } = e.target;
       setFormData(prev => ({ ...prev, [name]: value }));
     };
-  
-    const handleMultiSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
-      const { name, options } = e.target;
-      const values = Array.from(options)
-        .filter(option => option.selected)
-        .map(option => Number(option.value));
-      
-      setFormData(prev => ({ ...prev, [name]: values }));
-    };
 
     const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
       const { name, value, checked } = e.target;
@@ -78,9 +96,10 @@ export default function PersonForm({onSubmit, onCancel }: Props) {
     if (loading) return <Spinner1 />
   
     return (
+      <>
       <form onSubmit={(e) => {
-        e.preventDefault();
-        onSubmit(formData);
+        e.preventDefault();        
+        handleSave(formData);
       }} className="space-y-4 max-h-96 overflow-y-auto">
         <div className="space-y-2">
           <input
@@ -173,18 +192,30 @@ export default function PersonForm({onSubmit, onCancel }: Props) {
         <div className="flex justify-end space-x-2">
           <button
             type="button"
-            onClick={onCancel}
-            className="px-4 py-2 text-gray-600 border rounded hover:bg-gray-100"
+            onClick={onClose}
+            className="px-4 py-2 text-white bg-red-500 rounded hover:bg-red-600"
           >
             Cancelar
           </button>
           <button
             type="submit"
             className="px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-600"
+            disabled={loading}
           >
-            Guardar
+            {loading ? 'Guardando...' : 'Guardar'}
           </button>
         </div>
       </form>
+      {error && (
+            <ErrorModal onClose={() => setError(null)}>
+            {error}
+            </ErrorModal>
+         )}
+        {success && (
+            <SuccessModal onClose={handleSuccess}>
+                {success}
+            </SuccessModal>
+        )}
+      </>
     );
   }

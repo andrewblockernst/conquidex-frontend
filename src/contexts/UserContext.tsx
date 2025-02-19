@@ -94,7 +94,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
 
       try {
         const { activeProfile: profile, member } = await getProfile(user!);
-        
+        console.log('perfil actualizado', profile);
         if (!mounted) return;
         
         setActiveProfile(profile);
