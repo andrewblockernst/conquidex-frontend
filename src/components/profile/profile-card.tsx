@@ -34,7 +34,7 @@ function ProfileCard({member}: Props) {
     COUNSELOR: 'CONSEJERO',
     STAFF: 'DIRECTIVO',
   };
-  const isGuest = member.role_name === 'guest';
+  const isGuest = member.role_name === 'GUEST';
   const avatar = AVATARS[member.role_id ?? 0] || AVATARS[0];
   const friendlyRoleName = isGuest ? 'Usuario' : (roleNameMap[member.role_name ?? ''] || member.role_name);
   const activeClasses = memberData?.classes?.filter((c) => !c.is_completed);
@@ -44,11 +44,12 @@ function ProfileCard({member}: Props) {
     <div className='w-full flex flex-col items-center'>
         <img
         src={avatar}
-        alt={member.name!}
+        alt={member.name! + ' ' + member.surname!}
         className="w-32 h-32 rounded-full"
         />
-        <h1 className="text-3xl font-bold mt-4">{member.name} {member.nickname ? `"${member.nickname}"` : ""}{" "}
-        {member.surname}</h1>
+        <h1 className="text-3xl font-bold mt-4">
+        {member.name+" "+(member.nickname ? member.nickname : "")+" "+
+        member.surname}</h1>
         <p className="text-gray-600">{friendlyRoleName}</p>
         <div className='w-full flex flex-col items-start'>
           <p className="mt-4 text-gray-800"> <b>Email: </b>{member.email}</p>

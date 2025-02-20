@@ -7,7 +7,7 @@ import ToolsBar from "@/components/toolsbar/toolsbar"
 
 export default function NavigationWrapper({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
-  const noToolsRoute = pathname === '/login' || pathname === '/'
+  const noToolsRoute = pathname === '/login' || pathname === '/';
 
   return (
     <>

@@ -60,4 +60,7 @@ declare global {
         classes: number[]
       }
 
+      type UnitInsert = Database['public']['Tables']['units']['Insert'];
+      type UnitUpdate = Database['public']['Tables']['units']['Update']
+
 }

@@ -762,7 +762,7 @@ export type Database = {
         Insert: {
           club_id: number
           color?: string
-          id: number
+          id?: number
           name: string
         }
         Update: {

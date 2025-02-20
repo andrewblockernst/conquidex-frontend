@@ -3,6 +3,7 @@
 import Link from 'next/link'; // REDIRIGE A /home SIN QUE ESTE SE REFRESQUE
 import { useUser } from "@/contexts/UserContext";
 import { TentIcon, AttendanceIcon, AddIcon, CalendarIcon, InfoClubIcon, ProfileIcon } from '../icons';
+import AddButton from './addButton';
 
 const MobileNavbar = () => {
   const { activeProfile } = useUser();
@@ -28,12 +29,7 @@ const MobileNavbar = () => {
             <AttendanceIcon className="w-8 h-8 text-black" />
           </button>
 
-          <button
-            id="add-button"
-            className="outline-none border-0 w-16 h-16 rounded-t-full bg-transparent flex items-center justify-center text-black transition-all duration-300 ease-in-out cursor-pointer hover:-translate-y-[3px]"
-          >
-            <AddIcon className="w-8 h-8 text-black" />
-          </button>
+          <AddButton/>
         </>
       )}
 

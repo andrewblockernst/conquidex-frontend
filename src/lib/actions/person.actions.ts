@@ -1,7 +1,7 @@
 'use server'
 
+import { triggerClubViewRefresh } from "@/utils/events/events";
 import { createClient } from "@/utils/supabase/server";
-import { revalidatePath } from "next/cache";
 
 export async function createPerson(personData: PersonFormData): Promise<boolean> {
   const supabase = await createClient();
@@ -16,10 +16,7 @@ export async function createPerson(personData: PersonFormData): Promise<boolean>
   if (error) {
     throw new Error(error.message);
   }
-
-  // Revalidar las rutas que muestran personas
-  revalidatePath('/home');
-
+  
   return true;
 }
 

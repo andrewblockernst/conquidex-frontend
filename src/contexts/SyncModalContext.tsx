@@ -38,7 +38,12 @@ export const SyncModalProvider = ({ children }: { children: React.ReactNode; }) 
 
     return (
         <SyncModalContext.Provider value={{ showSyncModal, openSyncModal, closeSyncModal, syncRedirect, loading }}>
-            {children}
+        {loading && (
+            <div className="flex justify-center items-center h-screen">
+            <img src="/logo.png" alt="conquidex" className="w-32" />
+            </div>
+        )}
+        {!loading && children}
         </SyncModalContext.Provider>
     );
 };

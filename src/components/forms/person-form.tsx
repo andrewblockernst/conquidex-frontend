@@ -4,10 +4,10 @@ import { createPerson, fetchRoles, fetchUnits, fetchClasses } from '@/lib/action
 import Spinner1 from "../spinners/spinner-1";
 import ErrorModal from "../modals/error-modal";
 import SuccessModal from "../modals/success-modal";
-import { useClubView } from "@/contexts/ClubViewContext";
+import { triggerClubViewRefresh } from "@/utils/events/events";
 
 interface Props {
-    onClose: () => void;
+    onClose?: () => void;
   }
 
 export default function PersonForm({ onClose }: Props) {
@@ -30,7 +30,6 @@ export default function PersonForm({ onClose }: Props) {
     const [units, setUnits] = useState<Unit[]>([]);
     const [classes, setClasses] = useState<Class[]>([]);
     const [loading, setLoading] = useState(true);
-    const { triggerRefetch: refetchPersons } = useClubView();
 
     //modales
     const [error, setError] = useState<string | null>(null);
@@ -52,8 +51,8 @@ export default function PersonForm({ onClose }: Props) {
 
     const handleSuccess = () => {
         setSuccess(null);
-        onClose();
-        refetchPersons();
+        triggerClubViewRefresh();
+        onClose!();
     }
   
     useEffect(() => {
@@ -100,7 +99,7 @@ export default function PersonForm({ onClose }: Props) {
       <form onSubmit={(e) => {
         e.preventDefault();        
         handleSave(formData);
-      }} className="space-y-4 max-h-96 overflow-y-auto">
+      }} className="space-y-4">
         <div className="space-y-2">
           <input
             type="text"
@@ -157,7 +156,7 @@ export default function PersonForm({ onClose }: Props) {
             <div>
               <label className="block font-medium">Unidades</label>
               {units.map(unit => (
-                <div key={unit.id} className="flex items-center" style={{ backgroundColor: `#${unit.color}` }}>
+                <div key={unit.id} className="flex items-center" style={{ backgroundColor: unit.color }}>
                   <input
                     type="checkbox"
                     name="units"
@@ -173,7 +172,7 @@ export default function PersonForm({ onClose }: Props) {
             <div>
               <label className="block font-medium">Clases</label>
               {classes.map(class_ => (
-                <div key={class_.id} className="flex items-center" style={{ backgroundColor: `#${class_.color}` }}>
+                <div key={class_.id} className="flex items-center" style={{ backgroundColor: class_.color }}>
                   <input
                     type="checkbox"
                     name="classes"
@@ -190,13 +189,14 @@ export default function PersonForm({ onClose }: Props) {
         </div>
   
         <div className="flex justify-end space-x-2">
+          {onClose &&
           <button
             type="button"
             onClick={onClose}
             className="px-4 py-2 text-white bg-red-500 rounded hover:bg-red-600"
           >
             Cancelar
-          </button>
+          </button>}
           <button
             type="submit"
             className="px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-600"

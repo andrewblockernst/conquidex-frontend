@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { createClient } from "@/utils/supabase/client";
 import { useUser } from "@/contexts/UserContext";
 import { useSyncModal } from "@/contexts/SyncModalContext";
@@ -9,7 +9,7 @@ import { PersonList } from "../../person/person-table/person-list";
 import Button from "@/components/buttons/button";
 import Link from "next/link";
 import SearchButton from "@/components/search-input";
-import { useClubView } from "@/contexts/ClubViewContext";
+import { CLUB_VIEW_REFRESH_EVENT } from "@/utils/events/events";
 
 export default function ClubView() {
   const supabase = createClient();
@@ -21,14 +21,18 @@ export default function ClubView() {
   const [unitsData, setUnitsData] = useState<UnitGroup[]>([]);
   const [classesData, setClassesData] = useState<ClassGroup[]>([]);
   const [loading, setLoading] = useState({ units: true, classes: true });
-  const { shouldRefetch } = useClubView();
 
   useEffect(() => {
-    console.log("ClubView: shouldRefetch", shouldRefetch);
+    console.log("ClubView mounted");
+    return () => console.log("ClubView unmounted");
+  }, []);
+
+  useEffect(() => {
     let isMounted = true;
     const controller = new AbortController();
 
     const fetchAllData = async () => {
+      console.log("ClubView effect running with club_id:", club?.id);
       try {
         if (!club?.id) return;
         setLoading({ units: true, classes: true });
@@ -74,11 +78,16 @@ export default function ClubView() {
 
     fetchAllData();
 
+    const handleRefresh = () => {
+      fetchAllData();
+    };
+    window.addEventListener(CLUB_VIEW_REFRESH_EVENT, handleRefresh);
     return () => {
+      window.removeEventListener(CLUB_VIEW_REFRESH_EVENT, handleRefresh);
       isMounted = false;
       controller.abort();
     };
-  }, [club?.id, shouldRefetch]);
+  }, [club?.id]);
 
   const isLoading =
     userLoading ||

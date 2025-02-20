@@ -4,7 +4,7 @@ import { SyncModalProvider } from "@/contexts/SyncModalContext"
 import "./globals.css"
 import { UserProvider } from "@/contexts/UserContext"
 import  NavigationWrapper from "@/components/wrappers/navigation-wrapper"
-import { ClubViewProvider } from "@/contexts/ClubViewContext"
+import { StrictMode } from "react"
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -28,11 +28,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <div className="min-h-screen flex flex-col">
           <UserProvider>
             <SyncModalProvider>
-              <ClubViewProvider>
                 <NavigationWrapper> {/* header, navbar, toolsbar */}
                   {children}
                 </NavigationWrapper>
-              </ClubViewProvider>
             </SyncModalProvider>
           </UserProvider>
         </div>

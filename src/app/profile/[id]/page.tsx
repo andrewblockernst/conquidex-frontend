@@ -32,14 +32,27 @@ export default async function MemberPage({
   const parsedParams = await params;
   const memberId = parsedParams.id;
 
-  const { data: member } = await supabase
+  let { data: member } = await supabase
     .from("members")
     .select("*")
     .eq("id", memberId)
     .single();
 
-  if (!member) return <div>Miembro no encontrado</div>;
-
+  if (!member){
+    member = {
+      auth_user_uuid: null,
+      club_id: null,
+      club_name: null,
+      email: null,
+      id: null,
+      last_enrollment: null,
+      name: "Perfil no encontrado",
+      nickname: null,
+      role_id: null,
+      role_name: null,
+      surname: "",
+    };
+  } 
   return (
     <div className="w-full relative flex items-center justify-center min-h-screen max-w-2xl mx-auto">
       <div className="absolute left-4 top-4 z-10">
@@ -54,4 +67,5 @@ export default async function MemberPage({
       </div>
     </div>
   );
+  
 }
