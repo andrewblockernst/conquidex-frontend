@@ -39,11 +39,12 @@ export const PersonList = ({ group, groupBy }: PersonListProps) => {
             : (g as ClassGroup).class_name;
 
         const isExpanded = expanded[uniqueKey];
+        console.log(`Group: ${name}, Persons:`, g.persons); // Log para debuggear
         return (
           <div
             key={uniqueKey}
             className="my-2 rounded-lg shadow-[4px_4px_0_0_#323232] p-2 border-2 border-slate-800"
-            style={{ backgroundColor: `#${g.color}` }}
+            style={{ backgroundColor: g.color }}
           >
             <div className="flex justify-between items-center">
               <h2 className="text-xl font-bold">{name}</h2>
@@ -58,14 +59,22 @@ export const PersonList = ({ group, groupBy }: PersonListProps) => {
             </div>
             {isExpanded && (
               <div className="space-y-2">
-                {g.persons.map((person) => (
-                  <Link
-                    href={`/profile/${person.id}`}
-                    key={`${uniqueKey}-person-${person.id}`}
-                  >
-                    <PersonCard person={person} />
-                  </Link>
-                ))}
+                {g.persons && g.persons.length > 0 ? (
+                  g.persons.map((person) => (
+                    <Link
+                      href={`/profile/${person.id}`}
+                      key={`${uniqueKey}-person-${person.id}`}
+                    >
+                      <PersonCard person={person} />
+                    </Link>
+                  ))
+                ) : (
+                  <div className="flex items-center justify-center bg-gray-200 my-2 p-4 rounded-lg shadow-[4px_4px_0_0_#323232] border-2 border-slate-800">
+                    <h2 className="text-sm">
+                      {groupBy === "units" ? "¡Ey! Todavía no hay conquis en esta unidad 😔" : "No hay personas en esta clase 😔"}
+                    </h2>
+                  </div>
+                )}
               </div>
             )}
           </div>

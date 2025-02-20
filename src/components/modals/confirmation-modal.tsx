@@ -3,6 +3,7 @@ import { X } from 'lucide-react';
 interface ConfirmationModalProps {
   title: string;
   children: React.ReactNode;
+  className?: string;
   confirmText: string;
   cancelText?: string;
   isOpen: boolean;
@@ -10,11 +11,11 @@ interface ConfirmationModalProps {
   onConfirm: () => void;
 }
 
-const ConfirmationModal: React.FC<ConfirmationModalProps> = ({ title, children, confirmText, cancelText, isOpen, onClose, onConfirm }) => {
+const ConfirmationModal: React.FC<ConfirmationModalProps> = ({ title, children, className, confirmText, cancelText, isOpen, onClose, onConfirm }) => {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 modal-overlay" style={{ marginTop: 0, marginBottom: 0}}>
+    <div className={`fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 ${className}`} style={{ marginTop: 0, marginBottom: 0}}>
       <div className="bg-white rounded-lg shadow-lg w-96 relative">
               {/* Header */}
         <div className="bg-yellow-600 p-4 rounded-t-lg flex items-center justify-between">

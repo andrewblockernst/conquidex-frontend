@@ -54,6 +54,13 @@ export type Database = {
             foreignKeyName: "attendance_person_id_fkey"
             columns: ["person_id"]
             isOneToOne: false
+            referencedRelation: "member_data"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "attendance_person_id_fkey"
+            columns: ["person_id"]
+            isOneToOne: false
             referencedRelation: "members"
             referencedColumns: ["id"]
           },
@@ -91,6 +98,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "member_club_role_unit"
             referencedColumns: ["person_id"]
+          },
+          {
+            foreignKeyName: "attendance_taken_by_fkey"
+            columns: ["taken_by"]
+            isOneToOne: false
+            referencedRelation: "member_data"
+            referencedColumns: ["id"]
           },
           {
             foreignKeyName: "attendance_taken_by_fkey"
@@ -338,16 +352,19 @@ export type Database = {
       person_class_items: {
         Row: {
           class_id: number
+          completion_date: string | null
           item_id: number
           person_id: number
         }
         Insert: {
           class_id: number
+          completion_date?: string | null
           item_id: number
           person_id: number
         }
         Update: {
           class_id?: number
+          completion_date?: string | null
           item_id?: number
           person_id?: number
         }
@@ -372,6 +389,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "member_club_role_unit"
             referencedColumns: ["person_id"]
+          },
+          {
+            foreignKeyName: "person_class_items_person_id_fkey"
+            columns: ["person_id"]
+            isOneToOne: false
+            referencedRelation: "member_data"
+            referencedColumns: ["id"]
           },
           {
             foreignKeyName: "person_class_items_person_id_fkey"
@@ -406,14 +430,20 @@ export type Database = {
       person_classes: {
         Row: {
           class_id: number
+          completion_date: string | null
+          is_completed: boolean | null
           person_id: number
         }
         Insert: {
           class_id: number
+          completion_date?: string | null
+          is_completed?: boolean | null
           person_id: number
         }
         Update: {
           class_id?: number
+          completion_date?: string | null
+          is_completed?: boolean | null
           person_id?: number
         }
         Relationships: [
@@ -437,6 +467,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "member_club_role_unit"
             referencedColumns: ["person_id"]
+          },
+          {
+            foreignKeyName: "person_classes_person_id_fkey"
+            columns: ["person_id"]
+            isOneToOne: false
+            referencedRelation: "member_data"
+            referencedColumns: ["id"]
           },
           {
             foreignKeyName: "person_classes_person_id_fkey"
@@ -470,16 +507,19 @@ export type Database = {
       }
       person_honors: {
         Row: {
+          completion_date: string | null
           honor_category_id: string
           honor_id: number
           person_id: number
         }
         Insert: {
+          completion_date?: string | null
           honor_category_id: string
           honor_id: number
           person_id: number
         }
         Update: {
+          completion_date?: string | null
           honor_category_id?: string
           honor_id?: number
           person_id?: number
@@ -505,6 +545,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "member_club_role_unit"
             referencedColumns: ["person_id"]
+          },
+          {
+            foreignKeyName: "person_honor_person_id_fkey"
+            columns: ["person_id"]
+            isOneToOne: false
+            referencedRelation: "member_data"
+            referencedColumns: ["id"]
           },
           {
             foreignKeyName: "person_honor_person_id_fkey"
@@ -582,6 +629,13 @@ export type Database = {
             foreignKeyName: "persons_role_id_fkey"
             columns: ["role_id"]
             isOneToOne: false
+            referencedRelation: "available_roles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "persons_role_id_fkey"
+            columns: ["role_id"]
+            isOneToOne: false
             referencedRelation: "roles"
             referencedColumns: ["id"]
           },
@@ -617,6 +671,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "member_club_role_unit"
             referencedColumns: ["person_id"]
+          },
+          {
+            foreignKeyName: "fk_persons_units_person"
+            columns: ["person_id"]
+            isOneToOne: false
+            referencedRelation: "member_data"
+            referencedColumns: ["id"]
           },
           {
             foreignKeyName: "fk_persons_units_person"
@@ -701,7 +762,7 @@ export type Database = {
         Insert: {
           club_id: number
           color?: string
-          id: number
+          id?: number
           name: string
         }
         Update: {
@@ -722,6 +783,24 @@ export type Database = {
       }
     }
     Views: {
+      available_roles: {
+        Row: {
+          hierarchy: number | null
+          id: number | null
+          name: string | null
+        }
+        Insert: {
+          hierarchy?: number | null
+          id?: number | null
+          name?: string | null
+        }
+        Update: {
+          hierarchy?: number | null
+          id?: number | null
+          name?: string | null
+        }
+        Relationships: []
+      }
       guests: {
         Row: {
           auth_user_uuid: string | null
@@ -768,6 +847,13 @@ export type Database = {
             foreignKeyName: "persons_role_id_fkey"
             columns: ["role_id"]
             isOneToOne: false
+            referencedRelation: "available_roles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "persons_role_id_fkey"
+            columns: ["role_id"]
+            isOneToOne: false
             referencedRelation: "roles"
             referencedColumns: ["id"]
           },
@@ -792,6 +878,15 @@ export type Database = {
           },
         ]
       }
+      member_data: {
+        Row: {
+          classes: Json | null
+          honors: Json | null
+          id: number | null
+          units: Json | null
+        }
+        Relationships: []
+      }
       members: {
         Row: {
           auth_user_uuid: string | null
@@ -812,6 +907,13 @@ export type Database = {
             columns: ["club_id"]
             isOneToOne: false
             referencedRelation: "clubs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "persons_role_id_fkey"
+            columns: ["role_id"]
+            isOneToOne: false
+            referencedRelation: "available_roles"
             referencedColumns: ["id"]
           },
           {
@@ -864,6 +966,14 @@ export type Database = {
           unit_id: number
         }
         Returns: boolean
+      }
+      create_person: {
+        Args: {
+          person_data: Json
+          unit_ids: number[]
+          class_ids: number[]
+        }
+        Returns: undefined
       }
       get_current_user: {
         Args: Record<PropertyKey, never>

@@ -94,7 +94,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
 
       try {
         const { activeProfile: profile, member } = await getProfile(user!);
-        
+        console.log('perfil actualizado', profile);
         if (!mounted) return;
         
         setActiveProfile(profile);
@@ -170,7 +170,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     <UserContext.Provider value={value}>
       {loading && (
         <div className="flex justify-center items-center h-screen">
-          <img src="logo.png" alt="conquidex" className="w-32" />
+          <img src="/logo.png" alt="conquidex" className="w-32" />
         </div>
       )}
       {!loading && children}

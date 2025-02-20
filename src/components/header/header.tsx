@@ -23,19 +23,19 @@ export const Header = () => {
               <img
                 src="/logo-blanco.png"
                 alt="Conquidex"
-                className="h-10 w-auto lg:block hidden"
+                className="h-10 w-auto md:block hidden"
               />
 
               {/* LOGO PARA EL MOBILE DESIGN */}
               <img
-                src="/logo-blanco.png"
+                src="\panuelo-solo.png"
                 alt="Conquidex"
-                className="h-10 w-auto lg:hidden block"
+                className="h-10 w-auto md:hidden block"
               />
             </Link>
 
             {/* Desktop Menu */}
-            <div className="hidden lg:flex space-x-2">
+            <div className="hidden sm:flex space-x-2">
               {user && (
                 <>
                   <SyncButton />
@@ -45,17 +45,14 @@ export const Header = () => {
             </div>
 
             {/* Mobile Menu */}
-            <div className="flex lg:hidden items-center space-x-2">
+            <div className="flex sm:hidden items-center space-x-2">
               {user && <SyncButton />}
             </div>
           </div>
         </div>
       </header>
 
-      {/* Contenedor con padding-top para evitar que el contenido quede oculto debajo del header */}
-      <div className="pt-16">
-        <SyncProfileModal />
-      </div>
+      <SyncProfileModal />
     </>
   );
 };

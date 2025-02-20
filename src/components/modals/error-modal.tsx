@@ -2,14 +2,15 @@ import { X, AlertCircle } from 'lucide-react';
 
 interface ErrorModalProps {
     children: React.ReactNode;
+    className?: string;
     onClose: () => void;
   }
   
-  const ErrorModal: React.FC<ErrorModalProps> = ({children, onClose}) => {
+  const ErrorModal: React.FC<ErrorModalProps> = ({children, className, onClose}) => {
     if (!children) return null;
   
     return (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 modal-overlay" style={{ marginTop: 0, marginBottom: 0}}>
+        <div className={`fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 ${className}`} style={{ marginTop: 0, marginBottom: 0}}>
           <div className="bg-white rounded-lg shadow-lg w-96 relative">
             {/* Header with red background */}
             <div className="bg-red-600 p-4 rounded-t-lg flex items-center justify-between">
