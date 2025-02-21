@@ -29,10 +29,10 @@ const ProfileButton = () => {
         <div className="absolute z-10 w-44 p-4 mt-2 right-0 bg-yellow-500 border-2 border-yellow-800 rounded-lg shadow-[4px_4px_0_0_#323232] space-y-2">
           <div className="flex flex-col mt-2 mb-2 space-y-2">
             <Link href={`/profile/${activeProfile?.id}`}>
-              <Button className="w-full">Mi Perfil</Button>
+              <Button buttonStyle="w-full">Mi Perfil</Button>
             </Link>
             <Button>Mi Club</Button>
-            <Button className="flex items-center justify-center">
+            <Button buttonStyle="flex items-center justify-center">
               <span>Soporte</span>
             </Button>
             <AuthButton />

@@ -232,7 +232,7 @@ export const ProfileIcon = ({ className }: { className: string }) => (
 );
 
 //ICONOS EN BLANCO
-export const SettingsIconWhite = ({ className }: { className: string }) => (
+export const SettingsIconWhite = ({ className }: { className?: string }) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     width="24"

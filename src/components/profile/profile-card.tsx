@@ -4,6 +4,8 @@ import AVATARS from '@/constants/avatars';
 import { useEffect, useState } from 'react'
 import { getMemberData } from './actions';
 import ClassCard from '../cards/class-card';
+import SettingsButton from './settings-button';
+import Spinner1 from '../spinners/spinner-1';
 
 interface Props{
     member: Member;
@@ -41,12 +43,17 @@ function ProfileCard({member}: Props) {
   
   return (
    <div className="w-full max-w-xl h-screen flex justify-center mx-auto p-4 border-2 border-gray-200 shadow-lg">
-    <div className='w-full flex flex-col items-center'>
+    <div className='w-full flex flex-col items-center relative'>
         <img
         src={avatar}
         alt={member.name! + ' ' + member.surname!}
         className="w-32 h-32 rounded-full"
         />
+
+          <div className='absolute right-0 top-0'>
+            <SettingsButton memberId={member.id}></SettingsButton>
+          </div>
+
         <h1 className="text-3xl font-bold mt-4">
         {member.name+" "+(member.nickname ? member.nickname : "")+" "+
         member.surname}</h1>
@@ -54,6 +61,9 @@ function ProfileCard({member}: Props) {
         <div className='w-full flex flex-col items-start'>
           <p className="mt-4 text-gray-800"> <b>Email: </b>{member.email}</p>
           <p className="mt-4 text-gray-800"><b>Club: </b>{member.club_name}</p>
+          {/*INFO ADICIONAL FETCHEADA POR CLIENTE*/}
+          {loading ? <div className='flex items-center justify-center w-full pt-6'><Spinner1 /></div> :
+          <>
             <p className="mt-4 text-gray-800"><b>Clase actual: </b></p>
             <div className="w-full space-y-2">
               {activeClasses ? activeClasses.map((c) =>
@@ -63,9 +73,11 @@ function ProfileCard({member}: Props) {
                   <h2 className="text-lg font-semibold">
                       Sin clases activas
                   </h2>
-              </div>
-            }
+              </div>}
             </div>
+          </>
+          }
+            
         </div>
     </div>
   </div>

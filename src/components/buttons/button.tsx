@@ -14,7 +14,7 @@ function Button({ buttonStyle, transitionColor, contentStyle, children, onClick 
   return (
     <button
       type="button"
-      className={`flex justify-center items-center gap-2 p-2 w-35 h-10 rounded-lg border-2 border-yellow-800 bg-yellow-500 shadow-[4px_4px_0_0_#323232] font-semibold text-base cursor-pointer transition-all duration-250 relative overflow-hidden z-10 group hover:text-gray-100 ${buttonStyle}`}
+      className={`w-full flex justify-center items-center gap-2 p-2 w-35 h-10 rounded-lg border-2 border-yellow-800 bg-yellow-500 shadow-[4px_4px_0_0_#323232] font-semibold text-base cursor-pointer transition-all duration-250 relative overflow-hidden z-10 group hover:text-gray-100 ${buttonStyle}`}
       onClick={onClick}
     >
       {/*BARRIDO DEL FONDO*/}

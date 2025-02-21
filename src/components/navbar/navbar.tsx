@@ -32,13 +32,14 @@ const MobileNavbar = () => {
           <AddButton/>
         </>
       )}
-
-      <button
-        id="calendar-button"
-        className="outline-none border-0 w-16 h-16 rounded-t-full bg-transparent flex items-center justify-center text-black transition-all duration-300 ease-in-out cursor-pointer hover:-translate-y-[3px]"
-      >
-        <CalendarIcon className="w-8 h-8 text-black" />
-      </button>
+      <Link href="/calendar">
+        <button
+          id="calendar-button"
+          className="outline-none border-0 w-16 h-16 rounded-t-full bg-transparent flex items-center justify-center text-black transition-all duration-300 ease-in-out cursor-pointer hover:-translate-y-[3px]"
+        >
+          <CalendarIcon className="w-8 h-8 text-black" />
+        </button>
+      </Link>
 
       {(activeProfile?.role_id === 0 || activeProfile?.role_id === 1) && (
         <button
