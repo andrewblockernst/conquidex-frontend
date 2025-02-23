@@ -26,7 +26,7 @@ function SettingsButton({memberId}: Props) {
             {(memberId === activeProfile?.id || activeProfile?.role_id! >= 2) &&
                 <Button>Editar perfil</Button>
             }
-            <Button buttonStyle="flex items-center justify-center">
+            <Button>
               <span>Soporte</span>
             </Button>
             {memberId === activeProfile?.id &&

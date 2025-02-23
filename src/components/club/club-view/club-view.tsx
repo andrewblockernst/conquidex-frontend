@@ -135,7 +135,7 @@ export default function ClubView() {
             ¡Ups! Parece que todavía no formás parte de ningún club :(
           </h1>
           <Link href="/club/select">
-            <Button buttonStyle="px-8">Buscar club</Button>
+            <Button>Buscar club</Button>
           </Link>
         </main>
       </div>
