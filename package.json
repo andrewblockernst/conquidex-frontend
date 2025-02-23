@@ -10,6 +10,7 @@
     "update-types": "npx supabase gen types --lang=typescript --project-id xjfzbpkxaegapftdfcmd > src/types/database.types.ts"
   },
   "dependencies": {
+    "@github/relative-time-element": "^4.4.5",
     "@lordicon/element": "^1.10.1",
     "@supabase/ssr": "^0.5.2",
     "@supabase/supabase-js": "^2.47.6",

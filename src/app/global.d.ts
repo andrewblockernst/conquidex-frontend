@@ -13,6 +13,7 @@ declare global {
     type Class = Tables<'classes'>
     type ClassItem = Tables<'class_items'>
     type Role = Tables<'roles'>
+    type ClubEvent = Tables<'events'>
     interface UnitGroup{
         unit_id: number;
         club_id: number
@@ -61,6 +62,9 @@ declare global {
       }
 
       type UnitInsert = Database['public']['Tables']['units']['Insert'];
-      type UnitUpdate = Database['public']['Tables']['units']['Update']
+      type UnitUpdate = Database['public']['Tables']['units']['Update'];
+
+      type EventInsert = Database['public']['Tables']['events']['Insert'];
+      type EventUpdate = Database['public']['Tables']['events']['Update'];
 
 }
