@@ -47,6 +47,9 @@ const AddButton: React.FC = () => {
               <Link href="/member/add">
                 <Button variant="primary" onClick={toggleDropdown}>CREAR MIEMBRO</Button>
               </Link>
+              <Link href={`/calendar?new=y#event-form`} onClick={toggleDropdown}>
+                  <Button variant="secondary" >CREAR EVENTO</Button>
+              </Link>
             </div>
           </div>
         )}
