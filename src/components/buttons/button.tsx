@@ -38,7 +38,7 @@ function Button({ variant="warning", className, contentStyle, children, disabled
 export default Button;
 
 const buttonVariants = {
-  base: "w-full flex justify-center items-center gap-2 p-2 h-10 rounded-lg border-2 font-semibold text-base cursor-pointer transition-all duration-250 relative overflow-hidden group",
+  base: "w-full flex justify-center items-center text-white gap-2 p-2 h-10 rounded-lg border-2 font-semibold text-base cursor-pointer transition-all duration-250 relative overflow-hidden group",
   
   variants: {
     primary: {

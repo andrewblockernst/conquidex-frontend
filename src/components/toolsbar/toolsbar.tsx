@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useState } from "react";
 import { useUser } from "@/contexts/UserContext";
-import PersonCrudModal from "@/components/modals/CRUD/person-CRUD-modal";
+import PersonCrudModal from "@/components/modals/menu/menu-modal";
 import Button from "../buttons/button";
 import { TentIconWhite, AttendanceIconWhite, AddIconWhite, CalendarIconWhite, InfoClubIconWhite, ProfileIconWhite } from '../icons';
 

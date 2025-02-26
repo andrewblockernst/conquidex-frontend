@@ -1,10 +1,11 @@
 'use client';
 
+import { useEvents } from '@/contexts/EventContext';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 
 // Constants for days of the week and month names
-const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+const daysOfWeek = ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'];
+const monthNames = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
 
 // Array of pale background colors for each month
 const monthColors = [
@@ -35,6 +36,9 @@ export const ContinuousCalendar: React.FC<ContinuousCalendarProps> = ({ onClick 
   const [year, setYear] = useState<number>(today.getFullYear());
   const [selectedMonth, setSelectedMonth] = useState<number>(today.getMonth());
   const monthOptions = monthNames.map((month, index) => ({ name: month, value: `${index}` }));
+
+  //events
+  const { getEventsByDate, loading } = useEvents();
 
   // Function to scroll to a specific day
   const scrollToDay = (monthIndex: number, dayIndex: number) => {
@@ -149,6 +153,7 @@ export const ContinuousCalendar: React.FC<ContinuousCalendarProps> = ({ onClick 
           const isNewMonth = index === 0 || calendarDays[index - 1].month !== month;
           const isToday = today.getMonth() === month && today.getDate() === day && today.getFullYear() === year;
           const bgColor = month >= 0 ? monthColors[month] : 'bg-slate-100';
+          const events = getEventsByDate(year, month, day);
 
           return (
             <div
@@ -170,6 +175,17 @@ export const ContinuousCalendar: React.FC<ContinuousCalendarProps> = ({ onClick 
               >
                 {day}
               </span>
+              {events && (
+                <div className="absolute w-full h-full flex flex-col items-center justify-center text-center">
+                  {events.map((event) => (
+                    <div key={event.id} className="w-full flex items-center">
+                      <span className="w-full max-h-6 p-1 rounded-full text-xs overflow-hidden text-ellipsis whitespace-nowrap text-black"
+                      style={{ backgroundColor: event.color! }}
+                      >{event.name}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
               {isNewMonth && (
                 <span className="absolute bottom-0.5 left-0 w-full truncate px-1.5 text-sm font-semibold text-slate-300 sm:bottom-0 sm:text-lg">
                   {monthNames[month >= 0 ? month : 11]}
@@ -180,7 +196,7 @@ export const ContinuousCalendar: React.FC<ContinuousCalendarProps> = ({ onClick 
         })}
       </div>
     ));
-  }, [year]);
+  }, [year, loading]);
 
   // IntersectionObserver to detect visible month
   useEffect(() => {

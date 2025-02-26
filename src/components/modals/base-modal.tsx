@@ -1,17 +1,19 @@
+import { cn } from '@/lib/utils';
 import { X, Info } from 'lucide-react';
 
 interface BaseModalProps {
     title: string;
     children: React.ReactNode;
+    className?: string;
     onClose: () => void;
 }
 
-const BaseModal: React.FC<BaseModalProps> = ({title, children, onClose}) => {
+const BaseModal: React.FC<BaseModalProps> = ({title, children, className, onClose}) => {
   if (!children) return null;
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 modal-overlay" style={{ marginTop: 0, marginBottom: 0}}>
-      <div className="bg-white rounded-lg shadow-lg w-96 relative">
+      <div className={cn("bg-white rounded-lg shadow-lg w-96 relative", className)}>
         {/* Header with blue background */}
         <div className="bg-blue-600 p-4 rounded-t-lg flex items-center justify-between">
           <div className="flex items-center space-x-2">

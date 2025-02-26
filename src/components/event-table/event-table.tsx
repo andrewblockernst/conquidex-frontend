@@ -4,13 +4,20 @@ import React from 'react'
 import Button from '../buttons/button'
 import { useUser } from '@/contexts/UserContext';
 import EventCard from '../event-card/event-card';
-import { useEvent } from '@/contexts/EventContext';
+import { useEvents } from '@/contexts/EventContext';
+import { useSearchParams } from 'next/navigation';
 
 function EventTable() {
   const { club } = useUser();
-  const { events } = useEvent();
+  const { events } = useEvents();
+
+  const searchParams = useSearchParams()
+  const newEvent = searchParams.get("new");
+  const editEventId: number = Number(searchParams.get("edit"));
 
   return (
+    
+
     <div className='w-full h-full flex flex-col px-4'>
       <div className='event-header flex items-center justify-around border-2 border-gray-200 p-4'>
         <h1 className='text-xl'>Eventos de {club?.name}</h1>

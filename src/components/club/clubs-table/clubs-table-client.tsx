@@ -54,7 +54,7 @@ export default function ClubTableClient({ clubs }: Props) {
   };
 
   return (
-    <div className=" lg:w-2/3 flex flex-col items-center space-y-4 p-4">
+    <div className="w-full max-w-2xl flex flex-col items-center space-y-4 p-4">
       {/* Campo de búsqueda */}
       <input
         type="text"

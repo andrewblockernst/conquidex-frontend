@@ -4,6 +4,7 @@ import { useState } from "react";
 import { AddIcon } from "../icons";
 import Link from "next/link";
 import { X } from "lucide-react";
+import Button from "../buttons/button";
   
 const AddButton: React.FC = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -41,22 +42,10 @@ const AddButton: React.FC = () => {
             </div>
             <div className="flex flex-col mt-2 mb-2 space-y-4">
               <Link href="/unit/add">
-                <button
-                  onClick={toggleDropdown}
-                  type="button"
-                  className="flex justify-center items-center p-4 w-full h-7 rounded-lg border-2 border-green-800 bg-green-500 shadow-[4px_4px_0_0_#323232] cursor-pointer transition-all duration-250 relative overflow-hidden group hover:bg-green-600 font-semibold"
-                >
-                  Crear unidad
-                </button>
+                <Button variant="success" onClick={toggleDropdown}>CREAR UNIDAD</Button>
               </Link>
               <Link href="/member/add">
-                <button
-                  onClick={toggleDropdown}
-                  type="button"
-                  className="flex justify-center items-center p-4 w-full h-7 rounded-lg border-2 border-blue-800 bg-blue-500 shadow-[4px_4px_0_0_#323232] cursor-pointer transition-all duration-250 relative overflow-hidden group hover:bg-blue-600 font-semibold"
-                >
-                  Crear miembro
-                </button>
+                <Button variant="primary" onClick={toggleDropdown}>CREAR MIEMBRO</Button>
               </Link>
             </div>
           </div>

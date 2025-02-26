@@ -3,20 +3,29 @@ import { useEffect, useState } from "react";
 import Spinner1 from "../spinners/spinner-1";
 import ErrorModal from "../modals/error-modal";
 import SuccessModal from "../modals/success-modal";
-import { createUnit } from "@/lib/actions/units.actions";
 import { triggerClubViewRefresh } from "@/utils/events/events";
+import { useEvents } from "@/contexts/EventContext";
+import { createEvent } from "@/lib/actions/event.actions";
 
 interface Props {
     onClose?: () => void;
   }
 
-export default function UnitForm({ onClose }: Props) {
+export default function EventForm({ onClose }: Props) {
     const { club_id: clubId } = useUser().activeProfile!;
+    const { refreshNewEvent } = useEvents();
 
-    const [formData, setFormData] = useState<UnitInsert>({
-      club_id: clubId!,
-      name: '',
-      color: '#FFFFFF',
+    const today = new Date().toISOString();
+    const [formData, setFormData] = useState<EventInsert>({
+        city: null,
+        club_id: clubId!,
+        color: '#FFFFFF',
+        date: today,
+        description: '',
+        name: '',
+        state: null,
+        street: null,
+        street_number: null,
     });
     const [loading, setLoading] = useState(false);
 
@@ -24,12 +33,13 @@ export default function UnitForm({ onClose }: Props) {
     const [error, setError] = useState<string | null>(null);
     const [success, setSuccess] = useState<string | null>(null);
 
-    const handleSave = async (formData: UnitInsert) => {
+    const handleSave = async (formData: EventInsert) => {
         try {
             setLoading(true);
-            const success = await createUnit(formData);
-            if (success) {
-                setSuccess('Unidad creada con éxito.');
+            const createdEvent = await createEvent(formData);
+            if (createdEvent) {
+              refreshNewEvent(createdEvent);
+              setSuccess('Evento creado correctamente');
             }
           } catch (error) {
             setError((error as Error).message);

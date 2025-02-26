@@ -3,6 +3,7 @@ import { useState } from 'react';
 import BaseModal from '../base-modal';
 import Spinner1 from '@/components/spinners/spinner-1';
 import UnitForm from '@/components/forms/unit-form';
+import Button from '@/components/buttons/button';
 
 interface Props{
     isOpen: boolean;
@@ -10,7 +11,7 @@ interface Props{
 }
 
 const PersonCrudModal = ({ isOpen, onClose }: Props) => {
-    const [step, setStep] = useState('select'); // 'select', 'createMember', 'createUnit'
+    const [step, setStep] = useState('select'); // 'select', 'createMember', 'createUnit', 'createEvent'
     const [loading, setLoading] = useState(false);
 
 
@@ -24,18 +25,9 @@ const PersonCrudModal = ({ isOpen, onClose }: Props) => {
                     <h2 className="text-xl font-bold mb-4">¿Qué deseas crear?</h2>
                     <i className="text-gray-700">ⓘ Es recomendable primero crear una unidad y luego sus miembros.</i>
                     <div className="p-4 w-full space-y-4">
-                        <button
-                            onClick={() => setStep('createUnit')}
-                            className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline transition duration-300 ease-in-out w-full"
-                        >
-                            CREAR UNIDAD
-                        </button>
-                        <button
-                            onClick={() => setStep('createMember')}
-                            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline transition duration-300 ease-in-out w-full"
-                        >
-                            CREAR MIEMBRO
-                        </button>
+                        <Button variant="success" onClick={()=> setStep('createUnit') }>CREAR UNIDAD</Button>
+                        <Button variant="primary" onClick={()=> setStep('createMember') }>CREAR MIEMBRO</Button>
+                        <Button variant="secondary" onClick={()=> setStep('createEvent') }>CREAR EVENTO</Button>
                     </div>
                     <button
                         onClick={onClose}
@@ -57,6 +49,11 @@ const PersonCrudModal = ({ isOpen, onClose }: Props) => {
             </BaseModal>
         )}
         {step === 'createUnit' && (
+            <BaseModal title="Crear Unidad" onClose={() => setStep('select')}>
+                <UnitForm onClose={() => setStep('select')} ></UnitForm>
+            </BaseModal>
+        )}
+        {step === 'createEvent' && (
             <BaseModal title="Crear Unidad" onClose={() => setStep('select')}>
                 <UnitForm onClose={() => setStep('select')} ></UnitForm>
             </BaseModal>

@@ -7,10 +7,10 @@ import { createClient } from "@/utils/supabase/client";
 interface EventContextType{
     events: ClubEvent[];
     loading: boolean;
-    getEventsByDate: (year: number, month: number, day: number) => ClubEvent[] | null;
-    createEvent: (event: EventInsert) => void;
-    updateEvent: (event: EventUpdate) => void;
-    deleteEvent: (id: number) => void;
+    getEventsByDate: (year: number, month: number, day: number) => ClubEvent[];
+    refreshNewEvent: (event: ClubEvent) => void;
+    refreshUpdateEvent: (event: EventUpdate) => void;
+    refreshDeleteEvent: (id: number) => void;
 }
 
 const EventContext = createContext<EventContextType | undefined>(undefined);
@@ -40,45 +40,19 @@ export const EventProvider = ({ children }: { children: React.ReactNode }) => {
         fetchEvents();
     }, []);
 
-    const createEvent = async (event: EventInsert) => {
-        const { data, error } = await supabase
-          .from('events')
-          .insert(event);
-      
-        if (error) {
-          console.error('Error al crear el evento:', error);
-          return;
-        }
-      
+    const refreshNewEvent = async (event: ClubEvent) => {
         // Actualizamos el estado local con el nuevo evento
-        setEvents(prevEvents => [...prevEvents, data![0]]);
+        setEvents(prevEvents => [...prevEvents, event]);
       };
 
-      const updateEvent = async (event: EventUpdate) => {
-        const { data, error } = await supabase
-          .from('events')
-          .update(event)
-          .eq('id', event.id!);
-      
-        if (error) {
-          console.error('Error al actualizar el evento:', error);
-          return;
-        }
-      
+      const refreshUpdateEvent = async (event: EventUpdate) => {
         // Actualizamos el estado local con el evento actualizado
         setEvents(prevEvents =>
-          prevEvents.map(e => (e.id === event.id ? { ...e, ...(typeof data![0] === 'object' ? data![0] : {}) } : e))
+          prevEvents.map(e => (e.id === event.id ? { ...e, ...event } : e))
         );
       };
 
-      const deleteEvent = async (id: number) => {
-        const { error } = await supabase.from('events').delete().eq('id', id);
-      
-        if (error) {
-          console.error('Error al eliminar el evento:', error);
-          return;
-        }
-      
+      const refreshDeleteEvent = async (id: number) => {
         // Actualizamos el estado local eliminando el evento
         setEvents(prevEvents => prevEvents.filter(e => e.id !== id));
       };
@@ -97,13 +71,13 @@ export const EventProvider = ({ children }: { children: React.ReactNode }) => {
       };
 
     return (
-        <EventContext.Provider value={{ events, loading, getEventsByDate, createEvent, updateEvent, deleteEvent }}>
+        <EventContext.Provider value={{ events, loading, getEventsByDate, refreshNewEvent, refreshUpdateEvent, refreshDeleteEvent }}>
             {children}
         </EventContext.Provider>
     )
 }
 
-export const useEvent = () => {
+export const useEvents = () => {
     const context = useContext(EventContext);
     if (!context) {
         throw new Error("useEvent debe usarse dentro de un EventProvider");
