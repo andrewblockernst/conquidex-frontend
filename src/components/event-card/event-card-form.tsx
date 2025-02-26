@@ -89,6 +89,7 @@ function EventCardForm({ event, onSubmit }: Props) {
       onSubmit={handleSubmit}
       className="p-3 md:p-4 rounded-md border-2 border-gray-300 shadow-lg"
       style={{ backgroundColor: formData.color! }}
+      id="event-form"
     >
       {/* Header Section */}
       <div className="flex flex-wrap md:flex-nowrap justify-between items-center p-1 md:p-2 gap-2">
@@ -214,7 +215,7 @@ function EventCardForm({ event, onSubmit }: Props) {
       )}
 
       <div className="mt-3 md:mt-4 flex justify-end gap-2">
-        <Link href={`?${cancelParams.toString()}`}>
+        <Link href={`?${cancelParams.toString()}`} scroll={false}>
           <button
             className="bg-red-500 hover:bg-red-600 text-white px-3 py-2 rounded-md text-sm md:text-base"
           >

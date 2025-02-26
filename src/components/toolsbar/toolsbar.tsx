@@ -12,7 +12,7 @@ const ToolsBar: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   return (
-    <div className="hidden sm:flex w-[25%] pt-3">
+    <div className="hidden sm:flex w-[20%] pt-3">
       <aside className="fixed z-10 flex-col space-y-6 pt-24 pl-2 hidden sm:flex ">
         
         <Link href="/home">

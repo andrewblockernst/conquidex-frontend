@@ -36,7 +36,7 @@ function EventCard({ event }: Props) {
                   ...Object.fromEntries(searchParams.entries()),
                   edit: event.id
                 }
-              }} className="group">
+              }} scroll={false} className="group">
               <Pencil className="size-5 group-hover:size-6 transition-all ease-out duration-200" />
             </Link>
             <RelativeTime datetime={event.date} lang="es" ></RelativeTime>

@@ -14,7 +14,7 @@ export async function createEvent(event: EventInsert): Promise<ClubEvent> {
 
 export async function updateEvent(event: EventUpdate): Promise<boolean> {
     const supabase = await createClient();
-    const { error } = await supabase.from('events').update(event);
+    const { error } = await supabase.from('events').update(event).eq('id', event.id!);
 
     if (error) {
         throw new Error(error.message);
