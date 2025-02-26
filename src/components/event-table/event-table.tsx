@@ -5,10 +5,11 @@ import { useEffect, useState } from "react";
 import EventCard from "../event-card/event-card";
 import { useSearchParams } from "next/navigation";
 import EventCardForm from "../event-card/event-card-form";
-import { createEvent, updateEvent } from "@/lib/actions/event.actions";
+import { createEvent, deleteEvent, updateEvent } from "@/lib/actions/event.actions";
 import ErrorModal from "../modals/error-modal";
 import SuccessModal from "../modals/success-modal";
 import { useRouter } from "next/navigation";
+import ConfirmationModal from "../modals/confirmation-modal";
 
 interface Props {
   events: ClubEvent[];
@@ -16,11 +17,12 @@ interface Props {
 
 export default function EventTable({ events }: Props) {
   const router = useRouter();
-  const { refreshNewEvent, refreshUpdateEvent} = useEvents();
+  const { refreshNewEvent, refreshUpdateEvent, refreshDeleteEvent} = useEvents();
 
   const searchParams = useSearchParams()
   const newEvent = searchParams.get("new");
   const editEventId: number = Number(searchParams.get("edit"));
+  const deleteEventId: number = Number(searchParams.get("delete"));
   //const date = searchParams.get("date"); //didn't use it
 
   useEffect(() => {
@@ -58,47 +60,65 @@ export default function EventTable({ events }: Props) {
     }
   };
 
+  const handleDeleteEvent = async () => {
+    try {
+      const success = await deleteEvent(deleteEventId);
+      if (success) {
+        refreshDeleteEvent(deleteEventId);
+        setSuccess("Evento eliminado correctamente");
+      }
+    } catch (error) {
+      setError((error as Error).message);
+    }
+  };
+
   const handleSuccess = () => {
     setSuccess(null);
     //router.push(`/calendar?date=${date}`);
     const params = new URLSearchParams(searchParams.toString());
     params.delete("edit");
     params.delete("new");
+    params.delete("delete");
     router.push(`?${params.toString()}`, { scroll: false });
   }
 
+  const handleCancel = () => {
+    const params = new URLSearchParams(searchParams.toString());
+    params.delete("delete");
+    router.push(`?${params.toString()}`, { scroll: false });
+  }
   const handleError = () => {
     setError(null);
   }
 
   return (
     <>
-    <div className="flex flex-col gap-4 overflow-y-auto max-h-[60vh]">
-      {newEvent && <EventCardForm onSubmit={handleNewEvent}></EventCardForm>}
-      {
-        (!events || events.length === 0 ) && !newEvent && (
-          <div className='flex justify-center items-center h-40'>
-            <h1 className='text-xl'>Todavía no hay eventos</h1>
+      <div className="flex flex-col gap-4 overflow-y-auto max-h-[60vh]">
+        {newEvent && <EventCardForm onSubmit={handleNewEvent}></EventCardForm>}
+        {(!events || events.length === 0) && !newEvent && (
+          <div className="flex justify-center items-center h-40">
+            <h1 className="text-xl">Todavía no hay eventos</h1>
           </div>
-        )
-      }
-      {events.map((event) => (
-        editEventId === event.id ?
-        <EventCardForm key={event.id} event={event} onSubmit={handleUpdateEvent}></EventCardForm>
-        :
-        <EventCard key={event.id} event={event} />
-      ))}
-    </div>
-    {error && (
-            <ErrorModal onClose={handleError}>
-            {error}
-            </ErrorModal>
-         )}
-        {success && (
-            <SuccessModal onClose={handleSuccess}>
-                {success}
-            </SuccessModal>
         )}
+        {events.map((event) =>
+          editEventId === event.id ? (
+            <EventCardForm
+              key={event.id}
+              event={event}
+              onSubmit={handleUpdateEvent}
+            ></EventCardForm>
+          ) : (
+            <EventCard key={event.id} event={event} />
+          )
+        )}
+      </div>
+      {Boolean(deleteEventId) &&
+      <ConfirmationModal isOpen={true} title="ALERTA" confirmText="Eliminar"
+      cancelText="Cancelar" onConfirm={handleDeleteEvent} onClose={handleCancel} className="z-20">
+        ¿Seguro que deseas eliminar el evento? Esta accción no se puede revertir.
+      </ConfirmationModal>}
+      {error && <ErrorModal onClose={handleError} className="z-30">{error}</ErrorModal>}
+      {success && <SuccessModal onClose={handleSuccess} className="z-30">{success}</SuccessModal>}
     </>
   );
 }

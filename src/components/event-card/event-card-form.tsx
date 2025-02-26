@@ -112,7 +112,7 @@ function EventCardForm({ event, onSubmit }: Props) {
             className="w-8 h-8 md:w-10 md:h-10 border-none rounded-full"
           />
           <div className="whitespace-nowrap">
-            <RelativeTime datetime={displayDate} lang="es" />
+            <RelativeTime datetime={displayDate} lang="es"  />
           </div>
           <button
             type="button"

@@ -1,8 +1,9 @@
 import { useState } from "react";
 import RelativeTime from "../dates/relative-time";
-import { Pencil } from "lucide-react";
+import { EllipsisVertical, Pencil, Trash2 } from "lucide-react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
+import { useUser } from "@/contexts/UserContext";
 
 interface Props{
     event: ClubEvent
@@ -10,7 +11,9 @@ interface Props{
 
 function EventCard({ event }: Props) {
     const [isExpanded, setIsExpanded] = useState(false);
+    const [actionMenu, setActionMenu] = useState(false);
     const searchParams = useSearchParams(); // Get the current path
+    const { role_id } = useUser().activeProfile!;
 
     const HandleExpand = () => {
         setIsExpanded(!isExpanded);
@@ -31,15 +34,35 @@ function EventCard({ event }: Props) {
     <div className="p-2 rounded-md border-2 border-gray-500" style={{backgroundColor: event.color!}}>
       <div className="flex justify-between items-center p-2 gap-x-1 ">
             <h2 className="text-xl font-bold overflow-hidden whitespace-pre-wrap ">{event.name}</h2>
-            <Link href={{
-                query: {
-                  ...Object.fromEntries(searchParams.entries()),
-                  edit: event.id
-                }
-              }} scroll={false} className="group">
-              <Pencil className="size-5 group-hover:size-6 transition-all ease-out duration-200" />
-            </Link>
+            { role_id! >= 3 &&
+            <div className="relative">
+              <button onClick={()=> setActionMenu(!actionMenu)}><EllipsisVertical/></button>
+              { actionMenu &&
+              <div className="absolute flex flex-col items-center justify-center border border-black z-10" style={{backgroundColor: event.color!}}>
+                <Link href={{
+                    query: {
+                      ...Object.fromEntries(searchParams.entries()),
+                      edit: event.id
+                    }
+                  }} scroll={false} className="w-full flex gap-2 p-2 relative">
+                  <div className="absolute w-full inset-0 bg-black bg-opacity-0 hover:bg-opacity-20"></div>
+                  Editar <Pencil className="size-5" />
+                </Link>
+                <Link href={{
+                    query: {
+                      ...Object.fromEntries(searchParams.entries()),
+                      delete: event.id
+                    }
+                  }} scroll={false} className="w-full flex gap-2 p-2 relative">
+                  <div className="absolute w-full inset-0 bg-black bg-opacity-0 hover:bg-opacity-20"></div>
+                  Eliminar <Trash2 className="size-5"/>
+                </Link>
+              </div>
+              }
+            </div>
+            } 
             <RelativeTime datetime={event.date} lang="es" ></RelativeTime>
+            
             <button
                 onClick={() => HandleExpand()}
                 className={`bg-transparent text-black text-xl font-bold transform transition-transform ${

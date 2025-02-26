@@ -42,7 +42,7 @@ export const EventProvider = ({ children }: { children: React.ReactNode }) => {
 
     const refreshNewEvent = async (event: ClubEvent) => {
         // Actualizamos el estado local con el nuevo evento
-        setEvents(prevEvents => [...prevEvents, event]);
+        setEvents(prevEvents => [event, ...prevEvents]);
       };
 
       const refreshUpdateEvent = async (event: EventUpdate) => {
