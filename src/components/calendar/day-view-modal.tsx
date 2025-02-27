@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useUser } from "@/contexts/UserContext";
 import { useEvents } from "@/contexts/EventContext";
 import EventTable from "../event-table/event-table";
+import { EVENTS as PARAMS } from "@/constants/url-params";
 
 function DayViewModal() {
   const router = useRouter();
@@ -47,7 +48,7 @@ function DayViewModal() {
       {/*Add event button*/}
       { activeProfile?.role_id! >= 3 &&
       <div className="absolute -bottom-6 inset-x-0 flex justify-center space-x-4">
-        <Link href={`/calendar?date=${date}&new=y#event-form`}>
+        <Link href={`/calendar?date=${date}&${PARAMS.new}=y#event-form`}>
           <Button variant="success" className=" w-35 rounded-full h-full px-4">
             +
           </Button>

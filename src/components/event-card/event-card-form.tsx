@@ -4,6 +4,7 @@ import { useUser } from "@/contexts/UserContext";
 import { useSearchParams } from "next/navigation";
 import { urlToDate } from "@/lib/utils";
 import Link from "next/link";
+import { EVENTS as PARAMS } from "@/constants/url-params";
 
 interface Props {
   event?: ClubEvent;
@@ -32,8 +33,8 @@ function EventCardForm({ event, onSubmit }: Props) {
 
   // Remove the edit parameter from the URL when canceling
   const cancelParams = new URLSearchParams(searchParams.toString());
-  cancelParams.delete("edit");
-  cancelParams.delete("new");
+  cancelParams.delete(PARAMS.edit);
+  cancelParams.delete(PARAMS.new);
   
   //event props come first in case we're just updating an existing event and passing down its data
   const [formData, setFormData] = useState<EventInsert | EventUpdate>({

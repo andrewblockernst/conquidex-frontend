@@ -8,10 +8,13 @@ import { DownArrowHeadsIcon } from "@/components/icons";
 import { useEvents } from "@/contexts/EventContext";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useUser } from "@/contexts/UserContext";
+import { EVENTS as PARAMS } from "@/constants/url-params";
 
 export default function Calendar() {
   const router = useRouter();
   const { events, loading } = useEvents();
+  const { role_id } = useUser().activeProfile!;
 
   const handleDayClick = (day: number, month: number, year: number) => {
     router.push(`/calendar/?date=${day}-${month}-${year}`);
@@ -34,11 +37,13 @@ export default function Calendar() {
           {/* HEADER */}
           <div className='event-header flex items-center justify-around border-2 border-gray-200 p-4'>
             <h1 className='text-xl'>Próximos eventos</h1>
-            <Link href={`/calendar?new=y#event-form`}>
+            { role_id! >= 3 &&
+            <Link href={`/calendar?${PARAMS.new}=y#event-form`}>
               <Button variant='success' className='w-35 h-full px-8'>
                 Crear
               </Button>
             </Link>
+            }
           </div>
           {/* BODY */}
           <div className='event-body flex-1 h-full overflow-y-scroll'>

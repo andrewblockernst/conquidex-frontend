@@ -10,6 +10,8 @@ import ErrorModal from "../modals/error-modal";
 import SuccessModal from "../modals/success-modal";
 import { useRouter } from "next/navigation";
 import ConfirmationModal from "../modals/confirmation-modal";
+import { useUser } from "@/contexts/UserContext";
+import { EVENTS as PARAMS } from "@/constants/url-params";
 
 interface Props {
   events: ClubEvent[];
@@ -18,27 +20,20 @@ interface Props {
 export default function EventTable({ events }: Props) {
   const router = useRouter();
   const { refreshNewEvent, refreshUpdateEvent, refreshDeleteEvent} = useEvents();
+  const { activeProfile } = useUser();
 
   const searchParams = useSearchParams()
-  const newEvent = searchParams.get("new");
-  const editEventId: number = Number(searchParams.get("edit"));
-  const deleteEventId: number = Number(searchParams.get("delete"));
+  const newEvent = searchParams.get(PARAMS.new);
+  const editEventId: number = Number(searchParams.get(PARAMS.edit));
+  const deleteEventId: number = Number(searchParams.get(PARAMS.delete));
   //const date = searchParams.get("date"); //didn't use it
-
-  useEffect(() => {
-    // Este efecto se ejecutará cada vez que cambie el parámetro edit en la URL
-    console.log("Edit event ID changed:", editEventId);
-    // Podrías agregar lógica adicional aquí si es necesario
-  }, [editEventId]);
-
 
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
 
   const handleNewEvent = async (formData: EventInsert | EventUpdate) => {
     try {
-      console.log(formData as EventInsert)
-      const createdEvent = await createEvent(formData as EventInsert);
+      const createdEvent = await createEvent(formData as EventInsert, activeProfile!);
       if (createdEvent) {
         refreshNewEvent(createdEvent);
         setSuccess("Evento creado correctamente");
@@ -50,7 +45,7 @@ export default function EventTable({ events }: Props) {
 
   const handleUpdateEvent = async (formData: EventInsert | EventUpdate) => {
     try {
-      const createdEvent = await updateEvent(formData as EventUpdate);
+      const createdEvent = await updateEvent(formData as EventUpdate, activeProfile!);
       if (createdEvent) {
         refreshUpdateEvent(formData as EventUpdate);
         setSuccess("Evento actualizado correctamente");
@@ -62,7 +57,7 @@ export default function EventTable({ events }: Props) {
 
   const handleDeleteEvent = async () => {
     try {
-      const success = await deleteEvent(deleteEventId);
+      const success = await deleteEvent(deleteEventId, activeProfile!);
       if (success) {
         refreshDeleteEvent(deleteEventId);
         setSuccess("Evento eliminado correctamente");
@@ -76,15 +71,15 @@ export default function EventTable({ events }: Props) {
     setSuccess(null);
     //router.push(`/calendar?date=${date}`);
     const params = new URLSearchParams(searchParams.toString());
-    params.delete("edit");
-    params.delete("new");
-    params.delete("delete");
+    params.delete(PARAMS.edit);
+    params.delete(PARAMS.new);
+    params.delete(PARAMS.delete);
     router.push(`?${params.toString()}`, { scroll: false });
   }
 
-  const handleCancel = () => {
+  const handleDeleteCancel = () => {
     const params = new URLSearchParams(searchParams.toString());
-    params.delete("delete");
+    params.delete(PARAMS.delete);
     router.push(`?${params.toString()}`, { scroll: false });
   }
   const handleError = () => {
@@ -114,7 +109,7 @@ export default function EventTable({ events }: Props) {
       </div>
       {Boolean(deleteEventId) &&
       <ConfirmationModal isOpen={true} title="ALERTA" confirmText="Eliminar"
-      cancelText="Cancelar" onConfirm={handleDeleteEvent} onClose={handleCancel} className="z-20">
+      cancelText="Cancelar" onConfirm={handleDeleteEvent} onClose={handleDeleteCancel} className="z-20">
         ¿Seguro que deseas eliminar el evento? Esta accción no se puede revertir.
       </ConfirmationModal>}
       {error && <ErrorModal onClose={handleError} className="z-30">{error}</ErrorModal>}

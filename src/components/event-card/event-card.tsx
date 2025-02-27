@@ -4,6 +4,7 @@ import { EllipsisVertical, Pencil, Trash2 } from "lucide-react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useUser } from "@/contexts/UserContext";
+import { EVENTS as PARAMS } from "@/constants/url-params";
 
 interface Props{
     event: ClubEvent
@@ -42,7 +43,7 @@ function EventCard({ event }: Props) {
                 <Link href={{
                     query: {
                       ...Object.fromEntries(searchParams.entries()),
-                      edit: event.id
+                      [PARAMS.edit]: event.id
                     }
                   }} scroll={false} className="w-full flex gap-2 p-2 relative">
                   <div className="absolute w-full inset-0 bg-black bg-opacity-0 hover:bg-opacity-20"></div>
@@ -51,7 +52,7 @@ function EventCard({ event }: Props) {
                 <Link href={{
                     query: {
                       ...Object.fromEntries(searchParams.entries()),
-                      delete: event.id
+                      [PARAMS.delete]: event.id
                     }
                   }} scroll={false} className="w-full flex gap-2 p-2 relative">
                   <div className="absolute w-full inset-0 bg-black bg-opacity-0 hover:bg-opacity-20"></div>
