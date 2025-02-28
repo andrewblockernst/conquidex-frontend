@@ -6,6 +6,7 @@ import { UserProvider } from "@/contexts/UserContext"
 import  NavigationWrapper from "@/components/wrappers/navigation-wrapper"
 import { EventProvider } from "@/contexts/EventContext"
 import RelativeTimeLoader from "@/components/relative-time-loader"
+import NavigationHandler from "@/components/wrappers/navigation-history"
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -32,6 +33,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <EventProvider>
             <SyncModalProvider>
                 <NavigationWrapper> {/* header, navbar, toolsbar */}
+                  <NavigationHandler/>
                   {children}
                 </NavigationWrapper>
             </SyncModalProvider>

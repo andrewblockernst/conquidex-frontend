@@ -22,12 +22,14 @@ const MobileNavbar = () => {
 
       {activeProfile?.role_id !== 0 && activeProfile?.role_id !== 1 && (
         <>
+          <Link href="/attendance">
           <button
             id="attendace-button"
             className="outline-none border-0 w-16 h-16 rounded-t-full bg-transparent flex items-center justify-center text-black transition-all duration-300 ease-in-out cursor-pointer hover:-translate-y-[3px]"
           >
             <AttendanceIcon className="w-8 h-8 text-black" />
           </button>
+          </Link>
 
           <AddButton/>
         </>

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import RelativeTime from "../dates/relative-time";
 import { EllipsisVertical, Pencil, Trash2 } from "lucide-react";
 import Link from "next/link";
@@ -15,10 +15,24 @@ function EventCard({ event }: Props) {
     const [actionMenu, setActionMenu] = useState(false);
     const searchParams = useSearchParams(); // Get the current path
     const { role_id } = useUser().activeProfile!;
+    const actionMenuRef = useRef<HTMLDivElement>(null);
 
     const HandleExpand = () => {
         setIsExpanded(!isExpanded);
     };
+
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (actionMenuRef.current && !actionMenuRef.current.contains(event.target as Node)) {
+                setActionMenu(false);
+            }
+        };
+
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
+    }, []);
 
     const dateOptions: Intl.DateTimeFormatOptions = {
       weekday: "long",
@@ -36,10 +50,10 @@ function EventCard({ event }: Props) {
       <div className="flex justify-between items-center p-2 gap-x-1 ">
             <h2 className="text-xl font-bold overflow-hidden whitespace-pre-wrap ">{event.name}</h2>
             { role_id! >= 3 &&
-            <div className="relative">
+            <div className="relative" ref={actionMenuRef}>
               <button onClick={()=> setActionMenu(!actionMenu)}><EllipsisVertical/></button>
               { actionMenu &&
-              <div className="absolute flex flex-col items-center justify-center border border-black z-10" style={{backgroundColor: event.color!}}>
+              <div className="absolute -top-6 left-6 flex flex-col items-center justify-center border border-black z-10" style={{backgroundColor: event.color!}}>
                 <Link href={{
                     query: {
                       ...Object.fromEntries(searchParams.entries()),

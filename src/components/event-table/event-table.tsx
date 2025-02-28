@@ -88,7 +88,7 @@ export default function EventTable({ events }: Props) {
 
   return (
     <>
-      <div className="flex flex-col gap-4 overflow-y-auto max-h-[60vh]">
+      <div className="flex flex-col gap-4 overflow-y-auto max-h-[60vh] min-h-[30vh]">
         {newEvent && <EventCardForm onSubmit={handleNewEvent}></EventCardForm>}
         {(!events || events.length === 0) && !newEvent && (
           <div className="flex justify-center items-center h-40">
@@ -107,7 +107,7 @@ export default function EventTable({ events }: Props) {
           )
         )}
       </div>
-      {Boolean(deleteEventId) &&
+      {!!deleteEventId &&
       <ConfirmationModal isOpen={true} title="ALERTA" confirmText="Eliminar"
       cancelText="Cancelar" onConfirm={handleDeleteEvent} onClose={handleDeleteCancel} className="z-20">
         ¿Seguro que deseas eliminar el evento? Esta accción no se puede revertir.

@@ -196,7 +196,7 @@ export const ContinuousCalendar: React.FC<ContinuousCalendarProps> = ({ onClick 
         })}
       </div>
     ));
-  }, [year, loading]);
+  }, [year, loading, getEventsByDate]);
 
   // IntersectionObserver to detect visible month
   useEffect(() => {

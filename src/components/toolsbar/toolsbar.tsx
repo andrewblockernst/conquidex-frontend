@@ -24,10 +24,12 @@ const ToolsBar: React.FC = () => {
 
         {activeProfile?.role_id! >= 2 && (
           <>
-          <Button contentStyle="w-full text-white flex items-center space-x-4">
-            <AttendanceIconWhite></AttendanceIconWhite>
-            <h4 className="hidden md:block">Asistencia</h4>
-          </Button>
+          <Link href="/attendance">
+            <Button contentStyle="w-full text-white flex items-center space-x-4">
+              <AttendanceIconWhite></AttendanceIconWhite>
+              <h4 className="hidden md:block">Asistencia</h4>
+            </Button>
+          </Link>
 
           <Button contentStyle="w-full text-white flex items-center space-x-4" onClick={() => setIsModalOpen(true)}>
             <AddIconWhite></AddIconWhite>
