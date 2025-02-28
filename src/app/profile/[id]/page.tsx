@@ -55,13 +55,6 @@ export default async function MemberPage({
   } 
   return (
     <div className="w-full relative flex items-center justify-center min-h-screen max-w-2xl mx-auto">
-      <div className="absolute left-4 top-4 z-10">
-      <Link href={`/home`}>
-        <Button>
-        <MoveLeft size={32} />
-        </Button>
-      </Link>
-      </div>
       <div className="w-full flex justify-center items-center">
       <ProfileCard member={member} />
       </div>

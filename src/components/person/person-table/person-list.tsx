@@ -50,7 +50,7 @@ export const PersonList = ({ group, groupBy }: PersonListProps) => {
               <h2 className="text-xl font-bold">{name}</h2>
               <button
                 onClick={() => HandleExpand(uniqueKey)}
-                className={`bg-transparent text-black text-xl font-bold transform transition-transform ${
+                className={`p-2 bg-transparent text-black text-xl font-bold transform transition-transform ${
                   isExpanded ? "rotate-0" : "rotate-90"
                 }`}
               >
@@ -61,12 +61,7 @@ export const PersonList = ({ group, groupBy }: PersonListProps) => {
               <div className="space-y-2">
                 {g.persons && g.persons.length > 0 ? (
                   g.persons.map((person) => (
-                    <Link
-                      href={`/profile/${person.id}`}
-                      key={`${uniqueKey}-person-${person.id}`}
-                    >
-                      <PersonCard person={person} />
-                    </Link>
+                      <PersonCard key={`${uniqueKey}-person-${person.id}`} person={person} />
                   ))
                 ) : (
                   <div className="flex items-center justify-center bg-gray-200 my-2 p-4 rounded-lg shadow-[4px_4px_0_0_#323232] border-2 border-slate-800">

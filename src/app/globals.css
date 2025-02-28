@@ -2,6 +2,12 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer base {
+  html {
+    @apply scroll-smooth;
+  }
+}
+
 :root {
   --background: #ffffff;
   --foreground: #171717;
@@ -20,10 +26,6 @@ body {
 h1, h2, h3, h4, h5, h6 {
   font-weight: bold;
   line-height: 1.2;
-}
-
-button {
-  @apply text-sm font-medium rounded-lg px-4 py-2 bg-blue-500 text-white;
 }
 
 .container {

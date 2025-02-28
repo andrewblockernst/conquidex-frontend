@@ -7,7 +7,7 @@ import { createUnit } from "@/lib/actions/units.actions";
 import { triggerClubViewRefresh } from "@/utils/events/events";
 
 interface Props {
-    onClose: () => void;
+    onClose?: () => void;
   }
 
 export default function UnitForm({ onClose }: Props) {
@@ -41,12 +41,12 @@ export default function UnitForm({ onClose }: Props) {
     const handleSuccess = () => {
         setSuccess(null);
         triggerClubViewRefresh();
-        onClose();
+        onClose!();
     }
   
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
       const { name, value } = e.target;
-      setFormData(prev => ({ ...prev, [name]: value }));
+      setFormData({ ...formData, [name]: value });
     };
   
     if (loading) return <Spinner1 />

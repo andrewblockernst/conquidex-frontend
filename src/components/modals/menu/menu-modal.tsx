@@ -3,6 +3,8 @@ import { useState } from 'react';
 import BaseModal from '../base-modal';
 import Spinner1 from '@/components/spinners/spinner-1';
 import UnitForm from '@/components/forms/unit-form';
+import Button from '@/components/buttons/button';
+import Link from 'next/link';
 
 interface Props{
     isOpen: boolean;
@@ -10,7 +12,7 @@ interface Props{
 }
 
 const PersonCrudModal = ({ isOpen, onClose }: Props) => {
-    const [step, setStep] = useState('select'); // 'select', 'createMember', 'createUnit'
+    const [step, setStep] = useState('select'); // 'select', 'createMember', 'createUnit', 'createEvent'
     const [loading, setLoading] = useState(false);
 
 
@@ -23,19 +25,12 @@ const PersonCrudModal = ({ isOpen, onClose }: Props) => {
                 <div className="flex flex-col items-center pb-6">
                     <h2 className="text-xl font-bold mb-4">¿Qué deseas crear?</h2>
                     <i className="text-gray-700">ⓘ Es recomendable primero crear una unidad y luego sus miembros.</i>
-                    <div className="p-4 w-full space-y-4">
-                        <button
-                            onClick={() => setStep('createUnit')}
-                            className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline transition duration-300 ease-in-out w-full"
-                        >
-                            CREAR UNIDAD
-                        </button>
-                        <button
-                            onClick={() => setStep('createMember')}
-                            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline transition duration-300 ease-in-out w-full"
-                        >
-                            CREAR MIEMBRO
-                        </button>
+                    <div className="p-4 w-full flex flex-col space-y-4">
+                        <Button variant="success" onClick={()=> setStep('createUnit') }>CREAR UNIDAD</Button>
+                        <Button variant="primary" onClick={()=> setStep('createMember') }>CREAR MIEMBRO</Button>
+                        <Link href={`/calendar?new=y#event-form`} onClick={onClose}>
+                            <Button variant="secondary" >CREAR EVENTO</Button>
+                        </Link>
                     </div>
                     <button
                         onClick={onClose}

@@ -1,6 +1,5 @@
 'use server'
 
-import { triggerClubViewRefresh } from "@/utils/events/events";
 import { createClient } from "@/utils/supabase/server";
 
 export async function createUnit(personData: UnitInsert): Promise<boolean> {

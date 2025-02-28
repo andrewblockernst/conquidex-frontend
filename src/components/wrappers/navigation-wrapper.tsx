@@ -12,13 +12,17 @@ export default function NavigationWrapper({ children }: { children: React.ReactN
   return (
     <>
       <Header />
-      <main className={`flex-1 w-full flex justify-center ${!noToolsRoute ? 'mt-16 mb-16 sm:mb-0' : ''}`}>
-        <div className="flex w-full max-w-7xl">
+      <main
+        className={`min-h-screen w-full flex justify-center ${
+          !noToolsRoute ? 'pt-16 pb-16 sm:pb-0' : ''
+        }`}
+      >
+        <div className="h-full flex w-full max-w-7xl">
           {!noToolsRoute && <ToolsBar />}
           {children}
           {!noToolsRoute && <MobileNavbar />}
         </div>
       </main>
     </>
-  )
+  );
 }

@@ -259,12 +259,12 @@ export type Database = {
         Row: {
           city: string | null
           club_id: number
+          color: string | null
           country: string | null
+          date: string
           description: string | null
-          end_date: string
           id: number
           name: string
-          start_date: string
           state: string | null
           street: string | null
           street_number: number | null
@@ -272,12 +272,12 @@ export type Database = {
         Insert: {
           city?: string | null
           club_id: number
+          color?: string | null
           country?: string | null
+          date: string
           description?: string | null
-          end_date: string
           id?: number
           name: string
-          start_date: string
           state?: string | null
           street?: string | null
           street_number?: number | null
@@ -285,12 +285,12 @@ export type Database = {
         Update: {
           city?: string | null
           club_id?: number
+          color?: string | null
           country?: string | null
+          date?: string
           description?: string | null
-          end_date?: string
           id?: number
           name?: string
-          start_date?: string
           state?: string | null
           street?: string | null
           street_number?: number | null
