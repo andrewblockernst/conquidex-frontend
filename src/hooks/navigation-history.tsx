@@ -13,7 +13,7 @@ interface UseNavigationHistoryOptions {
 }
 
 export function useNavigationHistory(options: UseNavigationHistoryOptions = {}) {
-  const isClient = true//typeof window !== 'undefined';
+  const isClient = true // typeof window !== 'undefined';
   const router = useRouter();
   const pathname = usePathname();
   
@@ -27,11 +27,11 @@ export function useNavigationHistory(options: UseNavigationHistoryOptions = {}) 
   const [history, setHistory] = useState<string[]>([]);
   const historyRef = useRef<string[]>([]);
 
-  // Guardar historial (solo elimina duplicados CONSECUTIVOS)
+  // Save history (only removes CONSECUTIVE duplicates)
   const saveHistory = useCallback((newHistory: string[]) => {
     if (!isClient) return;
     
-    // Filtra solo duplicados consecutivos
+    // Filter only consecutive duplicates
     const cleanHistory = newHistory.reduce<string[]>((acc, path) => {
       if (path !== acc[acc.length - 1]) {
         acc.push(path);
@@ -44,14 +44,14 @@ export function useNavigationHistory(options: UseNavigationHistoryOptions = {}) 
     setHistory(cleanHistory);
   }, [storageKey, isClient]);
 
-  // Efecto principal de inicialización
+  // Main initialization effect
   useEffect(() => {
     if (!isClient) return;
 
-    // 1. Cargar historial existente
+    // 1. Load existing history
     const storedHistory = JSON.parse(localStorage.getItem(storageKey) || '[]');
     
-    // 2. Verificar referente externo
+    // 2. Check external referrer
     let shouldClear = false;
     if (resetOnExternalReferrer && document.referrer) {
       try {
@@ -59,9 +59,9 @@ export function useNavigationHistory(options: UseNavigationHistoryOptions = {}) 
       } catch {}
     }
 
-    // 3. Manejar limpieza o inicialización
+    // 3. Handle clearing or initialization
     if (shouldClear) {
-      saveHistory([pathname]); // Iniciar nuevo historial con la ruta actual
+      saveHistory([pathname]); // Start new history with the current path
     } else {
       const updatedHistory = storedHistory[storedHistory.length - 1] === pathname 
         ? storedHistory 
@@ -69,24 +69,24 @@ export function useNavigationHistory(options: UseNavigationHistoryOptions = {}) 
       saveHistory(updatedHistory);
     }
 
-    // 4. Limpiar solo al cerrar la ventana
+    // 4. Clear only when closing the window
     const clearStorage = () => localStorage.removeItem(storageKey);
     window.addEventListener('beforeunload', clearStorage);
     
     return () => window.removeEventListener('beforeunload', clearStorage);
-  }, []); // Sin dependencias para ejecutar solo en mount
+  }, []); // No dependencies to run only on mount
 
-  // Efecto para actualizar rutas
+  // Effect to update routes
   useEffect(() => {
     if (!pathname || !isClient) return;
     
-    // Solo agregar si es diferente a la última entrada
+    // Only add if different from the last entry
     if (historyRef.current[historyRef.current.length - 1] !== pathname) {
       saveHistory([...historyRef.current, pathname]);
     }
   }, [pathname, saveHistory, isClient]);
 
-  // Función de retroceso mejorada
+  // Enhanced back function
   const goBack = useCallback(() => {
     const effectiveHistory = historyRef.current;
     

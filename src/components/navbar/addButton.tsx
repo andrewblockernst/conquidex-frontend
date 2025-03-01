@@ -5,6 +5,7 @@ import { AddIcon } from "../icons";
 import Link from "next/link";
 import { X } from "lucide-react";
 import Button from "../buttons/button";
+import { EVENTS as PARAMS } from '@/constants/url-params';
   
 const AddButton: React.FC = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -47,7 +48,7 @@ const AddButton: React.FC = () => {
               <Link href="/member/add">
                 <Button variant="primary" onClick={toggleDropdown}>CREAR MIEMBRO</Button>
               </Link>
-              <Link href={`/calendar?new=y#event-form`} onClick={toggleDropdown}>
+              <Link href={`/calendar?${PARAMS.new}=y#event-form`} onClick={toggleDropdown}>
                   <Button variant="secondary" >CREAR EVENTO</Button>
               </Link>
             </div>

@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import RelativeTime from "../dates/relative-time";
 import { useUser } from "@/contexts/UserContext";
 import { useSearchParams } from "next/navigation";
-import { urlToDate } from "@/lib/utils";
+import { formatDateForInput, urlToDate } from "@/lib/utils";
 import Link from "next/link";
 import { EVENTS as PARAMS } from "@/constants/url-params";
 
@@ -19,22 +19,12 @@ function EventCardForm({ event, onSubmit }: Props) {
   const [loading, setLoading] = useState(false);
   const searchParams = useSearchParams();
   
-  // Format ISO date to YYYY-MM-DD for the date input
-  const formatDateForInput = (date: Date) => {
-    return date.toISOString().split('T')[0]; // Returns YYYY-MM-DD
-  };
-
   //If form was created from a specific date, use that date as default
   const paramsDate = searchParams.get("date");
-  const defaultDay = paramsDate ? urlToDate(paramsDate) : new Date(); //if not, create today's date
-
-  // We'll keep a display version for the input and an ISO version for submission
-  const [displayDate, setDisplayDate] = useState(formatDateForInput(defaultDay));
-
-  // Remove the edit parameter from the URL when canceling
-  const cancelParams = new URLSearchParams(searchParams.toString());
-  cancelParams.delete(PARAMS.edit);
-  cancelParams.delete(PARAMS.new);
+  //const defaultDay = paramsDate ? urlToDate(paramsDate) : new Date(); //if not, create today's date
+  const initialDate = event ? new Date(event.date) : paramsDate ? urlToDate(paramsDate) : new Date(); //if an event is coming from params, choose its date
+  const [displayTime, setDisplayTime] = useState(initialDate.toTimeString().slice(0, 5));
+  const [displayDate, setDisplayDate] = useState(formatDateForInput(initialDate));
   
   //event props come first in case we're just updating an existing event and passing down its data
   const [formData, setFormData] = useState<EventInsert | EventUpdate>({
@@ -42,7 +32,7 @@ function EventCardForm({ event, onSubmit }: Props) {
     club_id: clubId!,
     color: event?.color || '#FFFFFF',
     // Store the full ISO string for PostgreSQL
-    date: event?.date || defaultDay.toISOString(),
+    date: event?.date || initialDate.toISOString(),
     description: event?.description || null,
     id: event?.id || undefined,
     name: event?.name || '',
@@ -51,6 +41,12 @@ function EventCardForm({ event, onSubmit }: Props) {
     street_number: event?.street_number || null,
     country: event?.country || null,
   });
+
+  useEffect(() => {
+    console.log("paramsDate", paramsDate);
+    console.log("initialDate", initialDate);
+    console.log("displayDate", displayDate);
+  }, [displayDate]);
 
   const handleExpand = () => {
     setIsExpanded(!isExpanded);
@@ -62,18 +58,26 @@ function EventCardForm({ event, onSubmit }: Props) {
   };
 
   const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setDisplayDate(value);
-    // Convert the YYYY-MM-DD to a full ISO string for PostgreSQL
-    // This preserves the time and timezone information
-    const newDate = new Date(value);
+    const newDate = e.target.value;
+    setDisplayDate(newDate);
     
-    // Set the time to noon to avoid timezone issues (optional)
-    newDate.setHours(12, 0, 0, 0);
+    // Combinar con hora actual
+    const combinedDateTime = `${newDate}T${displayTime}`;
+    const utcDate = new Date(combinedDateTime).toISOString();
     
-    // Update formData with the ISO string for PostgreSQL
-    setFormData({ ...formData, [name]: newDate.toISOString() });
-  }
+    setFormData(prev => ({ ...prev, date: utcDate }));
+  };
+
+  const handleTimeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newTime = e.target.value;
+    setDisplayTime(newTime);
+    
+    // Combinar con fecha actual
+    const combinedDateTime = `${displayDate}T${newTime}`;
+    const utcDate = new Date(combinedDateTime).toISOString();
+    
+    setFormData(prev => ({ ...prev, date: utcDate }));
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -84,6 +88,11 @@ function EventCardForm({ event, onSubmit }: Props) {
     }
     setLoading(false);
   };
+
+  // Remove the edit parameter from the URL when canceling
+  const cancelParams = new URLSearchParams(searchParams.toString());
+  cancelParams.delete(PARAMS.edit);
+  cancelParams.delete(PARAMS.new);
 
   return (
     <form
@@ -113,7 +122,7 @@ function EventCardForm({ event, onSubmit }: Props) {
             className="w-8 h-8 md:w-10 md:h-10 border-none rounded-full"
           />
           <div className="whitespace-nowrap">
-            <RelativeTime datetime={displayDate} lang="es"  />
+            <RelativeTime datetime={formData.date!} lang="es"  />
           </div>
           <button
             type="button"
@@ -196,6 +205,12 @@ function EventCardForm({ event, onSubmit }: Props) {
                     onChange={handleDateChange}
                     disabled={paramsDate !== null}
                     required
+                  />
+                  <input
+                    type="time"
+                    value={displayTime}
+                    onChange={handleTimeChange}
+                    step="300" // Saltos de 5 minutos
                   />
                 </div>
               </section>

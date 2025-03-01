@@ -1,14 +1,14 @@
 'use client';
 
 import { useUser } from "@/contexts/UserContext";
-import { useRouter } from "next/navigation";
+import { useNavigationHistory } from "@/hooks/navigation-history";
 
 function Attendance() {
-  const router = useRouter();
+  const { goBack } = useNavigationHistory();
   const { activeProfile } = useUser();
 
   if (activeProfile?.role_id! < 2){
-    router.back();
+    goBack();
   }
   return (
     <div>Attendance</div>

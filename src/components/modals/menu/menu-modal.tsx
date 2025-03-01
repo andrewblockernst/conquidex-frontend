@@ -5,6 +5,7 @@ import Spinner1 from '@/components/spinners/spinner-1';
 import UnitForm from '@/components/forms/unit-form';
 import Button from '@/components/buttons/button';
 import Link from 'next/link';
+import { EVENTS as PARAMS } from '@/constants/url-params';
 
 interface Props{
     isOpen: boolean;
@@ -28,7 +29,7 @@ const PersonCrudModal = ({ isOpen, onClose }: Props) => {
                     <div className="p-4 w-full flex flex-col space-y-4">
                         <Button variant="success" onClick={()=> setStep('createUnit') }>CREAR UNIDAD</Button>
                         <Button variant="primary" onClick={()=> setStep('createMember') }>CREAR MIEMBRO</Button>
-                        <Link href={`/calendar?new=y#event-form`} onClick={onClose}>
+                        <Link href={`/calendar?${PARAMS.new}=y#event-form`} onClick={onClose}>
                             <Button variant="secondary" >CREAR EVENTO</Button>
                         </Link>
                     </div>
