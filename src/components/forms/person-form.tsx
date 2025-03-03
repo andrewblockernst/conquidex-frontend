@@ -4,8 +4,8 @@ import { createPerson, fetchRoles, fetchClasses } from '@/lib/actions/person.act
 import Spinner1 from "../spinners/spinner-1";
 import ErrorModal from "../modals/error-modal";
 import SuccessModal from "../modals/success-modal";
-import { triggerClubViewRefresh } from "@/utils/events/events";
 import { fetchUnits } from "@/lib/actions/units.actions";
+import { useClub } from "@/contexts/ClubContext";
 
 interface Props {
     onClose?: () => void;
@@ -13,6 +13,7 @@ interface Props {
 
 export default function PersonForm({ onClose }: Props) {
     const { club_id: clubId } = useUser().activeProfile!;
+    const { refreshAllData } = useClub();
 
     const [formData, setFormData] = useState<PersonFormData>({
       name: '',
@@ -52,8 +53,10 @@ export default function PersonForm({ onClose }: Props) {
 
     const handleSuccess = () => {
         setSuccess(null);
-        triggerClubViewRefresh();
-        onClose!();
+        refreshAllData();
+        if (onClose){
+          onClose()
+        }
     }
   
     useEffect(() => {

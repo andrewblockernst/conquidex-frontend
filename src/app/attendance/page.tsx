@@ -16,8 +16,7 @@ import { useClub } from "@/contexts/ClubContext";
 function Attendance() {
   const { goBack } = useNavigationHistory();
   const { activeProfile } = useUser();
-  const { units } = useClub();
-  const [isLoading, setIsLoading] = useState(false);
+  const { units, loading: {units: unitsLoading} } = useClub();
   const { getEventsByDate, loading: eventsLoading } = useEvents();
 
   const events =  useMemo(() => {
@@ -32,7 +31,7 @@ function Attendance() {
     }
   }, [activeProfile?.role_id, goBack]);
 
-  if (isLoading) {
+  if (unitsLoading || eventsLoading) {
     return <div className="w-full pt-8 flex items-center justify-center"><Spinner1 /></div>;
   }
 

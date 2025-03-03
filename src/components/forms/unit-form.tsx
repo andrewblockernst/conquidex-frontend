@@ -4,7 +4,7 @@ import Spinner1 from "../spinners/spinner-1";
 import ErrorModal from "../modals/error-modal";
 import SuccessModal from "../modals/success-modal";
 import { createUnit } from "@/lib/actions/units.actions";
-import { triggerClubViewRefresh } from "@/utils/events/events";
+import { useClub } from "@/contexts/ClubContext";
 
 interface Props {
     onClose?: () => void;
@@ -12,6 +12,7 @@ interface Props {
 
 export default function UnitForm({ onClose }: Props) {
     const { club_id: clubId } = useUser().activeProfile!;
+    const { refreshAllData } = useClub();
 
     const [formData, setFormData] = useState<UnitInsert>({
       club_id: clubId!,
@@ -40,7 +41,7 @@ export default function UnitForm({ onClose }: Props) {
 
     const handleSuccess = () => {
         setSuccess(null);
-        triggerClubViewRefresh();
+        refreshAllData();
         onClose!();
     }
   

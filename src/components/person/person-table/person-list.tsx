@@ -39,7 +39,7 @@ export const PersonList = ({ group, groupBy }: PersonListProps) => {
             : (g as ClassGroup).class_name;
 
         const isExpanded = expanded[uniqueKey];
-        console.log(`Group: ${name}, Persons:`, g.persons); // Log para debuggear
+        //console.log(`Group: ${name}`); // Log para debuggear
         return (
           <div
             key={uniqueKey}

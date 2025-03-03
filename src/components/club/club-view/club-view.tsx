@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { createClient } from "@/utils/supabase/client";
 import { useUser } from "@/contexts/UserContext";
 import { useSyncModal } from "@/contexts/SyncModalContext";
 import FilterButton from "@/components/buttons/filter-button";
@@ -9,85 +8,14 @@ import { PersonList } from "../../person/person-table/person-list";
 import Button from "@/components/buttons/button";
 import Link from "next/link";
 import SearchButton from "@/components/search-input";
-import { CLUB_VIEW_REFRESH_EVENT } from "@/utils/events/events";
+import { useClub } from "@/contexts/ClubContext";
 
 export default function ClubView() {
-  const supabase = createClient();
   const { club, loading: userLoading, user } = useUser();
   const { loading: syncLoading } = useSyncModal();
+  const { unitsData, classesData, loading } = useClub();
   const [groupBy, setGroupBy] = useState<"units" | "classes">("units");
   const [searchTerm, setSearchTerm] = useState<string>("");
-
-  const [unitsData, setUnitsData] = useState<UnitGroup[]>([]);
-  const [classesData, setClassesData] = useState<ClassGroup[]>([]);
-  const [loading, setLoading] = useState({ units: true, classes: true });
-
-  useEffect(() => {
-    console.log("ClubView mounted");
-    return () => console.log("ClubView unmounted");
-  }, []);
-
-  useEffect(() => {
-    let isMounted = true;
-    const controller = new AbortController();
-
-    const fetchAllData = async () => {
-      console.log("ClubView effect running with club_id:", club?.id);
-      try {
-        if (!club?.id) return;
-        setLoading({ units: true, classes: true });
-        const [unitsResponse, classesResponse] = await Promise.all([
-          supabase
-            .rpc("get_persons_by_unit", {
-              input_club_id: club.id,
-            })
-            .select("*")
-            .abortSignal(controller.signal),
-
-          supabase
-            .rpc("get_persons_by_class", {
-              input_club_id: club.id,
-            })
-            .select("*")
-            .abortSignal(controller.signal),
-        ]);
-
-        if (isMounted) {
-          if (!unitsResponse.error && unitsResponse.data) {
-            const validUnits = unitsResponse.data.filter(
-              (unit) => unit.unit_id !== undefined && unit.club_id
-            );
-            setUnitsData(validUnits as UnitGroup[]);
-          }
-
-          if (!classesResponse.error && classesResponse.data) {
-            const validClasses = classesResponse.data.filter(
-              (cls) => cls.class_id !== undefined && cls.club_id
-            );
-            setClassesData(validClasses as ClassGroup[]);
-          }
-        }
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      } finally {
-        if (isMounted) {
-          setLoading({ units: false, classes: false });
-        }
-      }
-    };
-
-    fetchAllData();
-
-    const handleRefresh = () => {
-      fetchAllData();
-    };
-    window.addEventListener(CLUB_VIEW_REFRESH_EVENT, handleRefresh);
-    return () => {
-      window.removeEventListener(CLUB_VIEW_REFRESH_EVENT, handleRefresh);
-      isMounted = false;
-      controller.abort();
-    };
-  }, [club?.id]);
 
   const isLoading =
     userLoading ||
