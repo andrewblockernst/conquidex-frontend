@@ -11,36 +11,19 @@ import UnitCard from "@/components/cards/unit-card";
 import Carousel from "@/components/carousel/carousel";
 import EventSillyCard from "@/components/event-card/event-silly-card";
 import Spinner1 from "@/components/spinners/spinner-1";
+import { useClub } from "@/contexts/ClubContext";
 
 function Attendance() {
   const { goBack } = useNavigationHistory();
   const { activeProfile } = useUser();
-  const [units, setUnits] = useState<Unit[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const { units } = useClub();
+  const [isLoading, setIsLoading] = useState(false);
   const { getEventsByDate, loading: eventsLoading } = useEvents();
-  
+
   const events =  useMemo(() => {
     const today = new Date();
     return getEventsByDate(today.getFullYear(), today.getMonth(), today.getDate());
   }, [getEventsByDate, eventsLoading]);
-
-  // Cargar datos solo una vez al montar el componente
-  useEffect(() => {
-    const loadData = async () => {
-      try {
-        if (activeProfile?.club_id) {
-          const fetchedUnits = await fetchUnits(activeProfile.club_id);
-          setUnits(fetchedUnits);
-        }
-      } catch (error) {
-        console.error("Error fetching units:", error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    loadData();
-  }, [activeProfile?.club_id]);
 
   // Redirección de seguridad basada en el rol
   useEffect(() => {

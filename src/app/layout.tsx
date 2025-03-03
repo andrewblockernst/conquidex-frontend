@@ -7,6 +7,7 @@ import  NavigationWrapper from "@/components/wrappers/navigation-wrapper"
 import { EventProvider } from "@/contexts/EventContext"
 import RelativeTimeLoader from "@/components/relative-time-loader"
 import NavigationHandler from "@/components/wrappers/navigation-history"
+import { ClubProvider } from "@/contexts/ClubContext"
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -30,14 +31,16 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <RelativeTimeLoader /> {/* cargar librería de github para tiempos relativos */}
         <div className="min-h-screen">
           <UserProvider>
-            <EventProvider>
-            <SyncModalProvider>
-                <NavigationWrapper> {/* header, navbar, toolsbar */}
-                  <NavigationHandler/>
-                  {children}
-                </NavigationWrapper>
-            </SyncModalProvider>
-            </EventProvider>
+            <ClubProvider>
+              <EventProvider>
+              <SyncModalProvider>
+                  <NavigationWrapper> {/* header, navbar, toolsbar */}
+                    <NavigationHandler/>
+                    {children}
+                  </NavigationWrapper>
+              </SyncModalProvider>
+              </EventProvider>
+            </ClubProvider>
           </UserProvider>
         </div>
       </body>
