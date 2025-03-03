@@ -33,21 +33,6 @@ export async function fetchRoles(): Promise<Role[]> {
   return data as Role[];
 }
 
-export async function fetchUnits(clubId: number): Promise<Unit[]> {
-  const supabase = await createClient();
-  const { data, error } = await supabase
-    .from('units')
-    .select('*')
-    .eq('club_id', clubId)
-    .order('name');
-
-  if (error) {
-    throw new Error(`Error fetching units: ${error.message}`);
-  }
-
-  return data;
-}
-
 export async function fetchClasses(): Promise<Class[]> {
   const supabase = await createClient();
   const { data, error } = await supabase

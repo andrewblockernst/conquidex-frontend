@@ -35,7 +35,7 @@ export default function Home() {
       <div className='event-header w-full text-center p-4'>
         <h1 className='text-xl'>Próximos eventos</h1>
       </div>
-      <div className='event-body flex-1'>
+      <div className='event-body w-full'>
         <EventTable events={events} />
       </div>
     </div>

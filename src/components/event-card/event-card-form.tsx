@@ -102,16 +102,15 @@ function EventCardForm({ event, onSubmit }: Props) {
       id="event-form"
     >
       {/* Header Section */}
-      <div className="flex flex-wrap md:flex-nowrap justify-between items-center p-1 md:p-2 gap-2">
-        <input
-          name="name"
-          className="text-xl font-bold overflow-hidden whitespace-pre-wrap w-full md:flex-grow p-2 border rounded-md"
-          value={formData.name}
-          onChange={handleInputChange}
-          placeholder="Título"
-          required
-        />
-        <div className="w-full flex items-center justify-between gap-2">
+      <div className="w-full flex flex-wrap justify-between items-center p-1 md:p-2 gap-2">
+          <input
+            name="name"
+            className="w-full text-xl font-bold p-2 border rounded-md"
+            value={formData.name}
+            onChange={handleInputChange}
+            placeholder="Título"
+            required
+          />
           <label htmlFor="color">Color:</label>
           <input
             type="color"
@@ -134,7 +133,6 @@ function EventCardForm({ event, onSubmit }: Props) {
           >
             ▼
           </button>
-        </div>
       </div>
 
       {/* Expanded Form Section */}

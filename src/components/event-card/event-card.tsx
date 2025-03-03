@@ -8,9 +8,10 @@ import { EVENTS as PARAMS } from "@/constants/url-params";
 
 interface Props{
     event: ClubEvent
+    editable?: boolean
 }
 
-function EventCard({ event }: Props) {
+function EventCard({ event, editable=true }: Props) {
     const [isExpanded, setIsExpanded] = useState(false);
     const [actionMenu, setActionMenu] = useState(false);
     const searchParams = useSearchParams(); // Get the current path
@@ -49,7 +50,7 @@ function EventCard({ event }: Props) {
     <div className="p-2 rounded-md border-2 border-gray-500" style={{backgroundColor: event.color!}}>
       <div className="flex justify-between items-center p-2 gap-x-1 ">
             <h2 className="text-xl font-bold overflow-hidden whitespace-pre-wrap ">{event.name}</h2>
-            { role_id! >= 3 &&
+            { editable && role_id! >= 3 &&
             <div className="relative" ref={actionMenuRef}>
               <button onClick={()=> setActionMenu(!actionMenu)}><EllipsisVertical/></button>
               { actionMenu &&

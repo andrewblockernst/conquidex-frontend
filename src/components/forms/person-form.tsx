@@ -1,10 +1,11 @@
 import { useUser } from "@/contexts/UserContext";
 import { useEffect, useState } from "react";
-import { createPerson, fetchRoles, fetchUnits, fetchClasses } from '@/lib/actions/person.actions';
+import { createPerson, fetchRoles, fetchClasses } from '@/lib/actions/person.actions';
 import Spinner1 from "../spinners/spinner-1";
 import ErrorModal from "../modals/error-modal";
 import SuccessModal from "../modals/success-modal";
 import { triggerClubViewRefresh } from "@/utils/events/events";
+import { fetchUnits } from "@/lib/actions/units.actions";
 
 interface Props {
     onClose?: () => void;
