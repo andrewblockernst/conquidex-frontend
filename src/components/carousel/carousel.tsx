@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { useRouter, useSearchParams } from 'next/navigation';
 
 interface Identifiable {
     id: number;
@@ -8,51 +9,97 @@ interface Identifiable {
 interface CarouselProps<T extends Identifiable> {
     objects: T[];
     renderCard: (selectedObject: T) => React.ReactNode; //función que renderiza una card
-    initialSelectedId?: number;
-    onSelect: (selectedObject: T) => void;
+    paramName: string; // Nombre del parámetro en la URL
+    //onSelect?: (selectedObject: T) => void;
 }
 
-const Carousel = <T extends Identifiable>({ objects, renderCard, initialSelectedId, onSelect }: CarouselProps<T>) => {
+const Carousel = <T extends Identifiable>({ 
+    objects, 
+    renderCard, 
+    paramName,
+    //onSelect 
+}: CarouselProps<T>) => {
+  const router = useRouter();
+  const searchParams = useSearchParams();
   const [selectedIndex, setSelectedIndex] = useState(0);
-  const [isLoading, setIsLoading] = useState(true);
-    // Encontrar el índice inicial basado en el ID proporcionado o usar 0
+  //const [initialized, setInitialized] = useState(false);
 
-useEffect(() => {
-    const findInitialIndex = () => {
-        if (!initialSelectedId || objects.length === 0) return 0;
-        const index = objects.findIndex(obj => obj.id === initialSelectedId);
-        return index >= 0 ? index : 0;
-    };
+  // Función para actualizar los params de URL
+  const updateUrlParams = (paramToUpdate: string, value: string) => {
+    const params = new URLSearchParams(searchParams.toString());
+    params.set(paramToUpdate, value);
+    return params.toString();
+  };
 
-    setSelectedIndex(findInitialIndex());
-    setIsLoading(false);
-    }, [initialSelectedId, objects]);
-  
-
+  // Efecto para inicializar el índice seleccionado basado en URL params
   useEffect(() => {
-    if (objects.length > 0) {
-      onSelect(objects[selectedIndex]);
+    if (objects.length === 0) return;
+
+    // Obtener el ID del parámetro de URL
+    const paramId = searchParams.get(paramName);
+    
+    if (paramId) {
+      // Intentar encontrar el objeto con ese ID
+      const index = objects.findIndex(obj => obj.id === parseInt(paramId));
+      if (index >= 0) {
+        setSelectedIndex(index); // Establecer el índice seleccionado y concluir efecto
+        //setInitialized(true);
+        return;
+      } 
     }
-  }, [selectedIndex, objects]);
+
+    // No hay parámetro o no se encontró el objeto, establecer índice predeterminado
+    setSelectedIndex(0);
+    // Actualizar la URL con el ID del primer objeto
+    if (objects.length > 0) {
+      const newParams = updateUrlParams(paramName, objects[0].id.toString());
+      router.replace(`?${newParams}`, { scroll: false });
+    }
+    
+    //setInitialized(true);
+  }, [objects, searchParams, paramName]); 
+
+  // -----Efecto para notificar selección después de la inicialización
+  // useEffect(() => {
+  //   if (!initialized || objects.length === 0) return;
+    
+  //   if (onSelect && objects[selectedIndex]) {
+  //     onSelect(objects[selectedIndex]);
+  //   }
+  // }, [selectedIndex, initialized, objects, onSelect]);
 
   const handlePrev = () => {
-    setSelectedIndex((prevIndex) => {
-      return prevIndex === 0 ? objects.length - 1 : prevIndex - 1;
-    });
+    if (objects.length === 0) return;
+    
+    const newIndex = selectedIndex === 0 ? objects.length - 1 : selectedIndex - 1;
+    setSelectedIndex(newIndex);
+    
+    // Actualizar la URL cuando el usuario hace clic en prev
+    const newParams = updateUrlParams(paramName, objects[newIndex].id.toString());
+    router.replace(`?${newParams}`, { scroll: false });
   };
 
   const handleNext = () => {
-    setSelectedIndex((prevIndex) => {
-      return prevIndex === objects.length - 1 ? 0 : prevIndex + 1;
-    });
+    if (objects.length === 0) return;
+    
+    const newIndex = selectedIndex === objects.length - 1 ? 0 : selectedIndex + 1;
+    setSelectedIndex(newIndex);
+    
+    // Actualizar la URL cuando el usuario hace clic en next
+    const newParams = updateUrlParams(paramName, objects[newIndex].id.toString());
+    router.replace(`?${newParams}`, { scroll: false });
+  };
+
+  const handleIndicatorClick = (index: number) => {
+    setSelectedIndex(index);
+    
+    // Actualizar la URL cuando el usuario hace clic en un indicador
+    const newParams = updateUrlParams(paramName, objects[index].id.toString());
+    router.replace(`?${newParams}`, { scroll: false });
   };
 
   if (objects.length === 0) {
-    return <div className="text-center py-4">No hay unidades disponibles</div>;
-  }
-
-  if (isLoading) {
-    return <div>Cargando...</div>;
+    return <div className="text-center py-4">No hay elementos disponibles</div>;
   }
 
   // Obtener los índices para mostrar en el carrusel
@@ -67,7 +114,7 @@ useEffect(() => {
           <div 
             className="w-full h-full max-w-xs opacity-50 transform scale-90 origin-right transition-all duration-300"
           >
-            {renderCard(objects[getPrevIndex()])}
+            {objects[getPrevIndex()] && renderCard(objects[getPrevIndex()])}
           </div>
           <button 
             onClick={handlePrev}
@@ -80,7 +127,7 @@ useEffect(() => {
         
         {/* Contenedor de la tarjeta central */}
         <div className="w-full flex flex-1 justify-center px-2 z-20 center-card">
-          {renderCard(objects[selectedIndex])}
+          {objects[selectedIndex] && renderCard(objects[selectedIndex])}
         </div>
         
         {/* Contenedor de la tarjeta derecha con flecha */}
@@ -96,7 +143,7 @@ useEffect(() => {
             className="w-full max-w-xs opacity-50 transform scale-90 origin-left transition-all duration-300"
             style={{ height: '100%' }}
           >
-            {renderCard(objects[getNextIndex()])}
+            {objects[getNextIndex()] && renderCard(objects[getNextIndex()])}
           </div>
         </div>
       </div>
@@ -109,8 +156,8 @@ useEffect(() => {
             className={`w-2 h-2 rounded-full ${
               index === selectedIndex ? 'bg-blue-600' : 'bg-gray-300'
             }`}
-            onClick={() => setSelectedIndex(index)}
-            aria-label={`Ir a la unidad ${index + 1}`}
+            onClick={() => handleIndicatorClick(index)}
+            aria-label={`Ir al elemento ${index + 1}`}
           />
         ))}
       </div>
