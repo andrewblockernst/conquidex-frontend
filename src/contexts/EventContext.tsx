@@ -22,11 +22,12 @@ export const EventProvider = ({ children }: { children: React.ReactNode }) => {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
+      if (!club?.id) return;
         const fetchEvents = async () => {
             const { data, error } = await supabase
               .from('events')
               .select('*')
-              .eq('club_id', club?.id!)
+              .eq('club_id', club.id)
               .order('date', { ascending: true });
           
             if (error) {

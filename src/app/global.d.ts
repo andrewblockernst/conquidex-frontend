@@ -14,20 +14,24 @@ declare global {
     type ClassItem = Tables<'class_items'>
     type Role = Tables<'roles'>
     type ClubEvent = Tables<'events'>
-    interface UnitGroup{
+    type Attendance = Tables<'attendance'>
+    interface BaseGroup{
+      club_id: number
+      color: string;
+      persons: Person[];
+      type: 'unit' | 'class';
+    }
+
+    interface UnitGroup extends BaseGroup{
         unit_id: number;
-        club_id: number
         unit_name: string;
-        color: string;
-        persons: Person[];
+        type: 'unit';
       }
 
-    interface ClassGroup {
+    interface ClassGroup extends BaseGroup{
         class_id: number;
-        club_id: number
         class_name: string;
-        color: string;
-        persons: Person[];
+        type: 'class';
       }
 
       type ClassWithItems = {

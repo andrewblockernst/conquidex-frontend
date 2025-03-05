@@ -22,18 +22,21 @@ export async function fetchClubData(clubId: number): Promise<[UnitGroup[], Class
         throw new Error("Error fetching data. Try again.");
       }
 
-      let validUnits, validClasses;
+      // Mapear unidades añadiendo la propiedad type
+      const validUnits = (unitsResponse.data ?? [])
+      .filter((unit) => unit.unit_id !== undefined && unit.club_id)
+      .map(unit => ({
+          ...unit, 
+          type: 'unit' as const
+      }));
 
-      if (unitsResponse.data) {
-         validUnits = unitsResponse.data.filter(
-          (unit) => unit.unit_id !== undefined && unit.club_id
-        );
-      }
-      
-      if (classesResponse.data) {
-        validClasses = classesResponse.data.filter(
-          (cls) => cls.class_id !== undefined && cls.club_id
-        );
-      }
+      // Mapear clases añadiendo la propiedad type
+      const validClasses = (classesResponse.data ?? [])
+      .filter((cls) => cls.class_id !== undefined && cls.club_id)
+      .map(cls => ({
+          ...cls, 
+          type: 'class' as const
+      }));
+
     return [validUnits as UnitGroup[], validClasses as ClassGroup[]]
 }

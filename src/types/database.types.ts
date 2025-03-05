@@ -11,20 +11,20 @@ export type Database = {
     Tables: {
       attendance: {
         Row: {
+          attended: boolean | null
           event_id: number
-          notes: string | null
           person_id: number
           taken_by: number | null
         }
         Insert: {
+          attended?: boolean | null
           event_id: number
-          notes?: string | null
           person_id: number
           taken_by?: number | null
         }
         Update: {
+          attended?: boolean | null
           event_id?: number
-          notes?: string | null
           person_id?: number
           taken_by?: number | null
         }
