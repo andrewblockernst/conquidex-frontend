@@ -14,3 +14,14 @@ export async function getAttendanceData(eventId: number): Promise<Attendance[]> 
     }
     return data;
 }
+
+export async function saveAttendanceData(data: Attendance[]): Promise<void> {
+    const supabase = await createClient();
+    const { error } = await supabase
+    .from('attendance')
+    .upsert(data);
+
+    if (error) {
+        throw new Error(error.message);
+    }
+}

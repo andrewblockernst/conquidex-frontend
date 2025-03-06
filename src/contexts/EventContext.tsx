@@ -59,17 +59,25 @@ export const EventProvider = ({ children }: { children: React.ReactNode }) => {
       };
 
     const getEventsByDate = (year: number, month: number, day: number): ClubEvent[] => {
-        // Se asume que 'month' es 0-indexado (0 = Enero, 11 = Diciembre)
-        // Construimos el inicio del día y el inicio del día siguiente en UTC
-        const startOfDay = new Date(Date.UTC(year, month, day));
-        const endOfDay = new Date(Date.UTC(year, month, day + 1));
-    
-        return events.filter((event) => {
-          // Se asume que event.date es un string ISO (por ejemplo, "2025-02-23T12:30:00.000Z")
-          const eventDate = new Date(event.date);
-          return eventDate >= startOfDay && eventDate < endOfDay;
-        });
-      };
+      //'month' es 0-indexado (0 = Enero, 11 = Diciembre)
+
+      // Obtener la zona horaria del usuario automáticamente desde el navegador
+      const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+      // Crear la fecha local del usuario para el inicio del día
+      const localStartOfDay = new Date(year, month, day);
+      // Convertir la fecha local a UTC según la zona horaria del usuario
+      const utcStartOfDay = new Date(localStartOfDay.toLocaleString("en-US", { timeZone: userTimeZone }));
+      // Crear la fecha local del usuario para el final del día
+      const localEndOfDay = new Date(year, month, day + 1);
+      // Convertir la fecha local a UTC según la zona horaria del usuario
+      const utcEndOfDay = new Date(localEndOfDay.toLocaleString("en-US", { timeZone: userTimeZone }));
+      
+      return events.filter((event) => {
+        // Se asume que event.date es un string ISO en UTC (ejemplo: "2025-03-06T00:03:06.867Z")
+        const eventDate = new Date(event.date);
+        return eventDate >= utcStartOfDay && eventDate < utcEndOfDay;
+      });
+    };
 
     return (
         <EventContext.Provider value={{ events, loading, getEventsByDate, refreshNewEvent, refreshUpdateEvent, refreshDeleteEvent }}>

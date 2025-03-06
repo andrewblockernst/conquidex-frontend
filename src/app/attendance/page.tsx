@@ -5,64 +5,74 @@ import { useNavigationHistory } from "@/hooks/navigation-history";
 import { useSearchParams } from "next/navigation";
 import { ATTENDANCE as PARAMS } from "@/constants/url-params";
 import { useEvents } from "@/contexts/EventContext";
-import { use, useEffect, useState } from "react";
-import { fetchUnits } from "@/lib/actions/units.actions";
+import { use, useEffect, useMemo, useState } from "react";
 import UnitCard from "@/components/cards/unit-card";
 import Carousel from "@/components/carousel/carousel";
-import EventCard from "@/components/event-card/event-card";
+import { useClub } from "@/contexts/ClubContext";
+import Spinner1 from "@/components/spinners/spinner-1";
+import EventSillyCard from "@/components/event-card/event-silly-card";
+import { AttendanceForm } from "@/components/forms/attendance-form";
 
 function Attendance() {
   const { goBack } = useNavigationHistory();
   const { activeProfile } = useUser();
-  const [units, setUnits] = useState<Unit[]>([]);
-  const { events } = useEvents();
-
+  const { units, unitsData, loading: {units: unitsLoading} } = useClub();
+  const { getEventsByDate, loading: eventsLoading } = useEvents();
   const searchParams = useSearchParams();
-  const unitId = searchParams.get(PARAMS.unit);
-  const eventId = searchParams.get(PARAMS.event);
+  const unitId = Number(searchParams.get(PARAMS.unit));
+  const eventId = Number(searchParams.get(PARAMS.event));
 
-  useEffect(() => {
-    const loadData = async () => {
-      setUnits(await fetchUnits(activeProfile?.club_id!));
-      };
-    loadData();
-  }, []);
+  const events =  useMemo(() => {
+    const today = new Date();
+    return getEventsByDate(today.getFullYear(), today.getMonth(), today.getDate());
+  }, [getEventsByDate, eventsLoading]);
 
-  // Detector simple de URL vacía
+  const group = useMemo(() => {
+    return unitsData.find(unit => unit.unit_id === unitId) ?? {} as GroupData;
+  }, [unitsData, unitId]);
+
+  // Redirección de seguridad basada en el rol
   useEffect(() => {
-    // Si la URL está vacía y hay datos disponibles, establecer valores por defecto
-    if (window.location.pathname === '/attendance' && !window.location.search) {
-      if (units.length > 0 && events.length > 0) {
-        // Redirigir a la misma página pero con parámetros por defecto
-        window.location.href = `/attendance?${PARAMS.unit}=${units[0].id}&${PARAMS.event}=${events[0].id}`;
-      }
+    if (activeProfile?.role_id && activeProfile.role_id < 2) {
+      goBack();
     }
-  }, [unitId, eventId]);
+  }, [activeProfile?.role_id, goBack]);
 
-  if (activeProfile?.role_id! < 2){
-    goBack();
+  if (unitsLoading || eventsLoading) {
+    return <div className="w-full pt-8 flex items-center justify-center"><Spinner1 /></div>;
   }
+
   return (
     <main className="w-full h-full flex flex-col items-center justify-center overflow-hidden py-2">
-      <h1 className="text-2xl">Asistencia</h1>
-      <div className="w-full h-1/3 py-4">
-        <Carousel
-        objects={units}
-        renderCard={(unit)=><UnitCard unit={unit}></UnitCard>}
-        initialSelectedId={unitId ? parseInt(unitId) : undefined}
-        onSelect={(unit)=> history.pushState(null, "", `?${PARAMS.unit}=${unit.id}&${PARAMS.event}=${eventId}`)}
-        />
-      </div>
-      <div className="w-full h-1/3 pb-4">
-        <Carousel
-        objects={events}
-        renderCard={(event)=><EventCard event={event} editable={false}></EventCard>}
-        initialSelectedId={eventId ? parseInt(eventId) : undefined}
-        onSelect={(event)=> history.pushState(null, "", `?${PARAMS.unit}=${unitId}&${PARAMS.event}=${event.id}`)}
-        />
-      </div>
+      
+      {units.length > 0 ? (
+        <div className="w-full h-1/3 py-4">
+          <Carousel
+            objects={units}
+            renderCard={(unit) => <UnitCard unit={unit} />}
+            paramName={PARAMS.unit}
+          />
+        </div>
+      ) : (<p>¡Ups! Parece que no hay unidades a las que tomar asistencia :C</p>)}
+      
+      {events.length > 0 ? (
+        <div className="w-full h-1/3 pb-4">
+          <Carousel
+            objects={events}
+            renderCard={(event) => <EventSillyCard event={event} />}
+            paramName={PARAMS.event}
+          />
+        </div>
+      ): (
+        <p>No hay eventos para hoy :C</p>
+      )}
+      {eventId ?
+        <AttendanceForm group={group} eventId={eventId}/>
+        :
+        <p>Se necesita un evento para tomar asistencia</p>
+      }
     </main>
-  )
+  );
 }
 
-export default Attendance
+export default Attendance;

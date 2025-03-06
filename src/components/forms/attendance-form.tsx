@@ -2,14 +2,15 @@
 
 import PersonCard from "@/components/person/person-card/person-card";
 import { useUser } from "@/contexts/UserContext";
-import { getAttendanceData } from "@/lib/actions/attendance.actions";
-import React, { useEffect, useState } from "react";
+import { getAttendanceData, saveAttendanceData } from "@/lib/actions/attendance.actions";
+import React, { useEffect, useMemo, useState } from "react";
 
 interface AttendanceFormProps {
   group: GroupData;
   eventId: ClubEvent["id"];
 }
 
+//Special data type to easily render attendance data
 type attendanceDataType = {
   [personId: Attendance["person_id"]]:{
     attended: Attendance["attended"],
@@ -19,24 +20,60 @@ type attendanceDataType = {
 
 export const AttendanceForm = ({ group, eventId }: AttendanceFormProps) => {
   const { activeProfile } = useUser();
-  const [attendanceData, setAttendanceData] = useState<attendanceDataType>({});
+  const [eventAttendance, setEventAttendance] = useState<Attendance[]>([]); // Store the fetched attendance data 
+  const [attendanceData, setAttendanceData] = useState<attendanceDataType>({}); // Store the mapped attendance data for rendering (actually a bad practice)
+
+  const uniqueKey = useMemo(()=>(group.type === "unit" ? `unit-${group.unit_id}` : `class-${group.class_id}`) ,[group]);
+  const name = useMemo(()=>(group.type === "unit" ? group.unit_name : group.class_name), [group]);
 
   useEffect(() => {
-    //Trae los datos de asistencia de UN evento para TODAS las agrupaciones
-    //Por eso eventId es su única dependencia
+    //Fetch attendance data for ONE event for ALL groups
+    //That's why eventId is its only dependency
     const fetchAttendance = async () => {
       const data = await getAttendanceData(eventId);
-      const attendanceMap = data.reduce((acc, record) => {
-        acc[record.person_id] = { attended: record.attended, taken_by: record.taken_by};
-        return acc;
-      }, {} as attendanceDataType);
-      setAttendanceData(attendanceMap);
+      setEventAttendance(data);
     };
     fetchAttendance();
   }, [eventId]);
 
-  const handleSave = (attendanceData: attendanceDataType) => {
-    console.log(attendanceData);
+  useEffect(() => {
+    //Create an empty attendance data object with all the persons in the group
+    //This is essential for the handleChange function to work bc if attendanceData is just an empty object, it won't be able to read 'undefined' values such as 'attended'.
+    const initialAttendanceData: attendanceDataType = {};
+    group.persons.forEach((person) => {
+      initialAttendanceData[person.id] = { attended: false, taken_by: null };
+    });
+
+    //Populate with the fecthed data from eventAttendance
+    const attendanceMap = { ...initialAttendanceData }; // Copy of the initial state
+      eventAttendance.forEach((record) => {
+        if (attendanceMap[record.person_id]) {
+          attendanceMap[record.person_id] = {
+            attended: record.attended ?? false,
+            taken_by: record.taken_by,
+          };
+        }
+      });
+      setAttendanceData(attendanceMap);
+  }, [uniqueKey, eventAttendance]);
+
+  const handleSave = async (attendanceData: attendanceDataType) => {
+    //map back to Attendance type
+    const dataToSave = group.persons.map((person)=>(
+      {
+        event_id: eventId,
+        person_id: person.id,
+        attended: attendanceData[person.id].attended || false,
+        taken_by: attendanceData[person.id].taken_by || null
+      }))
+      try{
+        await saveAttendanceData(dataToSave);
+      }
+      catch(error){
+        console.error(error);
+      }
+
+    
   };
 
   const handleChange = (personId: number) => {
@@ -46,9 +83,6 @@ export const AttendanceForm = ({ group, eventId }: AttendanceFormProps) => {
     }));
   };
 
-  const uniqueKey = group.type === "unit" ? `unit-${group.unit_id}` : `class-${group.class_id}`;
-  const name = group.type === "unit" ? group.unit_name : group.class_name;
-
   return (
     <div
       className="w-full rounded-lg shadow-[4px_4px_0_0_#323232] p-2 border-2 border-slate-800"
@@ -57,26 +91,46 @@ export const AttendanceForm = ({ group, eventId }: AttendanceFormProps) => {
       <div className="flex justify-between items-center">
         <h2 className="text-xl font-bold">{name}</h2>
       </div>
-      <div className="space-y-2">
         {group.persons && group.persons.length > 0 ? (
-          group.persons.map((person) => (
-            <form
-              key={`${uniqueKey}-person-${person.id}`}
-              className="flex items-center gap-2"
-              onSubmit={(e) => {
-                e.preventDefault();        
-                handleSave(attendanceData);
-              }}
+          <form         
+            className="items-center space-y-2"
+            onSubmit={(e) => {
+              e.preventDefault();
+              handleSave(attendanceData);}}>
+
+              {group.persons.map((person) => (
+                <label 
+                  htmlFor={`checkbox-${person.id}`} 
+                  className="flex items-center gap-2 cursor-pointer w-full"
+                  key={`${uniqueKey}-person-${person.id}`}>
+                  <PersonCard person={person} redirectable={false}/>
+                  <input
+                    id={`checkbox-${person.id}`}
+                    type="checkbox"
+                    checked={attendanceData[person.id]?.attended ?? false}
+                    onChange={() => handleChange(person.id)}
+                    className="sr-only peer"
+                  />
+                  <div
+                    className="relative flex-none w-12 h-6 bg-blue-200 rounded-full
+                    peer peer-checked:after:translate-x-full 
+                    rtl:peer-checked:after:-translate-x-full 
+                    peer-checked:after:border-white after:content-[''] 
+                    after:absolute after:top-[2px] after:start-[2px] 
+                    after:bg-white after:border-gray-300 after:border 
+                    after:rounded-full after:h-5 
+                    after:w-5 after:transition-all  
+                    peer-checked:bg-blue-500"
+                  ></div>
+                </label>))
+              }
+            <button
+              type="submit"
+              className="w-full p-2 text-white bg-blue-500 rounded-md shadow-md hover:bg-blue-700"
             >
-              <PersonCard person={person} />
-              <input
-                type="checkbox"
-                checked={attendanceData[person.id].attended || false}
-                onChange={()=> handleChange(person.id)}
-                className="mr-2"
-              />
-            </form>
-          ))
+              Guardar
+            </button>
+          </form>
         ) : (
           <div className="flex items-center justify-center bg-gray-200 my-2 p-4 rounded-lg shadow-[4px_4px_0_0_#323232] border-2 border-slate-800">
             <h2 className="text-sm">
@@ -86,7 +140,6 @@ export const AttendanceForm = ({ group, eventId }: AttendanceFormProps) => {
             </h2>
           </div>
         )}
-      </div>
     </div>
   );
 };
